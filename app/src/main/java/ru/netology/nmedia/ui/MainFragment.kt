@@ -24,7 +24,7 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.text.text = getString(R.string.app_name)
+        binding.tVmain.text = getString(R.string.app_name)
     }
 
     companion object {
