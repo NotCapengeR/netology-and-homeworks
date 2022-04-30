@@ -21,5 +21,5 @@ jobs:
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: NMEDIA-debug.apk
-          path: app/build/outputs/apk/debug/NMEDIA-debug.apk
+          name: app-debug.apk
+          path: app/build/outputs/apk/debug/app-debug.apk
