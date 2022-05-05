@@ -2,10 +2,6 @@ name: Android with CI
 
 on:
   push:
-    branches: [ master, main, 1.1_first_app ]
-  pull_request:
-    branches: [ master, main, 1.1_first_app ]
-
     branches: [ master, main, 1.2-resources ]
   pull_request:
     branches: [ master, main, 1.2-resources ]
