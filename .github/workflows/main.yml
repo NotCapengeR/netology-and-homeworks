@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ master, main, 1.1_first_app ]
 
+    branches: [ master, main, 1.2-resources ]
+  pull_request:
+    branches: [ master, main, 1.2-resources ]
+
+
 jobs:
   build:
     runs-on: ubuntu-20.04
@@ -23,3 +28,4 @@ jobs:
         with:
           name: app-debug.apk
           path: app/build/outputs/apk/debug/app-debug.apk
+
