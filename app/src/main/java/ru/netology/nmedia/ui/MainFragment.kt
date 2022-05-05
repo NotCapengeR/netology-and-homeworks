@@ -27,13 +27,14 @@ class MainFragment : Fragment() {
         binding.tVmain.text = getString(R.string.app_name)
     }
 
-    companion object {
-        @JvmStatic
-        fun newInstance() = MainFragment()
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        @JvmStatic
+        fun newInstance() = MainFragment()
     }
 }
