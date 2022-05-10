@@ -89,7 +89,7 @@
         android:layout_marginEnd="1dp"
         android:layout_marginStart="2dp"
         android:layout_marginTop="11dp"
-        android:text="10"
+        android:text="777"
         android:textSize="20sp"
         app:layout_constraintTop_toBottomOf="@+id/tvPostText"
         app:layout_constraintStart_toEndOf="@+id/likes" />
@@ -136,7 +136,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="2dp"
         android:layout_marginTop="11dp"
-        android:text="1000"
+        android:text="100,35K"
         android:textSize="20sp"
         app:layout_constraintTop_toBottomOf="@+id/tvPostText"
         app:layout_constraintStart_toEndOf="@+id/share" />
@@ -161,7 +161,7 @@
         android:layout_marginEnd="3dp"
         android:layout_marginStart="1dp"
         android:layout_marginTop="12dp"
-        android:text="1003121 M"
+        android:text="100.31 M"
         android:textSize="15sp"
         app:layout_constraintTop_toBottomOf="@+id/tvPostText"
         app:layout_constraintEnd_toEndOf="parent" />

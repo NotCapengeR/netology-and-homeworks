@@ -22,28 +22,26 @@ class PostAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         @RequiresApi(Build.VERSION_CODES.O)
-        fun bind(post: Post) {
-            with(binding) {
-                tvCommentsCount.text = post.comments.toPostText()
-                tvLikesCount.text = post.likes.toPostText()
-                tvShareCount.text = post.shared.toPostText()
-                tvViewsCount.text = post.views.toPostText()
-                tvPostText.text = post.text
-                tvPostTitle.text = post.title
-                tvDateTime.text = dateFormatter.format(post.date)
-                postAvatar.setImageResource(post.avatarId)
-            }
+        fun bind(post: Post) = with(binding) {
+            tvCommentsCount.text = post.comments.toPostText()
+            tvLikesCount.text = post.likes.toPostText()
+            tvShareCount.text = post.shared.toPostText()
+            tvViewsCount.text = post.views.toPostText()
+            tvPostText.text = post.text
+            tvPostTitle.text = post.title
+            tvDateTime.text = dateFormatter.format(post.date)
+            postAvatar.setImageResource(post.avatarId)
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostAdapter.PostViewHolder {
         val itemBinding =
             PostItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return PostViewHolder(itemBinding)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: PostAdapter.PostViewHolder, position: Int) {
         holder.bind(posts[position])
     }
 

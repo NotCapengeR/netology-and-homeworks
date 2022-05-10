@@ -116,7 +116,11 @@ class MainFragment : Fragment() {
                     "faslkfasklfasljkfasljkfasljfasljkfasljkfasljkflasjkk" +
                     "fsalkjfasljkfasjlkflasjkflajksflasjkflasjkflasjkljkfasljkfasflasjk",
             R.mipmap.ic_launcher,
-            LocalDateTime.now()
+            LocalDateTime.now(),
+            comments = 12_100,
+            likes = 12_100,
+            shared = 12_100,
+            views = 12_100
         ),
         Post(
             6L,
