@@ -1,51 +1,63 @@
-package ru.netology.nmedia.ui
+package ru.netology.nmedia.ui.adapter
 
-import android.os.Build
+import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nmedia.databinding.PostItemBinding
+import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.utils.toPostText
-import java.time.format.DateTimeFormatter
+import timber.log.Timber
+
+
+interface PostListener {
+    fun onAdded(title: String, text: String)
+
+    fun onRemoved(id: Long)
+
+    fun onEdit(id: Long, newText: String)
+
+    fun onLiked(id: Long)
+
+    fun onShared(id: Long)
+}
 
 class PostAdapter(
-    private val posts: List<Post>
+    private val listener: PostListener
 ) : ListAdapter<Post, PostAdapter.PostViewHolder>(DiffUtilCallback) {
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy, H:mm")
 
     inner class PostViewHolder(private val binding: PostItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        @RequiresApi(Build.VERSION_CODES.O)
         fun bind(post: Post) = with(binding) {
+            this.root.tag = post
             tvCommentsCount.text = post.comments.toPostText()
             tvLikesCount.text = post.likes.toPostText()
             tvShareCount.text = post.shared.toPostText()
             tvViewsCount.text = post.views.toPostText()
             tvPostText.text = post.text
             tvPostTitle.text = post.title
-            tvDateTime.text = dateFormatter.format(post.date)
+            tvDateTime.text = DateFormat.format("d MMMM yyyy, HH:mm", post.date)
             postAvatar.setImageResource(post.avatarId)
+            menuButton.setOnClickListener {
+                Timber.d("CLICK!!!!!!! Post id: ${post.id}")
+                listener.onRemoved(post.id)
+            }
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostAdapter.PostViewHolder {
-        val itemBinding =
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
+        val binding =
             PostItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return PostViewHolder(itemBinding)
+        return PostViewHolder(binding)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun onBindViewHolder(holder: PostAdapter.PostViewHolder, position: Int) {
-        holder.bind(posts[position])
+    override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
+        holder.bind(getItem(position))
     }
 
-    override fun getItemCount(): Int = posts.size
 
     object DiffUtilCallback : DiffUtil.ItemCallback<Post>() {
         override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean =
@@ -53,6 +65,6 @@ class PostAdapter(
 
         override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean =
             oldItem.id == newItem.id
-
     }
 }
+

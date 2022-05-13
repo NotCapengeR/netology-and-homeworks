@@ -1,9 +1,11 @@
-package ru.netology.nmedia.ui
+package ru.netology.nmedia.ui.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.activity.viewModels
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.ActivityMainBinding
+import ru.netology.nmedia.ui.viewmodel.PostViewModel
 
 
 class MainActivity : AppCompatActivity() {
@@ -13,7 +15,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater).also { setContentView(it.root) }
         supportFragmentManager.beginTransaction()
-            .add(R.id.activity_main, MainFragment.newInstance())
+            .replace(R.id.activity_main, MainFragment.newInstance())
             .commit()
     }
 }

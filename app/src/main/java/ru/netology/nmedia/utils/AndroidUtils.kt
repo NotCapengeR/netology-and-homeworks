@@ -1,4 +1,4 @@
-package ru.netology.nmedia.ui.decorators
+package ru.netology.nmedia.utils
 
 import android.app.Activity
 import android.content.Context
