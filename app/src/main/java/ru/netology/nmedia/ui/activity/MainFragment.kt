@@ -8,16 +8,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentMainBinding
-import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.ui.adapter.PostAdapter
 import ru.netology.nmedia.ui.adapter.PostListener
-import ru.netology.nmedia.ui.decorators.*
+import ru.netology.nmedia.ui.decorators.LinearVerticalSpacingDecoration
 import ru.netology.nmedia.ui.viewmodel.PostViewModel
 import ru.netology.nmedia.utils.AndroidUtils
-import timber.log.Timber
-import java.util.*
 
 class MainFragment : Fragment() {
 
@@ -37,25 +33,24 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = PostAdapter(object : PostListener {
-            override fun onAdded(title: String, text: String) {
-                viewModel.addPost(title, text)
+            override fun onAdded(title: String, text: String): Long {
+                return viewModel.addPost(title, text)
             }
 
-            override fun onRemoved(id: Long) {
-                viewModel.removePost(id)
-                Timber.d("Fun: ${viewModel.removePost(id)}\n_______________________")
+            override fun onRemoved(id: Long): Boolean {
+                return viewModel.removePost(id)
             }
 
-            override fun onEdit(id: Long, newText: String) {
-                viewModel.editPost(id, newText)
+            override fun onEdit(id: Long, newText: String): Boolean {
+                return viewModel.editPost(id, newText)
             }
 
-            override fun onLiked(id: Long) {
-                viewModel.likePost(id)
+            override fun onLiked(id: Long): Boolean {
+                return viewModel.likePost(id)
             }
 
-            override fun onShared(id: Long) {
-                viewModel.sharePost(id)
+            override fun onShared(id: Long): Int {
+                return viewModel.sharePost(id)
             }
         })
         with(binding) {

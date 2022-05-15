@@ -5,7 +5,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.repository.PostRepositoryImpl
-import timber.log.Timber
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val postRepository = PostRepositoryImpl()
@@ -13,12 +12,13 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         postRepository.addPost("Университет НЕТОЛОГИЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯ", "KJNJK24H4HJK21142HJK")
-        repeat(7) {
+        repeat(9) {
             postRepository.addPost(
-                "Университет Нетология", "afshjafhsjkfaskhjfasjkhgfasjkhg" +
-                        "fsalkjafsljkfasljkfalsjkafsljk" +
-                        "faslkjkfasljkfasljkfasljkfasj;" +
-                        "faslhjkfasjkfashjkfahsjkjkfas"
+                "Университет Нетология",
+                "afshjafhsjkfaskhjfasjkhgfasjkhgfasfsfasfasafsfafadsfasafsfasfasfasfas" +
+                        "fsalkjafsljkfasljkfalsjkafsljkfsafasfaslhjkafskjafsjkhhfajkasfjklfsas" +
+                        "faslkjkfasljkfasljkfasljkfasj;faslkjaflsjkaflskjflajkslajkfsfkalsjfsa" +
+                        "faslhjkfasjkfashjkfahsjkjkfasfasfasfasafsfasfasfasfasfasfas212312312123"
             )
         }
         notifyChanges()
@@ -30,19 +30,18 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         return result
     }
 
-    // Эта функция у меня всегда вызывается два раза, если вы знаете причину — сообщите пж
     fun removePost(id: Long): Boolean {
         postRepository.removePost(id).also {
             if (it) notifyChanges()
-            Timber.d("Fun actually returns $it")
-            return postRepository.getPostById(id) == null
+            return it
         }
     }
 
     fun editPost(id: Long, newText: String): Boolean {
-        val result = postRepository.editPost(id, newText)
-        if (result) notifyChanges()
-        return result
+        postRepository.editPost(id, newText).also {
+            if (it) notifyChanges()
+            return it
+        }
     }
 
     fun likePost(id: Long): Boolean {

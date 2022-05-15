@@ -8,20 +8,21 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nmedia.databinding.PostItemBinding
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.utils.clickWithDebounce
 import ru.netology.nmedia.utils.toPostText
-import timber.log.Timber
 
 
 interface PostListener {
-    fun onAdded(title: String, text: String)
 
-    fun onRemoved(id: Long)
+    fun onAdded(title: String, text: String): Long
 
-    fun onEdit(id: Long, newText: String)
+    fun onRemoved(id: Long): Boolean
 
-    fun onLiked(id: Long)
+    fun onEdit(id: Long, newText: String): Boolean
 
-    fun onShared(id: Long)
+    fun onLiked(id: Long): Boolean
+
+    fun onShared(id: Long): Int
 }
 
 class PostAdapter(
@@ -41,8 +42,7 @@ class PostAdapter(
             tvPostTitle.text = post.title
             tvDateTime.text = DateFormat.format("d MMMM yyyy, HH:mm", post.date)
             postAvatar.setImageResource(post.avatarId)
-            menuButton.setOnClickListener {
-                Timber.d("CLICK!!!!!!! Post id: ${post.id}")
+            menuButton.clickWithDebounce {
                 listener.onRemoved(post.id)
             }
         }

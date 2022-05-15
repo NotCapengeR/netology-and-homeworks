@@ -2,9 +2,7 @@ package ru.netology.nmedia.repository
 
 import ru.netology.nmedia.R
 import ru.netology.nmedia.dto.Post
-import timber.log.Timber
 import java.util.*
-import kotlin.collections.HashMap
 
 class PostRepositoryImpl : PostRepository {
 
@@ -28,7 +26,6 @@ class PostRepositoryImpl : PostRepository {
     }
 
     override fun removePost(id: Long): Boolean {
-        Timber.d("Fun should return ${posts.containsValue(getPostById(id))}")
         val post = findPostById(id).post ?: return false
         posts.remove(id)
         return !posts.containsValue(post)
