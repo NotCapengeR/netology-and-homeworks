@@ -52,7 +52,7 @@ class MainFragment : Fragment() {
             }
             ivShare.setDebouncedListener(300L) {
                 post.shareCount++
-                tvLikesCount.text = post.likesCount.toPostText()
+                tvShareCount.text = post.shareCount.toPostText()
             }
             ivLikes.setImageResource(R.drawable.heart_outline)
         }
