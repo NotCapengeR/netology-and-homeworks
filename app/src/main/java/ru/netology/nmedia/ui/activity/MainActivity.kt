@@ -1,11 +1,9 @@
 package ru.netology.nmedia.ui.activity
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.ActivityMainBinding
-import ru.netology.nmedia.ui.viewmodel.PostViewModel
 
 
 class MainActivity : AppCompatActivity() {

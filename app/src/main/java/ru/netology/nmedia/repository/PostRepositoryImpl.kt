@@ -19,7 +19,7 @@ class PostRepositoryImpl : PostRepository {
     override fun getPostById(id: Long): Post? = findPostById(id).post
 
     override fun addPost(title: String, text: String): Long {
-        val post = Post(postId, title, text, R.mipmap.ic_launcher, Date().time)
+        val post = Post(postId, title, text, Date().time, R.mipmap.ic_launcher)
         posts[postId] = post
         postId++
         return post.id
@@ -39,10 +39,35 @@ class PostRepositoryImpl : PostRepository {
     }
 
     override fun likePost(id: Long): Boolean {
-        TODO("Not yet implemented")
+        val post = findPostById(id).post ?: return false
+        val previousLikesCount = post.likes
+        if (post.isLiked) {
+            posts[id] = post.copy(likes = previousLikesCount - 1, isLiked = !post.isLiked)
+        } else {
+            posts[id] = post.copy(likes = previousLikesCount + 1, isLiked = !post.isLiked)
+        }
+        return true
     }
 
     override fun sharePost(id: Long): Int {
-        TODO("Not yet implemented")
+        val post = findPostById(id).post ?: return -1
+        val nextValue = post.shared + 450
+        posts[id] = post.copy(shared = nextValue)
+        return nextValue
+    }
+
+    override fun commentPost(id: Long): Int {
+        val post = findPostById(id).post ?: return -1
+        val nextValue = post.comments + 450
+        posts[id] = post.copy(comments = nextValue)
+        return nextValue
+    }
+
+    override fun onPostMoved(id: Long, movedBy: Int): Long {
+        val post = findPostById(id).post ?: return -1L
+        val swappablePost = posts[post.id - movedBy] ?: return -2L
+        posts[post.id] = swappablePost.copy(id = post.id)
+        posts[swappablePost.id] = post.copy(id = swappablePost.id)
+        return swappablePost.id
     }
 }

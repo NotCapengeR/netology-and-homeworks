@@ -2,4 +2,7 @@
 <resources>
     <string name="app_name">НМедиа</string>
     <string name="group_avatar">Изображение профиля группы</string>
+    <string name="post_remove">Удалить</string>
+    <string name="post_move_up">Переместить вверх</string>
+    <string name="post_mode_down">Переместить вниз</string>
 </resources>

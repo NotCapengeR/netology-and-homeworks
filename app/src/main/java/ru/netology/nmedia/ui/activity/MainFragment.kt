@@ -14,6 +14,7 @@ import ru.netology.nmedia.ui.adapter.PostListener
 import ru.netology.nmedia.ui.decorators.LinearVerticalSpacingDecoration
 import ru.netology.nmedia.ui.viewmodel.PostViewModel
 import ru.netology.nmedia.utils.AndroidUtils
+import timber.log.Timber
 
 class MainFragment : Fragment() {
 
@@ -38,6 +39,7 @@ class MainFragment : Fragment() {
             }
 
             override fun onRemoved(id: Long): Boolean {
+                Timber.d("Removed post with id $id")
                 return viewModel.removePost(id)
             }
 
@@ -52,7 +54,16 @@ class MainFragment : Fragment() {
             override fun onShared(id: Long): Int {
                 return viewModel.sharePost(id)
             }
+
+            override fun onCommented(id: Long): Int {
+                return viewModel.commentPost(id)
+            }
+
+            override fun onPostMoved(id: Long, movedBy: Int): Long {
+                return viewModel.movePost(id, movedBy)
+            }
         })
+        adapter.setHasStableIds(true)
         with(binding) {
             rcViewPost.layoutManager =
                 LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
@@ -63,7 +74,7 @@ class MainFragment : Fragment() {
                 )
             )
         }
-        viewModel.liveData.observe(activity as AppCompatActivity) {
+        viewModel.postsList.observe(activity as AppCompatActivity) {
             adapter.submitList(it)
         }
     }

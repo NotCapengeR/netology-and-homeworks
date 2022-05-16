@@ -3,4 +3,7 @@
     <string name="dummy_button" translatable="false">Dummy Button</string>
     <string name="dummy_content" translatable="false">DUMMY\nCONTENT</string>
     <string name="group_avatar">Group\'s profile image</string>
+    <string name="post_remove">Remove</string>
+    <string name="post_move_up">Move up</string>
+    <string name="post_mode_down">Move down</string>
 </resources>

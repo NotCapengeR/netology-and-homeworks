@@ -15,4 +15,8 @@ interface PostRepository {
     fun likePost(id: Long): Boolean
 
     fun sharePost(id: Long): Int
+
+    fun commentPost(id: Long): Int
+
+    fun onPostMoved(id: Long, movedBy: Int): Long
 }

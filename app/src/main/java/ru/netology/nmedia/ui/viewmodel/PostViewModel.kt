@@ -8,7 +8,7 @@ import ru.netology.nmedia.repository.PostRepositoryImpl
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val postRepository = PostRepositoryImpl()
-    val liveData = MutableLiveData<List<Post>>()
+    val postsList = MutableLiveData<List<Post>>()
 
     init {
         postRepository.addPost("Университет НЕТОЛОГИЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯ", "KJNJK24H4HJK21142HJK")
@@ -24,6 +24,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         notifyChanges()
     }
 
+    // НЕ ДОДЕЛАНО! Руками не трогать
     fun addPost(title: String, text: String): Long {
         val result = postRepository.addPost(title, text)
         notifyChanges()
@@ -37,26 +38,32 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    // Тоже не доделано
     fun editPost(id: Long, newText: String): Boolean {
-        postRepository.editPost(id, newText).also {
+        return postRepository.editPost(id, newText).also {
             if (it) notifyChanges()
-            return it
         }
     }
 
     fun likePost(id: Long): Boolean {
-        val result = postRepository.likePost(id)
-        notifyChanges()
-        return result
+        return postRepository.likePost(id).also {
+            if (it) notifyChanges()
+        }
     }
 
-    fun sharePost(id: Long): Int {
-        val result = postRepository.sharePost(id)
-        notifyChanges()
-        return result
+    fun sharePost(id: Long): Int = postRepository.sharePost(id).also {
+        if (it > 0) notifyChanges()
+    }
+
+    fun commentPost(id: Long): Int = postRepository.commentPost(id).also {
+        if (it > 0) notifyChanges()
+    }
+
+    fun movePost(id: Long, movedBy: Int): Long = postRepository.onPostMoved(id, movedBy).also {
+        if (it > 0L) notifyChanges()
     }
 
     private fun notifyChanges() {
-        liveData.value = postRepository.getPosts()
+        postsList.value = postRepository.getPosts()
     }
 }
