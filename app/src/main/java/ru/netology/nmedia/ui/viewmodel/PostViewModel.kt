@@ -8,7 +8,9 @@ import ru.netology.nmedia.repository.PostRepositoryImpl
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val postRepository = PostRepositoryImpl()
-    val postsList = MutableLiveData<List<Post>>()
+    val postsList: MutableLiveData<List<Post>> by lazy {
+        MutableLiveData<List<Post>>()
+    }
 
     init {
         postRepository.addPost("Университет НЕТОЛОГИЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯ", "KJNJK24H4HJK21142HJK")
