@@ -6,15 +6,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentMainBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.utils.clickWithDebounce
 import ru.netology.nmedia.utils.setDebouncedListener
 import ru.netology.nmedia.utils.toPostText
+import ru.netology.nmedia.viewmodel.PostViewModel
+import java.util.*
 
 class MainFragment : Fragment() {
 
+    private val viewModel: PostViewModel by activityViewModels()
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
 
@@ -29,32 +33,33 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val post = Post(1, "fashkjfshjkhjfas", "124hjk14hj2k2", 0, 0)
+        val post = viewModel.post.value
         with(binding) {
-            tvCommentsCount.text = post.commentsCount.toPostText()
-            tvLikesCount.text = post.likesCount.toPostText()
-            tvShareCount.text = post.shareCount.toPostText()
-            tvViewsCount.text = post.views.toPostText()
-            tvPostText.text = post.text
-            tvPostTitle.text = post.title
-            tvDateTime.text = DateFormat.format("d MMMM yyyy, HH:mm", post.date)
-            ivPostAvatar.setImageResource(post.avatarId)
+            ivLikes.tag = post
+            tvShareCount.tag = post
+            tvPostText.text = post?.text
+            tvPostTitle.text = post?.title
+            tvDateTime.text = DateFormat.format("d MMMM yyyy, HH:mm", post?.date ?: Date().time)
+            ivPostAvatar.setImageResource(post?.avatarId ?: R.drawable.ic_launcher_foreground)
+            ivLikes.setImageResource(R.drawable.heart_outline)
             ivLikes.clickWithDebounce(300L) {
-                if (!post.isLiked) {
-                    post.likesCount++
-                    ivLikes.setImageResource(R.drawable.heart)
-                } else {
-                    post.likesCount--
-                    ivLikes.setImageResource(R.drawable.heart_outline)
-                }
-                post.isLiked = !post.isLiked
-                tvLikesCount.text = post.likesCount.toPostText()
+                viewModel.likePost(ivLikes.tag as Post)
             }
             ivShare.setDebouncedListener(300L) {
-                post.shareCount++
-                tvShareCount.text = post.shareCount.toPostText()
+                viewModel.sharePost(tvShareCount.tag as Post)
             }
-            ivLikes.setImageResource(R.drawable.heart_outline)
+
+            viewModel.post.observe(viewLifecycleOwner) {
+                tvCommentsCount.text = it.commentsCount.toPostText()
+                tvLikesCount.text = it.likesCount.toPostText()
+                tvShareCount.text = it.shareCount.toPostText()
+                tvViewsCount.text = it.views.toPostText()
+                if (it.isLiked)  {
+                    ivLikes.setImageResource(R.drawable.heart)
+                } else {
+                    ivLikes.setImageResource(R.drawable.heart_outline)
+                }
+            }
         }
     }
 
