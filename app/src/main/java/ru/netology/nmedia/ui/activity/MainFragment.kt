@@ -54,6 +54,8 @@ class MainFragment : Fragment() {
                 tvLikesCount.text = it.likesCount.toPostText()
                 tvShareCount.text = it.shareCount.toPostText()
                 tvViewsCount.text = it.views.toPostText()
+                ivLikes.tag = it
+                tvShareCount.tag = it
                 if (it.isLiked)  {
                     ivLikes.setImageResource(R.drawable.heart)
                 } else {
