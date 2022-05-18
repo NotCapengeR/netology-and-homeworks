@@ -9,12 +9,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentMainBinding
-import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.utils.clickWithDebounce
-import ru.netology.nmedia.utils.setDebouncedListener
 import ru.netology.nmedia.utils.toPostText
 import ru.netology.nmedia.viewmodel.PostViewModel
-import java.util.*
 
 class MainFragment : Fragment() {
 
