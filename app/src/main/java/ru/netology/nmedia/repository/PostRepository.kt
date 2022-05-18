@@ -4,6 +4,8 @@ import ru.netology.nmedia.dto.Post
 
 interface PostRepository {
 
+    fun getPosts(): List<Post>
+
     fun addPost(title: String, text: String): Long
 
     fun removePost(id: Long): Boolean

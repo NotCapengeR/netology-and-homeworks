@@ -9,12 +9,12 @@ class PostRepositoryImpl : PostRepository {
     private val posts: MutableMap<Long, Post> = HashMap()
     private var postId: Long = 1L
 
-    fun getPosts(): List<Post> = posts.values.toList()
-
     private fun findPostById(id: Long): PostSearchResult {
         val post = posts[id] ?: return PostSearchResult.NotFound
         return PostSearchResult.Success(post)
     }
+
+    override fun getPosts(): List<Post> = posts.values.toList()
 
     override fun getPostById(id: Long): Post? = findPostById(id).post
 

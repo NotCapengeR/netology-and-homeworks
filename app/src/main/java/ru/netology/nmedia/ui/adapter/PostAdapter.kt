@@ -138,7 +138,7 @@ class PostAdapter(
             oldItem.id == newItem.id
     }
 
-    companion object {
+    private companion object {
         private const val REMOVE_ID: Int = 1
         private const val MOVE_UP_ID: Int = 2
         private const val MOVE_DOWN_ID: Int = 3
