@@ -4,34 +4,29 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.repository.PostRepositoryImpl
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val postRepository = PostRepositoryImpl()
     val post: MutableLiveData<Post> by lazy {
         MutableLiveData<Post>()
     }
 
     init {
-        post.value = Post(1, "Университет Нетология", "—", 0, 0)
+        post.value = postRepository.getPost()
     }
 
-    fun likePost(post: Post): Boolean {
-        if (!post.isLiked) {
-            post.likesCount++
-        } else {
-            post.likesCount--
-        }
-        post.isLiked = !post.isLiked
-        notifyChanges(post)
-        return post.isLiked
+    fun likePost(post: Post): Boolean = postRepository.likePost(post).also {
+        notifyChanges()
     }
 
-    fun sharePost(post: Post): Int {
-        post.shareCount++
-        notifyChanges(post)
-        return post.shareCount
+
+    fun sharePost(post: Post): Int = postRepository.sharePost(post).also {
+        notifyChanges()
     }
 
-    private fun notifyChanges(post: Post) {
-        this.post.value = post
+    private fun notifyChanges() {
+        post.value = postRepository.getPost()
     }
 }

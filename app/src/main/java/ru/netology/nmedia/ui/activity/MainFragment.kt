@@ -20,7 +20,7 @@ class MainFragment : Fragment() {
 
     private val viewModel: PostViewModel by activityViewModels()
     private var _binding: FragmentMainBinding? = null
-    private val binding get() = _binding!!
+    private val binding get() = requireNotNull(_binding)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,33 +33,26 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val post = viewModel.post.value
-        with(binding) {
-            ivLikes.tag = post
-            tvShareCount.tag = post
-            tvPostText.text = post?.text
-            tvPostTitle.text = post?.title
-            tvDateTime.text = DateFormat.format("d MMMM yyyy, HH:mm", post?.date ?: Date().time)
-            ivPostAvatar.setImageResource(post?.avatarId ?: R.drawable.ic_launcher_foreground)
-            ivLikes.setImageResource(R.drawable.heart_outline)
-            ivLikes.clickWithDebounce(300L) {
-                viewModel.likePost(ivLikes.tag as Post)
-            }
-            ivShare.setDebouncedListener(300L) {
-                viewModel.sharePost(tvShareCount.tag as Post)
-            }
-
-            viewModel.post.observe(viewLifecycleOwner) {
+        viewModel.post.observe(viewLifecycleOwner) {
+            with(binding) {
+                tvPostText.text = it.text
+                tvPostTitle.text = it.title
+                tvDateTime.text = DateFormat.format("d MMMM yyyy, HH:mm", it.date)
                 tvCommentsCount.text = it.commentsCount.toPostText()
                 tvLikesCount.text = it.likesCount.toPostText()
                 tvShareCount.text = it.shareCount.toPostText()
                 tvViewsCount.text = it.views.toPostText()
-                ivLikes.tag = it
-                tvShareCount.tag = it
-                if (it.isLiked)  {
+                ivPostAvatar.setImageResource(it.avatarId)
+                if (it.isLiked) {
                     ivLikes.setImageResource(R.drawable.heart)
                 } else {
                     ivLikes.setImageResource(R.drawable.heart_outline)
+                }
+                ivLikes.clickWithDebounce(50L) {
+                    viewModel.likePost(it)
+                }
+                ivShare.clickWithDebounce(50L) {
+                    viewModel.sharePost(it)
                 }
             }
         }
