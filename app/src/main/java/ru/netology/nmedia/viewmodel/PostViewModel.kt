@@ -14,7 +14,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     init {
-        post.value = postRepository.getPost()
+        notifyChanges()
     }
 
     fun likePost(post: Post): Boolean = postRepository.likePost(post).also {
