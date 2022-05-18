@@ -108,10 +108,10 @@ class PostAdapter(
             } else {
                 ivLikes.setImageResource(R.drawable.heart_outline)
             }
-            ivLikes.setDebouncedListener(300L, this@PostAdapter)
-            menuButton.setDebouncedListener(300L, this@PostAdapter)
-            ivShare.setDebouncedListener(300L, this@PostAdapter)
-            ivComments.setDebouncedListener(300L, this@PostAdapter)
+            ivLikes.setDebouncedListener(50L, this@PostAdapter)
+            menuButton.setDebouncedListener(700L, this@PostAdapter)
+            ivShare.setDebouncedListener(50L, this@PostAdapter)
+            ivComments.setDebouncedListener(50L, this@PostAdapter)
         }
 
     }
