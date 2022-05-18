@@ -19,7 +19,7 @@ import timber.log.Timber
 class MainFragment : Fragment() {
 
     private var _binding: FragmentMainBinding? = null
-    private val binding get() = _binding!!
+    private val binding get() = requireNotNull(_binding)
     private val viewModel: PostViewModel by activityViewModels()
 
     override fun onCreateView(
