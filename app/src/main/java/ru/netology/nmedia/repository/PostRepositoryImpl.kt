@@ -1,8 +1,10 @@
 package ru.netology.nmedia.repository
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import ru.netology.nmedia.dto.Post
 
-class PostRepositoryImpl : PostRepository {
+object PostRepositoryImpl : PostRepository {
 
     private val post = Post(1, "Университет Нетология", "—", 0, 0)
 
@@ -23,4 +25,7 @@ class PostRepositoryImpl : PostRepository {
     }
 
     override fun getPost(): Post = post
+
+    override fun getPostLiveData(): LiveData<Post> = MutableLiveData(post)
+
 }
