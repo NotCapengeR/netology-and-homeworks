@@ -12,10 +12,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
          PostRepositoryImpl.getPostLiveData() as MutableLiveData
     }
 
-    init {
-        notifyChanges()
-    }
-
     fun likePost(post: Post): Boolean = PostRepositoryImpl.likePost(post).also {
         notifyChanges()
     }
