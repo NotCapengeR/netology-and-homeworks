@@ -65,9 +65,14 @@ class PostRepositoryImpl : PostRepository {
 
     override fun onPostMoved(id: Long, movedBy: Int): Long {
         val post = findPostById(id).post ?: return -1L
-        val swappablePost = posts[post.id - movedBy] ?: return -2L
-        posts[post.id] = swappablePost.copy(id = post.id)
-        posts[swappablePost.id] = post.copy(id = swappablePost.id)
-        return swappablePost.id
+        return try {
+            val postsList = getPosts()
+            val swappablePost = postsList[postsList.indexOf(post) - movedBy]
+            posts[post.id] = swappablePost.copy(id = post.id)
+            posts[swappablePost.id] = post.copy(id = swappablePost.id)
+            swappablePost.id
+        } catch (ex: ArrayIndexOutOfBoundsException) {
+            -2L
+        }
     }
 }

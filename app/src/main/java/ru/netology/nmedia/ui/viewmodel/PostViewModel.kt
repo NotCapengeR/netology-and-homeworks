@@ -14,14 +14,8 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         postRepository.addPost("Университет НЕТОЛОГИЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯ", "KJNJK24H4HJK21142HJK")
-        repeat(9) {
-            postRepository.addPost(
-                "Университет Нетология",
-                "afshjafhsjkfaskhjfasjkhgfasjkhgfasfsfasfasafsfafadsfasafsfasfasfasfas" +
-                        "fsalkjafsljkfasljkfalsjkafsljkfsafasfaslhjkafskjafsjkhhfajkasfjklfsas" +
-                        "faslkjkfasljkfasljkfasljkfasj;faslkjaflsjkaflskjflajkslajkfsfkalsjfsa" +
-                        "faslhjkfasjkfashjkfahsjkjkfasfasfasfasafsfasfasfasfasfasfas212312312123"
-            )
+        repeat(9) { index ->
+            postRepository.addPost("Нетология", "Пост под номером ${index + 2}")
         }
         notifyChanges()
     }
