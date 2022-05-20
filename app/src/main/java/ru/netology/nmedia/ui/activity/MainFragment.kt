@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import ru.netology.nmedia.databinding.FragmentMainBinding
+import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.ui.adapter.PostAdapter
 import ru.netology.nmedia.ui.adapter.PostListener
 import ru.netology.nmedia.ui.decorators.LinearVerticalSpacingDecoration
@@ -59,7 +60,7 @@ class MainFragment : Fragment() {
                 return viewModel.commentPost(id)
             }
 
-            override fun onPostMoved(id: Long, movedBy: Int): Long {
+            override fun onPostMoved(id: Long, movedBy: Int): Boolean {
                 return viewModel.movePost(id, movedBy)
             }
         })
@@ -75,6 +76,7 @@ class MainFragment : Fragment() {
             )
         }
         viewModel.postsList.observe(activity as AppCompatActivity) {
+            Timber.d("Hueta обновлена!")
             adapter.submitList(it)
         }
     }

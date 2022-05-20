@@ -14,7 +14,7 @@ class PostRepositoryImpl : PostRepository {
         return PostSearchResult.Success(post)
     }
 
-    override fun getPosts(): List<Post> = posts.values.toList()
+    override fun getPosts(): MutableList<Post> = posts.values.toMutableList()
 
     override fun getPostById(id: Long): Post? = findPostById(id).post
 
@@ -63,16 +63,17 @@ class PostRepositoryImpl : PostRepository {
         return nextValue
     }
 
-    override fun onPostMoved(id: Long, movedBy: Int): Long {
-        val post = findPostById(id).post ?: return -1L
-        return try {
-            val postsList = getPosts()
-            val swappablePost = postsList[postsList.indexOf(post) - movedBy]
-            posts[post.id] = swappablePost.copy(id = post.id)
-            posts[swappablePost.id] = post.copy(id = swappablePost.id)
-            swappablePost.id
-        } catch (ex: ArrayIndexOutOfBoundsException) {
-            -2L
-        }
+    override fun onPostMoved(id: Long, movedBy: Int): Pair<Post, Post>? {
+        return null
+        //  может когда-нибудь придётся переделать...
+        //        val post = findPostById(id).post ?: return null
+        //        val postsList = getPosts()
+        //        val postIndex = postsList.indexOf(post)
+        //        return try {
+        //            val swappablePost = postsList[postIndex - movedBy]
+        //            Pair(post, swappablePost)
+        //        } catch (ex: ArrayIndexOutOfBoundsException) {
+        //            null
+        //        }
     }
 }

@@ -20,5 +20,5 @@ interface PostRepository {
 
     fun commentPost(id: Long): Int
 
-    fun onPostMoved(id: Long, movedBy: Int): Long
+    fun onPostMoved(id: Long, movedBy: Int): Pair<Post, Post>?
 }

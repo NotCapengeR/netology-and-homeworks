@@ -32,7 +32,7 @@ interface PostListener {
 
     fun onCommented(id: Long): Int
 
-    fun onPostMoved(id: Long, movedBy: Int): Long
+    fun onPostMoved(id: Long, movedBy: Int): Boolean
 }
 
 class PostAdapter(
