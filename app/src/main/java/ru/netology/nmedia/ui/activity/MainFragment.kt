@@ -63,11 +63,8 @@ class MainFragment : Fragment() {
         })
         adapter.setHasStableIds(true)
         with(binding) {
-            binding.rcViewPost.layoutManager = LinearLayoutManager(
-                activity,
-                LinearLayoutManager.VERTICAL,
-                false
-            )
+            binding.rcViewPost.layoutManager =
+                LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
             rcViewPost.adapter = adapter
             rcViewPost.addItemDecoration(
                 LinearVerticalSpacingDecoration(

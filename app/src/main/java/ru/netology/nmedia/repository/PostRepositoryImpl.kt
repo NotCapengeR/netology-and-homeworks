@@ -15,7 +15,7 @@ object PostRepositoryImpl : PostRepository {
         return PostSearchResult.Success(post)
     }
 
-    override fun getPosts(): MutableList<Post> = posts.values.toMutableList()
+    override fun getPosts(): List<Post> = posts.values.toList()
 
     override fun getPostById(id: Long): Post? = findPostById(id).post
 
