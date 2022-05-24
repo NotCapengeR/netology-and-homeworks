@@ -75,8 +75,7 @@ class MainFragment : Fragment() {
                 )
             )
         }
-        viewModel.postsList.observe(activity as AppCompatActivity) {
-            Timber.d("Hueta обновлена!")
+        viewModel.postsList.observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }
     }
