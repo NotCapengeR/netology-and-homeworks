@@ -2,9 +2,9 @@ name: Android with CI
 
 on:
   push:
-    branches: [ master, main, 2.2-mvvm ]
+    branches: [ master, main, 2.3-recycler_view ]
   pull_request:
-    branches: [ master, main, 2.2-mvvm ]
+    branches: [ master, main, 2.3-recycler_view ]
 
 
 jobs:
