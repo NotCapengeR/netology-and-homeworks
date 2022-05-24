@@ -7,11 +7,11 @@ data class Post(
     val id: Long,
     val title: String,
     val text: String,
-    var likesCount: Int = 0,
-    var shareCount: Int = 0,
-    val commentsCount: Int = 0,
-    var isLiked: Boolean = false,
+    val date: Long,
+    val avatarId: Int = R.drawable.ic_baseline_account_circle_24,
+    val likes: Int = 0,
+    val comments: Int = 0,
+    val shared: Int = 0,
     val views: Int = 0,
-    val date: Long = Date().time,
-    val avatarId: Int = R.drawable.ic_launcher_foreground
+    val isLiked: Boolean = false,
 )

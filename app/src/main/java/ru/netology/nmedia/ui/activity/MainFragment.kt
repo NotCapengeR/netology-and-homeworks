@@ -1,17 +1,19 @@
 package ru.netology.nmedia.ui.activity
 
 import android.os.Bundle
-import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import ru.netology.nmedia.R
+import androidx.recyclerview.widget.LinearLayoutManager
 import ru.netology.nmedia.databinding.FragmentMainBinding
-import ru.netology.nmedia.utils.clickWithDebounce
-import ru.netology.nmedia.utils.toPostText
-import ru.netology.nmedia.viewmodel.PostViewModel
+import ru.netology.nmedia.ui.adapters.PostAdapter
+import ru.netology.nmedia.ui.adapters.PostListener
+import ru.netology.nmedia.ui.adapters.decorators.LinearVerticalSpacingDecoration
+import ru.netology.nmedia.ui.viewmodel.PostViewModel
+import ru.netology.nmedia.utils.AndroidUtils
 
 class MainFragment : Fragment() {
 
@@ -30,28 +32,51 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.post.observe(viewLifecycleOwner) {
-            with(binding) {
-                tvPostText.text = it.text
-                tvPostTitle.text = it.title
-                tvDateTime.text = DateFormat.format("d MMMM yyyy, HH:mm", it.date)
-                tvCommentsCount.text = it.commentsCount.toPostText()
-                tvLikesCount.text = it.likesCount.toPostText()
-                tvShareCount.text = it.shareCount.toPostText()
-                tvViewsCount.text = it.views.toPostText()
-                ivPostAvatar.setImageResource(it.avatarId)
-                if (it.isLiked) {
-                    ivLikes.setImageResource(R.drawable.heart)
-                } else {
-                    ivLikes.setImageResource(R.drawable.heart_outline)
-                }
-                ivLikes.clickWithDebounce(50L) {
-                    viewModel.likePost(it)
-                }
-                ivShare.clickWithDebounce(50L) {
-                    viewModel.sharePost(it)
-                }
+        val adapter = PostAdapter(object : PostListener {
+            override fun onAdded(title: String, text: String): Long {
+                return viewModel.addPost(title, text)
             }
+
+            override fun onRemoved(id: Long): Boolean {
+                return viewModel.removePost(id)
+            }
+
+            override fun onEdit(id: Long, newText: String): Boolean {
+                return viewModel.editPost(id, newText)
+            }
+
+            override fun onLiked(id: Long): Boolean {
+                return viewModel.likePost(id)
+            }
+
+            override fun onShared(id: Long): Int {
+                return viewModel.sharePost(id)
+            }
+
+            override fun onCommented(id: Long): Int {
+                return viewModel.commentPost(id)
+            }
+
+            override fun onPostMoved(id: Long, movedBy: Int): Boolean {
+                return viewModel.movePost(id, movedBy)
+            }
+        })
+        adapter.setHasStableIds(true)
+        with(binding) {
+            binding.rcViewPost.layoutManager = LinearLayoutManager(
+                activity,
+                LinearLayoutManager.VERTICAL,
+                false
+            )
+            rcViewPost.adapter = adapter
+            rcViewPost.addItemDecoration(
+                LinearVerticalSpacingDecoration(
+                    AndroidUtils.dpToPx(activity as AppCompatActivity, 5)
+                )
+            )
+        }
+        viewModel.postsList.observe(viewLifecycleOwner) {
+            adapter.submitList(it)
         }
     }
 
