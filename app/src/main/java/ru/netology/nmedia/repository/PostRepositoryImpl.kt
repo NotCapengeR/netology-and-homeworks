@@ -3,8 +3,9 @@ package ru.netology.nmedia.repository
 import ru.netology.nmedia.R
 import ru.netology.nmedia.dto.Post
 import java.util.*
+import javax.inject.Inject
 
-class PostRepositoryImpl : PostRepository {
+class PostRepositoryImpl @Inject constructor() : PostRepository {
 
     private val posts: MutableMap<Long, Post> = HashMap()
     private var postId: Long = 1L
