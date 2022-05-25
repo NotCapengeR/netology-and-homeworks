@@ -8,16 +8,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import ru.netology.nmedia.App
+import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentMainBinding
-import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.ui.activity.AddFragment.Companion.ADD_FRAGMENT_TAG
 import ru.netology.nmedia.ui.adapter.PostAdapter
 import ru.netology.nmedia.ui.adapter.PostListener
-import ru.netology.nmedia.ui.decorators.LinearVerticalSpacingDecoration
+import ru.netology.nmedia.ui.adapter.decorators.LinearVerticalSpacingDecoration
 import ru.netology.nmedia.ui.viewmodel.PostViewModel
 import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
 import ru.netology.nmedia.utils.AndroidUtils
 import ru.netology.nmedia.utils.getAppComponent
+import ru.netology.nmedia.utils.setDebouncedListener
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -84,9 +85,26 @@ class MainFragment : Fragment() {
                     AndroidUtils.dpToPx(activity as AppCompatActivity, 5)
                 )
             )
+            cardViewAddPost.setDebouncedListener(500L) {
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_main, AddFragment.newInstance(), ADD_FRAGMENT_TAG)
+                    .addToBackStack(null)
+                    .commit()
+            }
         }
         viewModel.postsList.observe(viewLifecycleOwner) {
             adapter.submitList(it)
+        }
+        viewModel.tag.observe(viewLifecycleOwner) { tag ->
+            with(binding) {
+                if (tag == MAIN_FRAGMENT_TAG) {
+                    cardViewAddPost.visibility = View.VISIBLE
+                    ivPlus.visibility = View.VISIBLE
+                } else {
+                    cardViewAddPost.visibility = View.GONE
+                    ivPlus.visibility = View.GONE
+                }
+            }
         }
     }
 
@@ -96,8 +114,11 @@ class MainFragment : Fragment() {
         _binding = null
     }
 
+
     companion object {
         @JvmStatic
         fun newInstance() = MainFragment()
+
+        const val MAIN_FRAGMENT_TAG: String = "Main fragment"
     }
 }

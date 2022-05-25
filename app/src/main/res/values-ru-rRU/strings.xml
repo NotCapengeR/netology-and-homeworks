@@ -5,4 +5,8 @@
     <string name="post_remove">Удалить</string>
     <string name="post_move_up">Переместить вверх</string>
     <string name="post_mode_down">Переместить вниз</string>
+    <string name="notifyAddPost">Введите текст и заговолок поста…</string>
+    <string name="send_post">Отправить пост!</string>
+    <string name="back">Назад</string>
+    <string name="edit">Редактировать</string>
 </resources>

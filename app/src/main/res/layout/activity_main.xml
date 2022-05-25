@@ -6,4 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.activity.MainActivity">
+
+<!--    <include-->
+<!--        android:id="@+id/action_bar"-->
+<!--        layout="@layout/action_bar"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        />-->
+
 </androidx.constraintlayout.widget.ConstraintLayout>

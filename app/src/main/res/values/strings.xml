@@ -6,4 +6,8 @@
     <string name="post_remove">Remove</string>
     <string name="post_move_up">Move up</string>
     <string name="post_mode_down">Move down</string>
+    <string name="notifyAddPost">Enter the text and the title for post…</string>
+    <string name="send_post">Send post!</string>
+    <string name="back">Back</string>
+    <string name="edit">Edit</string>
 </resources>

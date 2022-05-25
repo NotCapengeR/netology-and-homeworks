@@ -1,4 +1,4 @@
-package ru.netology.nmedia.ui.decorators
+package ru.netology.nmedia.ui.adapter.decorators
 
 import android.content.Context
 import android.util.AttributeSet

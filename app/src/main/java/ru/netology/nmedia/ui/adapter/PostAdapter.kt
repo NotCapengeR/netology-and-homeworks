@@ -61,6 +61,7 @@ class PostAdapter(
         val position = currentList.indexOf(post)
         Timber.d("Position: $position, id: ${post.id}")
 
+        popupMenu.menu.add(0, EDIT, Menu.NONE, context.getString(R.string.edit))
         popupMenu.menu.add(0, REMOVE_ID, Menu.NONE, context.getString(R.string.post_remove))
         popupMenu.menu
             .add(0, MOVE_UP_ID, Menu.NONE, context.getString(R.string.post_move_up)).apply {
@@ -142,6 +143,7 @@ class PostAdapter(
         private const val REMOVE_ID: Int = 1
         private const val MOVE_UP_ID: Int = 2
         private const val MOVE_DOWN_ID: Int = 3
+        private const val EDIT: Int = 4
     }
 }
 

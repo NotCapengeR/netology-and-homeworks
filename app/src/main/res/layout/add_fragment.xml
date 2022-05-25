@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:clickable="true"
+    tools:context=".ui.activity.MainFragment">
+
+    <ImageView
+        android:id="@+id/ivPostAvatar"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="5dp"
+        android:contentDescription="@string/group_avatar"
+        android:src="@mipmap/ic_launcher"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/ic_baseline_account_circle_24" />
+
+    <EditText
+        android:id="@+id/tvPostTitle"
+        android:layout_width="270dp"
+        android:layout_height="wrap_content"
+        android:maxLength="40"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="4dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@id/menuButton"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@id/ivPostAvatar"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvDateTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="8dp"
+        android:text="9 Мая 2020, 11:00"
+        android:textSize="20sp"
+        android:textStyle="normal"
+        app:layout_constraintStart_toEndOf="@+id/ivPostAvatar"
+        app:layout_constraintTop_toBottomOf="@+id/tvPostTitle" />
+
+    <ImageView
+        android:id="@+id/menuButton"
+        android:layout_width="28dp"
+        android:layout_height="50dp"
+        android:clickable="false"
+        android:src="@drawable/ic_baseline_more_vert_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/tvDateTime"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/dots_vertical"
+        tools:ignore="ContentDescription" />
+
+    <EditText
+        android:id="@+id/tvPostText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLength="4000"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        android:textSize="20sp"
+        android:textStyle="normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvDateTime" />
+
+    <ImageView
+        android:id="@+id/ivLikes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:clickable="false"
+        android:src="@drawable/heart_outline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvPostText"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/tvLikesCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="11dp"
+        android:layout_marginEnd="1dp"
+        android:text=" "
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/ivLikes"
+        app:layout_constraintTop_toBottomOf="@+id/tvPostText" />
+
+    <ImageView
+        android:id="@+id/ivComments"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="10dp"
+        android:clickable="false"
+        app:layout_constraintStart_toEndOf="@id/tvLikesCount"
+        app:layout_constraintTop_toBottomOf="@+id/tvPostText"
+        app:srcCompat="@drawable/comment_outline"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/tvCommentsCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="11dp"
+        android:layout_marginEnd="1dp"
+        android:text=" "
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/ivComments"
+        app:layout_constraintTop_toBottomOf="@+id/tvPostText" />
+
+    <ImageView
+        android:id="@+id/ivShare"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="10dp"
+        android:clickable="false"
+        app:layout_constraintStart_toEndOf="@id/tvCommentsCount"
+        app:layout_constraintTop_toBottomOf="@+id/tvPostText"
+        app:srcCompat="@drawable/share_outline"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/tvShareCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="11dp"
+        android:text=" "
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/ivShare"
+        app:layout_constraintTop_toBottomOf="@+id/tvPostText" />
+
+    <ImageView
+        android:id="@+id/ivViews"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="6dp"
+        android:clickable="false"
+        app:layout_constraintEnd_toStartOf="@id/tvViewsCount"
+        app:layout_constraintTop_toBottomOf="@+id/tvPostText"
+        app:srcCompat="@drawable/eye"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/tvViewsCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="3dp"
+        android:text=" "
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvPostText" />
+
+    <TextView
+        android:id="@+id/tvAddNotification"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_marginTop="30dp"
+        android:text="@string/notifyAddPost"
+        android:textColor="@color/gray"
+        android:textSize="20sp"
+        android:textStyle="italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvCommentsCount"
+        tools:text="@string/notifyAddPost" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewSendPost"
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="30dp"
+        android:background="?android:attr/selectableItemBackground"
+        app:cardBackgroundColor="@color/lime"
+        app:cardCornerRadius="30dp"
+        app:cardElevation="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/tvSend"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/send_post"
+            android:textColor="@color/black"
+            android:textSize="60sp"
+            android:textStyle="bold" />
+
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

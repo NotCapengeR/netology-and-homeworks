@@ -1,6 +1,7 @@
 package ru.netology.nmedia.ui.viewmodel
 
 import android.app.Application
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -21,7 +22,12 @@ class PostViewModel @Inject constructor(
     private val postRepository: PostRepository
 ) : AndroidViewModel(application) {
 
+    // это для перемещения постов
     private val mutablePostsList: MutableList<Post> = mutableListOf()
+
+    val tag: MutableLiveData<String?> by lazy {
+        MutableLiveData<String?>()
+    }
     val postsList: MutableLiveData<List<Post>> by lazy {
         MutableLiveData<List<Post>>()
     }
@@ -29,6 +35,10 @@ class PostViewModel @Inject constructor(
     init {
         mutablePostsList.addAll(postRepository.getPosts())
         notifyChanges()
+    }
+
+    fun currentTag(tag: String?) {
+        this.tag.value = tag
     }
 
     // НЕ ДОДЕЛАНО! Руками не трогать
@@ -117,39 +127,5 @@ class PostViewModel @Inject constructor(
     }
 }
 
-class ViewModelFactory @Inject constructor(
-    private val creators: Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>,
-) : ViewModelProvider.Factory {
 
-    override fun <T: ViewModel> create(modelClass: Class<T>): T {
-        var creator: Provider<out ViewModel>? = creators[modelClass]
-        if (creator == null) {
-            for ((key, value) in creators) {
-                if (modelClass.isAssignableFrom(key)) {
-                    creator = value
-                    break
-                }
-            }
-        }
-        if (creator == null) {
-            throw IllegalArgumentException("Unknown model class " + modelClass)
-        }
-        try {
-            @Suppress("UNCHECKED_CAST")
-            return creator.get() as T
-        } catch (e: Exception) {
-            throw RuntimeException(e)
-        }
-    }
-}
-
-@MustBeDocumented
-@Target(
-    AnnotationTarget.FUNCTION,
-    AnnotationTarget.PROPERTY_GETTER,
-    AnnotationTarget.PROPERTY_SETTER
-)
-@Retention(AnnotationRetention.RUNTIME)
-@MapKey
-internal annotation class ViewModelKey(val value: KClass<out ViewModel>)
 

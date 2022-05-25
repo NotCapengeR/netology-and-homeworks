@@ -48,3 +48,5 @@ fun Context.getAppComponent(): AppComponent = when(this) {
     is App -> appComponent
     else -> (this.applicationContext as App).appComponent
 }
+
+fun String.checkIfNotEmpty(): Boolean = this.trim().isNotEmpty()

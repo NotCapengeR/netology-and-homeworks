@@ -13,4 +13,5 @@ data class Post(
     val shared: Int = 0,
     val views: Int = 0,
     val isLiked: Boolean = false,
+    val editHistory: MutableList<String> = mutableListOf(),
 )

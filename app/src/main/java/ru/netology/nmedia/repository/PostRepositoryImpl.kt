@@ -8,6 +8,7 @@ import javax.inject.Inject
 class PostRepositoryImpl @Inject constructor() : PostRepository {
 
     private val posts: MutableMap<Long, Post> = HashMap()
+    private val removedPosts: MutableMap<Long, Post> = HashMap()
     private var postId: Long = 1L
 
     private fun findPostById(id: Long): PostSearchResult {
@@ -16,10 +17,7 @@ class PostRepositoryImpl @Inject constructor() : PostRepository {
     }
 
     init {
-        addPost("Университет НЕТОЛОГИЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯ", "KJNJK24H4HJK21142HJK")
-        repeat(9) { index ->
-            addPost("Нетология", "Пост под номером ${index + 2}")
-        }
+        addPost("Университет НЕТОЛОГИЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯ", "Здесь был кто-то очень интересный")
     }
 
     override fun getPosts(): MutableList<Post> = posts.values.toMutableList()
@@ -36,12 +34,14 @@ class PostRepositoryImpl @Inject constructor() : PostRepository {
     override fun removePost(id: Long): Boolean {
         val post = findPostById(id).post ?: return false
         posts.remove(id)
+        removedPosts[id] = post
         return !posts.containsValue(post)
     }
 
     override fun editPost(id: Long, newText: String): Boolean {
         val post = findPostById(id).post ?: return false
         val newPost = post.copy(text = newText)
+        newPost.editHistory.add(post.text)
         posts[id] = newPost
         return posts.containsValue(newPost)
     }
