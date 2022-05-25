@@ -1,7 +1,11 @@
 package ru.netology.nmedia.utils
 
+import android.content.Context
 import android.os.SystemClock
 import android.view.View
+import androidx.fragment.app.Fragment
+import ru.netology.nmedia.App
+import ru.netology.nmedia.di.AppComponent
 import java.text.DecimalFormat
 
 private val df = DecimalFormat("###.#")
@@ -35,4 +39,12 @@ fun View.setDebouncedListener(debounceTime: Long = 600L, onClickListener: View.O
     }
     lastClickTime = SystemClock.elapsedRealtime()
     this.setOnClickListener(clickWithDebounce)
+}
+
+fun Fragment.getAppComponent(): AppComponent =
+    (this.requireContext().applicationContext as App).appComponent
+
+fun Context.getAppComponent(): AppComponent = when(this) {
+    is App -> appComponent
+    else -> (this.applicationContext as App).appComponent
 }

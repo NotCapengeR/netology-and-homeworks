@@ -19,6 +19,7 @@ import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
 import ru.netology.nmedia.ui.viewmodel.ViewModelKey
 import javax.inject.Singleton
 
+@Singleton
 @Component(modules = [RepositoryModule::class, ViewModelModule::class, AppModule::class])
 interface AppComponent {
 
@@ -28,22 +29,24 @@ interface AppComponent {
 }
 
 @Module
-interface RepositoryModule {
-
-    @Binds
-    fun bindPostRepository(postRepository: PostRepositoryImpl): PostRepository
-}
-
-@Module
 interface AppModule {
 
     @Binds
     fun bindContext(application: App): Context
 
     @Binds
-   // @Singleton
+    @Singleton
     fun bindApp(application: App): Application
 }
+
+@Module
+interface RepositoryModule {
+
+    @Binds
+    @Singleton
+    fun bindPostRepository(postRepository: PostRepositoryImpl): PostRepository
+}
+
 
 @Module
 interface ViewModelModule {

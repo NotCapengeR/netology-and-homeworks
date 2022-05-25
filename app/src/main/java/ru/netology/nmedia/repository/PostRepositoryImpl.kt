@@ -15,6 +15,13 @@ class PostRepositoryImpl @Inject constructor() : PostRepository {
         return PostSearchResult.Success(post)
     }
 
+    init {
+        addPost("Университет НЕТОЛОГИЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯ", "KJNJK24H4HJK21142HJK")
+        repeat(9) { index ->
+            addPost("Нетология", "Пост под номером ${index + 2}")
+        }
+    }
+
     override fun getPosts(): MutableList<Post> = posts.values.toMutableList()
 
     override fun getPostById(id: Long): Post? = findPostById(id).post

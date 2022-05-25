@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import dagger.MapKey
+import ru.netology.nmedia.App
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
@@ -19,17 +20,13 @@ class PostViewModel @Inject constructor(
     application: Application,
     private val postRepository: PostRepository
 ) : AndroidViewModel(application) {
-   // private val postRepository = PostRepositoryImpl()
+
     private val mutablePostsList: MutableList<Post> = mutableListOf()
     val postsList: MutableLiveData<List<Post>> by lazy {
         MutableLiveData<List<Post>>()
     }
 
     init {
-        postRepository.addPost("Университет НЕТОЛОГИЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯ", "KJNJK24H4HJK21142HJK")
-        repeat(9) { index ->
-            postRepository.addPost("Нетология", "Пост под номером ${index + 2}")
-        }
         mutablePostsList.addAll(postRepository.getPosts())
         notifyChanges()
     }
@@ -121,7 +118,7 @@ class PostViewModel @Inject constructor(
 }
 
 class ViewModelFactory @Inject constructor(
-    private val creators: Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>
+    private val creators: Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>,
 ) : ViewModelProvider.Factory {
 
     override fun <T: ViewModel> create(modelClass: Class<T>): T {

@@ -17,15 +17,17 @@ import ru.netology.nmedia.ui.decorators.LinearVerticalSpacingDecoration
 import ru.netology.nmedia.ui.viewmodel.PostViewModel
 import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
 import ru.netology.nmedia.utils.AndroidUtils
+import ru.netology.nmedia.utils.getAppComponent
 import timber.log.Timber
 import javax.inject.Inject
 
 class MainFragment : Fragment() {
 
-    private var _binding: FragmentMainBinding? = null
-    private val binding get() = requireNotNull(_binding)
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
+    private var _binding: FragmentMainBinding? = null
+    private val binding get() = requireNotNull(_binding)
     private val viewModel: PostViewModel by activityViewModels() {
         viewModelFactory
     }
@@ -36,7 +38,7 @@ class MainFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
-        (requireContext().applicationContext as App).appComponent.inject(this)
+        getAppComponent().inject(this)
         return binding.root
     }
 
