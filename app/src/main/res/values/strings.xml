@@ -11,4 +11,5 @@
     <string name="back">Back</string>
     <string name="edit">Edit</string>
     <string name="edit_message">Edit Post</string>
+    <string name="text_is_unfilled">Text is unfilled!</string>
 </resources>

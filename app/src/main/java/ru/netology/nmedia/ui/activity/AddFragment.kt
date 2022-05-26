@@ -5,6 +5,7 @@ import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.AddFragmentBinding
@@ -61,9 +62,14 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
                     if (tvPostTitle.text.toString().checkIfNotEmpty() && tvPostText.text.toString().checkIfNotEmpty()) {
                         viewModel.addPost(tvPostTitle.text.toString(), tvPostText.text.toString())
                         activity?.onBackPressed()
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            requireContext().getString(R.string.text_is_unfilled),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
-
             }
             else -> {/* do nothing */}
         }
