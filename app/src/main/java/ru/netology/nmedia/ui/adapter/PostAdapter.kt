@@ -6,7 +6,6 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -24,7 +23,7 @@ interface PostListener {
 
     fun onRemoved(id: Long): Boolean
 
-    fun onEdit(id: Long, newText: String): Boolean
+    fun onEdit(id: Long, currentText: String): Boolean
 
     fun onLiked(id: Long): Boolean
 
@@ -61,7 +60,7 @@ class PostAdapter(
         val position = currentList.indexOf(post)
         Timber.d("Position: $position, id: ${post.id}")
 
-        popupMenu.menu.add(0, EDIT, Menu.NONE, context.getString(R.string.edit))
+        popupMenu.menu.add(0, EDIT_ID, Menu.NONE, context.getString(R.string.edit))
         popupMenu.menu.add(0, REMOVE_ID, Menu.NONE, context.getString(R.string.post_remove))
         popupMenu.menu
             .add(0, MOVE_UP_ID, Menu.NONE, context.getString(R.string.post_move_up)).apply {
@@ -78,6 +77,8 @@ class PostAdapter(
                     Timber.d("Position: $position")
                     listener.onRemoved(post.id)
                 }
+
+                EDIT_ID -> listener.onEdit(post.id, post.text)
 
                 MOVE_DOWN_ID -> listener.onPostMoved(post.id, -1)
 
@@ -143,7 +144,7 @@ class PostAdapter(
         private const val REMOVE_ID: Int = 1
         private const val MOVE_UP_ID: Int = 2
         private const val MOVE_DOWN_ID: Int = 3
-        private const val EDIT: Int = 4
+        private const val EDIT_ID: Int = 4
     }
 }
 

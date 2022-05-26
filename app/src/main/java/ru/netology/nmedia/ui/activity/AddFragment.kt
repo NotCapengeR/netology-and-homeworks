@@ -5,40 +5,37 @@ import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.AddFragmentBinding
-import ru.netology.nmedia.databinding.FragmentMainBinding
+import ru.netology.nmedia.ui.base.BaseFragment
 import ru.netology.nmedia.ui.viewmodel.PostViewModel
 import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
 import ru.netology.nmedia.utils.checkIfNotEmpty
-import ru.netology.nmedia.utils.clickWithDebounce
 import ru.netology.nmedia.utils.getAppComponent
 import ru.netology.nmedia.utils.setDebouncedListener
 import java.util.*
 import javax.inject.Inject
 
-class AddFragment : Fragment(), View.OnClickListener {
+class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-    private var _binding: AddFragmentBinding? = null
-    private val binding get() = requireNotNull(_binding)
     private val viewModel: PostViewModel by activityViewModels() {
         viewModelFactory
     }
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> AddFragmentBinding
+        get() = AddFragmentBinding::inflate
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        _binding = AddFragmentBinding.inflate(inflater, container, false)
+    ): View? {
         getAppComponent().inject(this)
         viewModel.currentTag(ADD_FRAGMENT_TAG)
-        return binding.root
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -49,10 +46,6 @@ class AddFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 
     companion object {
         @JvmStatic

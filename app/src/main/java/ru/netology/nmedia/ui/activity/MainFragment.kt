@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import ru.netology.nmedia.R
@@ -14,33 +14,34 @@ import ru.netology.nmedia.ui.activity.AddFragment.Companion.ADD_FRAGMENT_TAG
 import ru.netology.nmedia.ui.adapter.PostAdapter
 import ru.netology.nmedia.ui.adapter.PostListener
 import ru.netology.nmedia.ui.adapter.decorators.LinearVerticalSpacingDecoration
+import ru.netology.nmedia.ui.base.BaseFragment
 import ru.netology.nmedia.ui.viewmodel.PostViewModel
 import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
 import ru.netology.nmedia.utils.AndroidUtils
+import ru.netology.nmedia.utils.checkIfNotEmpty
 import ru.netology.nmedia.utils.getAppComponent
 import ru.netology.nmedia.utils.setDebouncedListener
 import timber.log.Timber
 import javax.inject.Inject
 
-class MainFragment : Fragment() {
+class MainFragment : BaseFragment<FragmentMainBinding>() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-
-    private var _binding: FragmentMainBinding? = null
-    private val binding get() = requireNotNull(_binding)
-    private val viewModel: PostViewModel by activityViewModels() {
+    private val viewModel: PostViewModel by activityViewModels {
         viewModelFactory
     }
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentMainBinding
+        get() = FragmentMainBinding::inflate
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentMainBinding.inflate(inflater, container, false)
+    ): View? {
         getAppComponent().inject(this)
-        return binding.root
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,8 +56,21 @@ class MainFragment : Fragment() {
                 return viewModel.removePost(id)
             }
 
-            override fun onEdit(id: Long, newText: String): Boolean {
-                return viewModel.editPost(id, newText)
+            override fun onEdit(id: Long, currentText: String): Boolean {
+                with(binding) {
+                    cardViewEditMessage.visibility = View.VISIBLE
+                    editableMessageContainer.visibility = View.VISIBLE
+                    tvPreviousText.text = currentText
+                    etPostEdit.setText(currentText)
+                    AndroidUtils.showKeyboard(etPostEdit, requireContext())
+                    ivEditPostSend.setDebouncedListener(50L) {
+                        if (etPostEdit.text.toString().checkIfNotEmpty()) {
+                            viewModel.editPost(id, etPostEdit.text.toString())
+                            clearKeyboard(etPostEdit)
+                        }
+                    }
+                    return true
+                }
             }
 
             override fun onLiked(id: Long): Boolean {
@@ -86,10 +100,14 @@ class MainFragment : Fragment() {
                 )
             )
             cardViewAddPost.setDebouncedListener(500L) {
+                clearKeyboard(etPostEdit)
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.fragment_main, AddFragment.newInstance(), ADD_FRAGMENT_TAG)
                     .addToBackStack(null)
                     .commit()
+            }
+            ivEditCancel.setDebouncedListener(50L) {
+                clearKeyboard(etPostEdit)
             }
         }
         viewModel.postsList.observe(viewLifecycleOwner) {
@@ -99,19 +117,19 @@ class MainFragment : Fragment() {
             with(binding) {
                 if (tag == MAIN_FRAGMENT_TAG) {
                     cardViewAddPost.visibility = View.VISIBLE
-                    ivPlus.visibility = View.VISIBLE
                 } else {
                     cardViewAddPost.visibility = View.GONE
-                    ivPlus.visibility = View.GONE
                 }
             }
         }
     }
 
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    override fun clearKeyboard(editText: EditText): Boolean = with(binding) {
+        super.clearKeyboard(editText)
+        cardViewEditMessage.visibility = View.GONE
+        editableMessageContainer.visibility = View.GONE
+        editText.text.clear()
+        return !editText.text.toString().checkIfNotEmpty()
     }
 
 
@@ -121,4 +139,6 @@ class MainFragment : Fragment() {
 
         const val MAIN_FRAGMENT_TAG: String = "Main fragment"
     }
+
+
 }

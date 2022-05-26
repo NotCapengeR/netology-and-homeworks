@@ -12,12 +12,12 @@
         android:id="@+id/cardViewAddPost"
         android:layout_width="90dp"
         android:layout_height="90dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="20dp"
         android:background="?android:attr/selectableItemBackground"
         app:cardBackgroundColor="@color/purple_200"
-        app:cardElevation="8dp"
         app:cardCornerRadius="50dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:cardElevation="8dp"
+        app:layout_constraintBottom_toTopOf="@id/editableMessageContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -25,7 +25,7 @@
             android:id="@+id/ivPlus"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/plus"/>
+            android:src="@drawable/plus" />
     </androidx.cardview.widget.CardView>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -37,4 +37,108 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:listitem="@layout/post_item" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/editableMessageContainer"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginBottom="0.05dp"
+        android:background="@color/white"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/cardViewEditMessage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/ivEditIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="7dp"
+            android:src="@drawable/pencil"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvEditNotify"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="@string/edit_message"
+            android:textColor="@color/purple_200"
+            app:layout_constraintStart_toEndOf="@id/ivEditIcon"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvPreviousText"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginBottom="2dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/gray"
+            app:layout_constraintEnd_toStartOf="@+id/ivEditCancel"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@id/ivEditIcon"
+            app:layout_constraintTop_toBottomOf="@id/tvEditNotify"
+            tools:text="ПРЕДЫДУЩНИЙ ТЕКСТ ПОСТА" />
+
+        <ImageView
+            android:id="@+id/ivEditCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="7dp"
+            android:clickable="true"
+            android:src="@drawable/close"
+            android:background="?android:attr/selectableItemBackground"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewEditMessage"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/gray"
+        android:elevation="2dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/ivEditPostSmile"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="?android:attr/selectableItemBackground"
+            android:paddingStart="5dp"
+            android:src="@drawable/emoticon_happy_outline" />
+
+        <EditText
+            android:id="@+id/etPostEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
+            android:textAlignment="viewStart"
+            android:inputType="text"
+            android:labelFor="@id/etPostEdit" />
+
+        <ImageView
+            android:id="@+id/ivEditPostSend"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackground"
+            android:paddingEnd="5dp"
+            android:src="@drawable/send_circle" />
+
+    </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

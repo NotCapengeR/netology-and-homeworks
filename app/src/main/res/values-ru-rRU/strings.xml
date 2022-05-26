@@ -9,4 +9,5 @@
     <string name="send_post">Отправить пост!</string>
     <string name="back">Назад</string>
     <string name="edit">Редактировать</string>
+    <string name="edit_message">Редактировать пост</string>
 </resources>

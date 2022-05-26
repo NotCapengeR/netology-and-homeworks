@@ -22,7 +22,7 @@ class PostViewModel @Inject constructor(
     private val postRepository: PostRepository
 ) : AndroidViewModel(application) {
 
-    // это для перемещения постов
+    // это для перемещения постов, в мапах-то позиции нельзя менять)
     private val mutablePostsList: MutableList<Post> = mutableListOf()
 
     val tag: MutableLiveData<String?> by lazy {
@@ -41,7 +41,6 @@ class PostViewModel @Inject constructor(
         this.tag.value = tag
     }
 
-    // НЕ ДОДЕЛАНО! Руками не трогать
     fun addPost(title: String, text: String): Long = postRepository.addPost(title, text).also {
         if (it > 0) {
             val post = postRepository.getPostById(it) ?: return -1
@@ -60,7 +59,6 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    // Тоже не доделано
     fun editPost(id: Long, newText: String): Boolean {
         val post = postRepository.getPostById(id) ?: return false
         return postRepository.editPost(id, newText).also {

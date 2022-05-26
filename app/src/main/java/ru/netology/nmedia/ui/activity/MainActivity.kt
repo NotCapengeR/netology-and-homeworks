@@ -18,17 +18,21 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    private val viewModel: PostViewModel by viewModels() {
+    private val viewModel: PostViewModel by viewModels {
         viewModelFactory
     }
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater).also { setContentView(it.root) }
         getAppComponent().inject(this)
+        binding = ActivityMainBinding.inflate(layoutInflater).also { setContentView(it.root) }
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.keyboard_backspace)
+        supportActionBar?.title = getString(R.string.app_name)
         supportFragmentManager.beginTransaction()
-            .replace(R.id.activity_main, MainFragment.newInstance(), MAIN_FRAGMENT_TAG)
+            .replace(R.id.container, MainFragment.newInstance(), MAIN_FRAGMENT_TAG)
             .addToBackStack(null)
             .commit()
     }
@@ -45,6 +49,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menu.clear()
         menuInflater.inflate(R.menu.main, menu)
         return true
     }
@@ -56,8 +61,7 @@ class MainActivity : AppCompatActivity() {
                 onBackPressed()
                 true
             }
-            R.id.back -> {
-                onBackPressed()
+            R.id.delete -> {
                 true
             }
             else -> super.onOptionsItemSelected(item)
