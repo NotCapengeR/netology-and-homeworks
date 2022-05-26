@@ -11,4 +11,5 @@
     <string name="edit">Редактировать</string>
     <string name="edit_message">Редактировать пост</string>
     <string name="text_is_unfilled">Поле текста не заполнено!</string>
+    <string name="text_is_equal">Текст не изменился!</string>
 </resources>

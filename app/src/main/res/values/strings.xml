@@ -12,4 +12,5 @@
     <string name="edit">Edit</string>
     <string name="edit_message">Edit Post</string>
     <string name="text_is_unfilled">Text is unfilled!</string>
+    <string name="text_is_equal">Text hasn\'t changed!</string>
 </resources>

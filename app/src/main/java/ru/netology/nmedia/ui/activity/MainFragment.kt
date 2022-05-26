@@ -65,13 +65,20 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                     etPostEdit.setText(currentText)
                     AndroidUtils.showKeyboard(etPostEdit, requireContext())
                     ivEditPostSend.setDebouncedListener(50L) {
-                        if (etPostEdit.text.toString().checkIfNotEmpty()) {
-                            viewModel.editPost(id, etPostEdit.text.toString())
-                            clearKeyboard(etPostEdit)
-                        } else {
-                            Toast.makeText(
+                        when {
+                            etPostEdit.text.toString()
+                                .checkIfNotEmpty() && etPostEdit.text.toString() != currentText -> {
+                                viewModel.editPost(id, etPostEdit.text.toString().trim())
+                                clearKeyboard(etPostEdit)
+                            }
+                            !etPostEdit.text.toString().checkIfNotEmpty() -> Toast.makeText(
                                 requireContext(),
                                 requireContext().getString(R.string.text_is_unfilled),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            etPostEdit.text.toString().trim() == currentText.trim() -> Toast.makeText(
+                                requireContext(),
+                                requireContext().getString(R.string.text_is_equal),
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -97,7 +104,8 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
             }
         })
         adapter.setHasStableIds(true)
-        with(binding) {
+        with(binding)
+        {
             rcViewPost.layoutManager =
                 LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
             rcViewPost.adapter = adapter
@@ -117,10 +125,12 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 clearKeyboard(etPostEdit)
             }
         }
-        viewModel.postsList.observe(viewLifecycleOwner) {
+        viewModel.postsList.observe(viewLifecycleOwner)
+        {
             adapter.submitList(it)
         }
-        viewModel.tag.observe(viewLifecycleOwner) { tag ->
+        viewModel.tag.observe(viewLifecycleOwner)
+        { tag ->
             with(binding) {
                 if (tag == MAIN_FRAGMENT_TAG) {
                     cardViewAddPost.visibility = View.VISIBLE
