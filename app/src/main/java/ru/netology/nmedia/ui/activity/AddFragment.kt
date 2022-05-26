@@ -23,7 +23,7 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-    private val viewModel: PostViewModel by activityViewModels() {
+    private val viewModel: PostViewModel by activityViewModels {
         viewModelFactory
     }
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> AddFragmentBinding
