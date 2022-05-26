@@ -126,12 +126,10 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 clearKeyboard(etPostEdit)
             }
         }
-        viewModel.postsList.observe(viewLifecycleOwner)
-        {
+        viewModel.postsList.observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }
-        viewModel.tag.observe(viewLifecycleOwner)
-        { tag ->
+        viewModel.tag.observe(viewLifecycleOwner) { tag ->
             with(binding) {
                 if (tag == MAIN_FRAGMENT_TAG) {
                     cardViewAddPost.visibility = View.VISIBLE
@@ -157,6 +155,4 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
 
         const val MAIN_FRAGMENT_TAG: String = "Main fragment"
     }
-
-
 }

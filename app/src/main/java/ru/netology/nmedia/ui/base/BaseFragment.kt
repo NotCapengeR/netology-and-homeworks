@@ -54,6 +54,11 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     open fun clearKeyboard(editText: EditText): Boolean {
         AndroidUtils.hideKeyboard(activity as AppCompatActivity)
         return !editText.text.toString().checkIfNotEmpty()
