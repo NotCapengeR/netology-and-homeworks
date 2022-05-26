@@ -60,7 +60,7 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
             R.id.cardViewSendPost -> {
                 with(binding) {
                     if (tvPostTitle.text.toString().checkIfNotEmpty() && tvPostText.text.toString().checkIfNotEmpty()) {
-                        viewModel.addPost(tvPostTitle.text.toString(), tvPostText.text.toString())
+                        viewModel.addPost(tvPostTitle.text.toString().trim(), tvPostText.text.toString().trim())
                         activity?.onBackPressed()
                     } else {
                         Toast.makeText(

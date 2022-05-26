@@ -76,7 +76,8 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                                 requireContext().getString(R.string.text_is_unfilled),
                                 Toast.LENGTH_SHORT
                             ).show()
-                            etPostEdit.text.toString().trim() == currentText.trim() -> Toast.makeText(
+
+                            etPostEdit.text.toString().trim() == currentText -> Toast.makeText(
                                 requireContext(),
                                 requireContext().getString(R.string.text_is_equal),
                                 Toast.LENGTH_SHORT
