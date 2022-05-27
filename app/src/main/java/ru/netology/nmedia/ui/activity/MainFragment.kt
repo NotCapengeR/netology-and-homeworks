@@ -42,7 +42,6 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
         savedInstanceState: Bundle?
     ): View? {
         getAppComponent().inject(this)
-        viewModel.currentTag(MAIN_FRAGMENT_TAG)
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 

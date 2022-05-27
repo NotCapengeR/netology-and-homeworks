@@ -11,6 +11,7 @@ import ru.netology.nmedia.ui.activity.MainFragment.Companion.MAIN_FRAGMENT_TAG
 import ru.netology.nmedia.ui.viewmodel.PostViewModel
 import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
 import ru.netology.nmedia.utils.getAppComponent
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -35,14 +36,16 @@ class MainActivity : AppCompatActivity() {
             .replace(R.id.container, MainFragment.newInstance(), MAIN_FRAGMENT_TAG)
             .addToBackStack(MAIN_FRAGMENT_TAG)
             .commit()
+        viewModel.currentTag(MAIN_FRAGMENT_TAG)
+        Timber.d("Hueta size: ${supportFragmentManager.fragments.size}")
     }
 
     override fun onBackPressed() {
-        val count = supportFragmentManager.backStackEntryCount
-        if (count in 0..1) {
+        if (supportFragmentManager.fragments.size < 2) {
             finish()
         } else {
-            val tag = supportFragmentManager.fragments[count - 2].tag
+            val tag =
+                supportFragmentManager.fragments[supportFragmentManager.fragments.size - 2].tag
             viewModel.currentTag(tag)
             supportFragmentManager.popBackStack()
         }
