@@ -37,7 +37,6 @@ class MainActivity : AppCompatActivity() {
             .addToBackStack(MAIN_FRAGMENT_TAG)
             .commit()
         viewModel.currentTag(MAIN_FRAGMENT_TAG)
-        Timber.d("Hueta size: ${supportFragmentManager.fragments.size}")
     }
 
     override fun onBackPressed() {
