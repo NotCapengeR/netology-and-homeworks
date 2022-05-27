@@ -44,7 +44,7 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                activity?.onBackPressed()
+                onBackPressed()
                 true
             }
             R.id.delete -> {
