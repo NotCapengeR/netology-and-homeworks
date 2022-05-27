@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.title = getString(R.string.app_name)
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, MainFragment.newInstance(), MAIN_FRAGMENT_TAG)
-            .addToBackStack(null)
+            .addToBackStack(MAIN_FRAGMENT_TAG)
             .commit()
     }
 

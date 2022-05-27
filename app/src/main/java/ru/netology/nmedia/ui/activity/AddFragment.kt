@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.AddFragmentBinding
@@ -61,7 +62,7 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
                 with(binding) {
                     if (tvPostTitle.text.toString().checkIfNotEmpty() && tvPostText.text.toString().checkIfNotEmpty()) {
                         viewModel.addPost(tvPostTitle.text.toString().trim(), tvPostText.text.toString().trim())
-                        activity?.onBackPressed()
+                        onBackPressed()
                     } else {
                         Toast.makeText(
                             requireContext(),
@@ -73,5 +74,10 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
             }
             else -> {/* do nothing */}
         }
+    }
+
+    override fun onBackPressed(): String? {
+        viewModel.currentTag(super.onBackPressed())
+        return viewModel.tag.value
     }
 }

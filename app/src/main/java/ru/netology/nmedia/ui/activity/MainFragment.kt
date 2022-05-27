@@ -42,6 +42,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
         savedInstanceState: Bundle?
     ): View? {
         getAppComponent().inject(this)
+        viewModel.currentTag(MAIN_FRAGMENT_TAG)
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
@@ -119,7 +120,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 clearKeyboard(etPostEdit)
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.fragment_main, AddFragment.newInstance(), ADD_FRAGMENT_TAG)
-                    .addToBackStack(null)
+                    .addToBackStack(ADD_FRAGMENT_TAG)
                     .commit()
             }
             ivEditCancel.setDebouncedListener(50L) {

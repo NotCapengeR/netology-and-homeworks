@@ -63,4 +63,12 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
         AndroidUtils.hideKeyboard(activity as AppCompatActivity)
         return !editText.text.toString().checkIfNotEmpty()
     }
+
+    open fun onBackPressed(): String? {
+        parentFragmentManager.popBackStack()
+        val index = parentFragmentManager.fragments.indexOf(parentFragmentManager.fragments.last()) - 1
+        return if (index >= 0) {
+            parentFragmentManager.fragments[index].tag
+        } else null
+    }
 }
