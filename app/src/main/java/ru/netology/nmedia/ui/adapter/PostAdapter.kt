@@ -97,21 +97,21 @@ class PostAdapter(
             ivLikes.tag = post
             ivComments.tag = post
             ivShare.tag = post
-            tvCommentsCount.text = post.comments.toPostText()
-            tvLikesCount.text = post.likes.toPostText()
-            tvShareCount.text = post.shared.toPostText()
+            ivComments.text = post.comments.toPostText()
+            ivLikes.text = post.likes.toPostText()
+            ivShare.text = post.shared.toPostText()
             tvViewsCount.text = post.views.toPostText()
             tvPostText.text = post.text
             tvPostTitle.text = post.title
             tvDateTime.text = DateFormat.format("d MMMM yyyy, HH:mm", post.date)
             ivPostAvatar.setImageResource(post.avatarId)
             if (post.isLiked) {
-                ivLikes.setImageResource(R.drawable.heart)
+                ivLikes.setIconResource(R.drawable.heart)
             } else {
-                ivLikes.setImageResource(R.drawable.heart_outline)
+                ivLikes.setIconResource(R.drawable.heart_outline)
             }
             ivLikes.setDebouncedListener(50L, this@PostAdapter)
-            menuButton.setDebouncedListener(700L, this@PostAdapter)
+            menuButton.setDebouncedListener(200L, this@PostAdapter)
             ivShare.setDebouncedListener(50L, this@PostAdapter)
             ivComments.setDebouncedListener(50L, this@PostAdapter)
         }

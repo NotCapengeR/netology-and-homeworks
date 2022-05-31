@@ -14,9 +14,9 @@
         android:layout_height="70dp"
         android:layout_marginStart="5dp"
         android:contentDescription="@string/group_avatar"
-        tools:src="@drawable/ic_baseline_account_circle_24"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/ic_baseline_account_circle_24" />
 
     <TextView
         android:id="@+id/tvPostTitle"
@@ -24,8 +24,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="4dp"
-        android:maxLines="1"
         android:ellipsize="end"
+        android:maxLines="1"
         android:text="Какой-то кругой заголовок"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -46,12 +46,15 @@
         app:layout_constraintStart_toEndOf="@+id/ivPostAvatar"
         app:layout_constraintTop_toBottomOf="@+id/tvPostTitle" />
 
-    <ImageView
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/menuButton"
-        android:layout_width="28dp"
-        android:layout_height="50dp"
+        style="@style/Widget.AppCompat.ShareAndCommentButton"
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        app:iconGravity="textStart"
         android:src="@drawable/ic_baseline_more_vert_24"
-        android:background="?android:attr/selectableItemBackground"
+        app:icon="@drawable/dots_vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/tvDateTime"
@@ -73,86 +76,59 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvDateTime" />
 
-    <ImageView
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/ivLikes"
+        style="@style/Widget.AppCompat.LikeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
-        android:background="?android:attr/selectableItemBackground"
+        android:checkable="true"
+        android:text="300"
+        android:textSize="20sp"
+        app:icon="@drawable/heart_outline"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvPostText"
-        tools:srcCompat="@drawable/heart_outline"
-        tools:ignore="ContentDescription" />
+        tools:ignore="ContentDescription"
+        tools:srcCompat="@drawable/heart_outline" />
 
-    <TextView
-        android:id="@+id/tvLikesCount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="1dp"
-        android:layout_marginStart="2dp"
-        android:layout_marginTop="11dp"
-        android:text="777"
-        android:textSize="20sp"
-        app:layout_constraintTop_toBottomOf="@+id/tvPostText"
-        app:layout_constraintStart_toEndOf="@+id/ivLikes" />
 
-    <ImageView
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/ivComments"
+        style="@style/Widget.AppCompat.ShareAndCommentButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="10dp"
-        android:background="?android:attr/selectableItemBackground"
-        app:layout_constraintStart_toEndOf="@id/tvLikesCount"
+        android:text="300"
+        android:textColor="@color/gray"
+        android:textSize="20sp"
+        app:icon="@drawable/comment_outline"
+        app:layout_constraintStart_toEndOf="@id/ivLikes"
         app:layout_constraintTop_toBottomOf="@+id/tvPostText"
-        app:srcCompat="@drawable/comment_outline"
         tools:ignore="ContentDescription" />
 
-    <TextView
-        android:id="@+id/tvCommentsCount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="1dp"
-        android:layout_marginStart="2dp"
-        android:layout_marginTop="11dp"
-        android:text="129,1"
-        android:textSize="20sp"
-        app:layout_constraintStart_toEndOf="@+id/ivComments"
-        app:layout_constraintTop_toBottomOf="@+id/tvPostText" />
-
-    <ImageView
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/ivShare"
+        style="@style/Widget.AppCompat.ShareAndCommentButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="10dp"
-        android:background="?android:attr/selectableItemBackground"
-        app:layout_constraintStart_toEndOf="@id/tvCommentsCount"
-        app:layout_constraintTop_toBottomOf="@+id/tvPostText"
-        app:srcCompat="@drawable/share_outline"
-        tools:ignore="ContentDescription" />
-
-    <TextView
-        android:id="@+id/tvShareCount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
-        android:layout_marginTop="11dp"
-        android:text="100,35K"
+        android:text="300"
+        android:textColor="@color/gray"
         android:textSize="20sp"
+        app:icon="@drawable/share_outline"
+        app:layout_constraintStart_toEndOf="@id/ivComments"
         app:layout_constraintTop_toBottomOf="@+id/tvPostText"
-        app:layout_constraintStart_toEndOf="@+id/ivShare" />
+        tools:ignore="ContentDescription" />
 
     <ImageView
         android:id="@+id/ivViews"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="23dp"
         android:layout_marginEnd="6dp"
         android:clickable="false"
-        app:layout_constraintTop_toBottomOf="@+id/tvPostText"
         app:layout_constraintEnd_toStartOf="@id/tvViewsCount"
+        app:layout_constraintTop_toBottomOf="@+id/tvPostText"
         app:srcCompat="@drawable/eye"
         tools:ignore="ContentDescription" />
 
@@ -160,15 +136,13 @@
         android:id="@+id/tvViewsCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="3dp"
         android:layout_marginStart="1dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="3dp"
         android:text="100.31 M"
         android:textSize="15sp"
-        app:layout_constraintTop_toBottomOf="@+id/tvPostText"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvPostText" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,4 +4,15 @@
         <item name="android:background">@color/black_overlay</item>
         <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
     </style>
+
+    <style name="Widget.AppCompat.LikeButton" parent="Widget.MaterialComponents.Button.TextButton.Icon">
+        <item name="iconTint">@color/red_liked</item>
+        <item name="background">?android:attr/selectableItemBackground</item>
+    </style>
+
+    <style name="Widget.AppCompat.ShareAndCommentButton" parent="Widget.MaterialComponents.Button.TextButton.Icon">
+
+        <item name="iconTint">?attr/colorControlNormal</item>
+        <item name="background">?android:attr/selectableItemBackground</item>
+    </style>
 </resources>
