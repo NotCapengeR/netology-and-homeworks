@@ -18,10 +18,7 @@ import ru.netology.nmedia.ui.adapter.decorators.LinearVerticalSpacingDecoration
 import ru.netology.nmedia.ui.base.BaseFragment
 import ru.netology.nmedia.ui.viewmodel.PostViewModel
 import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
-import ru.netology.nmedia.utils.AndroidUtils
-import ru.netology.nmedia.utils.checkIfNotEmpty
-import ru.netology.nmedia.utils.getAppComponent
-import ru.netology.nmedia.utils.setDebouncedListener
+import ru.netology.nmedia.utils.*
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -47,6 +44,20 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initView()
+    }
+
+
+    override fun clearKeyboard(editText: EditText?): Boolean = with(binding) {
+        super.clearKeyboard(editText)
+        cardViewEditMessage.setVisibility(false)
+        editableMessageContainer.setVisibility(false)
+        editText?.text?.clear()
+        return !editText?.text.toString().checkIfNotEmpty()
+    }
+
+
+    private fun initView() {
         val adapter = PostAdapter(object : PostListener {
             override fun onAdded(title: String, text: String): Long {
                 return viewModel.addPost(title, text)
@@ -59,8 +70,8 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
 
             override fun onEdit(id: Long, currentText: String): Boolean {
                 with(binding) {
-                    cardViewEditMessage.visibility = View.VISIBLE
-                    editableMessageContainer.visibility = View.VISIBLE
+                    cardViewEditMessage.setVisibility(true)
+                    editableMessageContainer.setVisibility(true)
                     tvPreviousText.text = currentText
                     etPostEdit.setText(currentText)
                     AndroidUtils.showKeyboard(etPostEdit, requireContext())
@@ -132,22 +143,13 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
         viewModel.tag.observe(viewLifecycleOwner) { tag ->
             with(binding) {
                 if (tag == MAIN_FRAGMENT_TAG) {
-                    cardViewAddPost.visibility = View.VISIBLE
+                    cardViewAddPost.setVisibility(true)
                 } else {
-                    cardViewAddPost.visibility = View.GONE
+                    cardViewAddPost.setVisibility(false)
                 }
             }
         }
     }
-
-    override fun clearKeyboard(editText: EditText): Boolean = with(binding) {
-        super.clearKeyboard(editText)
-        cardViewEditMessage.visibility = View.GONE
-        editableMessageContainer.visibility = View.GONE
-        editText.text.clear()
-        return !editText.text.toString().checkIfNotEmpty()
-    }
-
 
     companion object {
         @JvmStatic

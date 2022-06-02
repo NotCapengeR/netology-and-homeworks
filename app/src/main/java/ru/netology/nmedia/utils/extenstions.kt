@@ -10,7 +10,7 @@ import java.text.DecimalFormat
 
 private val df = DecimalFormat("###.#")
 
-fun Int.toPostText(): String = when(this) {
+fun Int.toPostText(): String = when (this) {
     in 0..999 -> this.toString()
     in 1_000..10_000 -> "${df.format(this.toDouble() / 1000.0)}K"
     in 10_001..999_999 -> "${this / 1000}K"
@@ -34,17 +34,24 @@ fun View.setDebouncedListener(debounceTime: Long = 600L, onClickListener: View.O
     var lastClickTime: Long = 0
     val clickWithDebounce: (view: View) -> Unit = {
 
-        if (SystemClock.elapsedRealtime() - lastClickTime < debounceTime) { /* do nothing */ }
-        else onClickListener.onClick(it)
+        if (SystemClock.elapsedRealtime() - lastClickTime < debounceTime) { /* do nothing */
+        } else onClickListener.onClick(it)
     }
     lastClickTime = SystemClock.elapsedRealtime()
     this.setOnClickListener(clickWithDebounce)
 }
 
+fun View.setVisibility(visible: Boolean?) = when (visible) {
+    true -> this.visibility = View.VISIBLE
+    false -> this.visibility = View.GONE
+    null -> this.visibility = View.INVISIBLE
+}
+
+
 fun Fragment.getAppComponent(): AppComponent =
     (this.requireContext().applicationContext as App).appComponent
 
-fun Context.getAppComponent(): AppComponent = when(this) {
+fun Context.getAppComponent(): AppComponent = when (this) {
     is App -> appComponent
     else -> (this.applicationContext as App).appComponent
 }

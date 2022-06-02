@@ -2,9 +2,7 @@ package ru.netology.nmedia.ui.activity
 
 import android.os.Bundle
 import android.text.format.DateFormat
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
@@ -16,6 +14,7 @@ import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
 import ru.netology.nmedia.utils.checkIfNotEmpty
 import ru.netology.nmedia.utils.getAppComponent
 import ru.netology.nmedia.utils.setDebouncedListener
+import ru.netology.nmedia.utils.setVisibility
 import java.util.*
 import javax.inject.Inject
 
@@ -36,16 +35,17 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
         savedInstanceState: Bundle?
     ): View? {
         getAppComponent().inject(this)
-        viewModel.currentTag(ADD_FRAGMENT_TAG)
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        with(binding) {
-            tvDateTime.text = DateFormat.format("d MMMM yyyy, HH:mm", Date().time)
-            cardViewSendPost.setDebouncedListener(600L, this@AddFragment)
-        }
+        initView()
+    }
+
+    private fun initView() = with(binding) {
+        tvDateTime.text = DateFormat.format("d MMMM yyyy, HH:mm", Date().time)
+        cardViewSendPost.setDebouncedListener(600L, this@AddFragment)
     }
 
 
@@ -76,8 +76,8 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
         }
     }
 
-    override fun onBackPressed(): String? {
-        viewModel.currentTag(super.onBackPressed())
-        return viewModel.tag.value
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
+        inflater.inflate(R.menu.empty, menu)
     }
 }

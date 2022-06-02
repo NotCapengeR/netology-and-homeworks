@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 import ru.netology.nmedia.R
+import ru.netology.nmedia.ui.activity.FragmentInteractor
+import ru.netology.nmedia.ui.activity.MainActivity
 import ru.netology.nmedia.utils.AndroidUtils
 import ru.netology.nmedia.utils.checkIfNotEmpty
 
@@ -15,11 +17,10 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
     private var _binding: ViewBinding? = null
     abstract val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> VB
 
+
     @Suppress("UNCHECKED_CAST")
     protected val binding: VB
         get() = requireNotNull(_binding) as VB
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +33,7 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = bindingInflater.invoke(inflater, container, false)
+        (activity as MainActivity).onStartFragment()
         return binding.root
     }
 
@@ -56,17 +58,21 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        (activity as FragmentInteractor).onStopFragment()
         _binding = null
     }
 
-    open fun clearKeyboard(editText: EditText): Boolean {
+    open fun clearKeyboard(editText: EditText? = null): Boolean? {
         AndroidUtils.hideKeyboard(activity as AppCompatActivity)
-        return !editText.text.toString().checkIfNotEmpty()
+        return if (editText != null) {
+            !editText.text.toString().checkIfNotEmpty()
+        } else null
     }
 
     open fun onBackPressed(): String? {
-        parentFragmentManager.popBackStack()
-        val index = parentFragmentManager.fragments.indexOf(parentFragmentManager.fragments.last()) - 1
+        activity?.onBackPressed()
+        val index =
+            parentFragmentManager.fragments.indexOf(parentFragmentManager.fragments.last()) - 1
         return if (index >= 0) {
             parentFragmentManager.fragments[index].tag
         } else null

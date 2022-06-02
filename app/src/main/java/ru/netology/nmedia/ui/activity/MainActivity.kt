@@ -15,7 +15,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), FragmentInteractor {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -32,11 +32,13 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.keyboard_backspace)
         supportActionBar?.title = getString(R.string.app_name)
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.container, MainFragment.newInstance(), MAIN_FRAGMENT_TAG)
-            .addToBackStack(MAIN_FRAGMENT_TAG)
-            .commit()
-        viewModel.currentTag(MAIN_FRAGMENT_TAG)
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.container, MainFragment.newInstance(), MAIN_FRAGMENT_TAG)
+                .addToBackStack(MAIN_FRAGMENT_TAG)
+                .commit()
+            viewModel.currentTag(MAIN_FRAGMENT_TAG)
+        }
     }
 
     override fun onBackPressed() {
@@ -56,7 +58,6 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
@@ -69,4 +70,23 @@ class MainActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
+
+    override fun onStartFragment() {
+        viewModel.currentTag(supportFragmentManager.fragments.last().tag)
+    }
+
+    override fun onStopFragment() {
+        if (supportFragmentManager.fragments.size >= 2) {
+            val tag =
+                supportFragmentManager.fragments[supportFragmentManager.fragments.size - 2].tag
+            viewModel.currentTag(tag)
+        }
+    }
+}
+
+interface FragmentInteractor {
+
+    fun onStartFragment()
+
+    fun onStopFragment()
 }
