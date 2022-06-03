@@ -3,6 +3,8 @@ package ru.netology.nmedia.ui.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.repository.PostRepository
 import java.util.*
@@ -25,7 +27,7 @@ class PostViewModel @Inject constructor(
 
     init {
         mutablePostsList.addAll(postRepository.getPosts())
-        notifyChanges()
+        loadData()
     }
 
     fun currentTag(tag: String?) {
@@ -36,7 +38,7 @@ class PostViewModel @Inject constructor(
         if (it > 0) {
             val post = postRepository.getPostById(it) ?: return -1
             mutablePostsList.add(post)
-            notifyChanges()
+            loadData()
         }
     }
 
@@ -45,7 +47,7 @@ class PostViewModel @Inject constructor(
         return postRepository.removePost(id).also {
             if (it) {
                 mutablePostsList.remove(post)
-                notifyChanges()
+                loadData()
             }
         }
     }
@@ -57,7 +59,7 @@ class PostViewModel @Inject constructor(
                 val newPost = postRepository.getPostById(id) ?: return false
                 val postIndex = mutablePostsList.indexOf(post)
                 mutablePostsList[postIndex] = newPost
-                notifyChanges()
+                loadData()
             }
         }
     }
@@ -69,7 +71,7 @@ class PostViewModel @Inject constructor(
                 val newPost = postRepository.getPostById(id) ?: return false
                 val postIndex = mutablePostsList.indexOf(post)
                 mutablePostsList[postIndex] = newPost
-                notifyChanges()
+                loadData()
             }
         }
     }
@@ -81,7 +83,7 @@ class PostViewModel @Inject constructor(
                 val newPost = postRepository.getPostById(id) ?: return -2
                 val postIndex = mutablePostsList.indexOf(post)
                 mutablePostsList[postIndex] = newPost
-                notifyChanges()
+                loadData()
             }
         }
     }
@@ -93,7 +95,7 @@ class PostViewModel @Inject constructor(
                 val newPost = postRepository.getPostById(id) ?: return -2
                 val postIndex = mutablePostsList.indexOf(post)
                 mutablePostsList[postIndex] = newPost
-                notifyChanges()
+                loadData()
             }
         }
     }
@@ -104,15 +106,17 @@ class PostViewModel @Inject constructor(
         val swappablePostIndex = postIndex - movedBy
         return try {
             Collections.swap(mutablePostsList, postIndex, swappablePostIndex)
-            notifyChanges()
+            loadData()
             postsList.value == mutablePostsList.toList()
         } catch (ex: ArrayIndexOutOfBoundsException) {
             return false
         }
     }
 
-    private fun notifyChanges() {
-        postsList.value = mutablePostsList.toList()
+    private fun loadData() {
+        viewModelScope.launch {
+            postsList.value = mutablePostsList.toList()
+        }
     }
 }
 

@@ -11,7 +11,6 @@ import ru.netology.nmedia.ui.activity.MainFragment.Companion.MAIN_FRAGMENT_TAG
 import ru.netology.nmedia.ui.viewmodel.PostViewModel
 import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
 import ru.netology.nmedia.utils.getAppComponent
-import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -37,7 +36,6 @@ class MainActivity : AppCompatActivity(), FragmentInteractor {
                 .replace(R.id.container, MainFragment.newInstance(), MAIN_FRAGMENT_TAG)
                 .addToBackStack(MAIN_FRAGMENT_TAG)
                 .commit()
-            viewModel.currentTag(MAIN_FRAGMENT_TAG)
         }
     }
 

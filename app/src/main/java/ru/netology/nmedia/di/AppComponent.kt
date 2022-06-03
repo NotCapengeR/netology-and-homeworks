@@ -1,6 +1,8 @@
 package ru.netology.nmedia.di
 
 import dagger.Component
+import ru.netology.nmedia.di.modules.AppModule
+import ru.netology.nmedia.di.modules.ViewModelModule
 import ru.netology.nmedia.ui.activity.AddFragment
 import ru.netology.nmedia.ui.activity.MainActivity
 import ru.netology.nmedia.ui.activity.MainFragment

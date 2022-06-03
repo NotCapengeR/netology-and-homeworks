@@ -73,7 +73,7 @@ class PostAdapter(
 
         popupMenu.setOnMenuItemClickListener {
             when (it.itemId) {
-                REMOVE_ID ->  {
+                REMOVE_ID -> {
                     Timber.d("Position: $position")
                     listener.onRemoved(post.id)
                 }
@@ -110,6 +110,7 @@ class PostAdapter(
             } else {
                 ivLikes.setIconResource(R.drawable.heart_outline)
             }
+            ivLikes.isChecked = post.isLiked
             ivLikes.setDebouncedListener(50L, this@PostAdapter)
             menuButton.setDebouncedListener(200L, this@PostAdapter)
             ivShare.setDebouncedListener(50L, this@PostAdapter)

@@ -1,10 +1,9 @@
-package ru.netology.nmedia.di
+package ru.netology.nmedia.di.modules
 
 import android.app.Application
 import android.content.Context
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import ru.netology.nmedia.App
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
