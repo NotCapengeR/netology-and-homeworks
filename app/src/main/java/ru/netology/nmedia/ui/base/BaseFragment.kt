@@ -34,6 +34,7 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
     ): View? {
         _binding = bindingInflater.invoke(inflater, container, false)
         (activity as MainActivity).onStartFragment()
+        clearKeyboard()
         return binding.root
     }
 
@@ -62,14 +63,14 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
         _binding = null
     }
 
-    open fun clearKeyboard(editText: EditText? = null): Boolean? {
+    protected open fun clearKeyboard(editText: EditText? = null): Boolean? {
         AndroidUtils.hideKeyboard(activity as AppCompatActivity)
         return if (editText != null) {
             !editText.text.toString().checkIfNotEmpty()
         } else null
     }
 
-    open fun onBackPressed(): String? {
+    protected open fun onBackPressed(): String? {
         activity?.onBackPressed()
         val index =
             parentFragmentManager.fragments.indexOf(parentFragmentManager.fragments.last()) - 1
