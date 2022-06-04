@@ -8,7 +8,7 @@
     android:background="@color/white"
     android:clickable="true"
     android:focusable="true"
-    tools:context=".ui.activity.MainFragment">
+    tools:context=".ui.fragments.MainFragment">
 
 
     <androidx.appcompat.widget.Toolbar

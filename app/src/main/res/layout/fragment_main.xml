@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".ui.activity.MainFragment">
+    tools:context=".ui.fragments.MainFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -19,7 +19,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:menu="@menu/main"
-        app:navigationIcon="@drawable/keyboard_backspace"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:title="@string/app_name" />
 

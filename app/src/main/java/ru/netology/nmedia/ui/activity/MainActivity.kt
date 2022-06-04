@@ -1,27 +1,13 @@
 package ru.netology.nmedia.ui.activity
 
-import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import ru.netology.nmedia.R
-import ru.netology.nmedia.utils.getAppComponent
+import ru.netology.nmedia.utils.FragmentObserver
 
 
-class MainActivity : AppCompatActivity(), FragmentInteractor {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        getAppComponent().inject(this)
-        setContentView(R.layout.activity_main)
-    }
+class MainActivity : AppCompatActivity(R.layout.activity_main), FragmentObserver {
 
     override fun onStartFragment() {}
 
     override fun onStopFragment() {}
-}
-
-interface FragmentInteractor {
-
-    fun onStartFragment()
-
-    fun onStopFragment()
 }

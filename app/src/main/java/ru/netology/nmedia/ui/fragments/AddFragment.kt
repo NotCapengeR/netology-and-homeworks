@@ -1,4 +1,4 @@
-package ru.netology.nmedia.ui.activity
+package ru.netology.nmedia.ui.fragments
 
 import android.os.Bundle
 import android.text.format.DateFormat
@@ -16,7 +16,6 @@ import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
 import ru.netology.nmedia.utils.checkIfNotEmpty
 import ru.netology.nmedia.utils.getAppComponent
 import ru.netology.nmedia.utils.setDebouncedListener
-import ru.netology.nmedia.utils.setVisibility
 import java.util.*
 import javax.inject.Inject
 
@@ -52,8 +51,6 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
             val appBarConfiguration = AppBarConfiguration(graph)
             toolbar.setupWithNavController(this, appBarConfiguration)
         }
-        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        (activity as AppCompatActivity).supportActionBar?.setHomeAsUpIndicator(R.drawable.keyboard_backspace)
         (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
         tvDateTime.text = DateFormat.format("d MMMM yyyy, HH:mm", Date().time)
         cardViewSendPost.setDebouncedListener(600L, this@AddFragment)

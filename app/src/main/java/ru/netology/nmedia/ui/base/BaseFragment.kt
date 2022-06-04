@@ -4,15 +4,14 @@ import android.os.Bundle
 import android.view.*
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.viewbinding.ViewBinding
 import ru.netology.nmedia.R
-import ru.netology.nmedia.ui.activity.FragmentInteractor
 import ru.netology.nmedia.ui.activity.MainActivity
 import ru.netology.nmedia.utils.AndroidUtils
+import ru.netology.nmedia.utils.FragmentObserver
 import ru.netology.nmedia.utils.checkIfNotEmpty
 
 abstract class BaseFragment<VB : ViewBinding> : Fragment() {
@@ -56,7 +55,7 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        (activity as FragmentInteractor).onStopFragment()
+        (activity as FragmentObserver).onStopFragment()
         _binding = null
     }
 
@@ -69,10 +68,6 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
     protected open fun onBackPressed(): String? {
         (activity as AppCompatActivity).onBackPressed()
-        val index =
-            parentFragmentManager.fragments.indexOf(parentFragmentManager.fragments.last()) - 1
-        return if (index >= 0) {
-            parentFragmentManager.fragments[index].tag
-        } else null
+        return parentFragmentManager.fragments.last().tag
     }
 }
