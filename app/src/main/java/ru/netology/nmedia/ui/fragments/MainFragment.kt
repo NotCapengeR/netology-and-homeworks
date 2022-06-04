@@ -76,35 +76,33 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 return viewModel.removePost(id)
             }
 
-            override fun onEdit(id: Long, currentText: String): Boolean {
-                with(binding) {
-                    cardViewEditMessage.setVisibility(true)
-                    editableMessageContainer.setVisibility(true)
-                    tvPreviousText.text = currentText
-                    etPostEdit.setText(currentText)
-                    AndroidUtils.showKeyboard(etPostEdit, requireContext())
-                    ivEditPostSend.setDebouncedListener(50L) {
-                        when {
-                            etPostEdit.text.toString()
-                                .checkIfNotEmpty() && etPostEdit.text.toString() != currentText -> {
-                                viewModel.editPost(id, etPostEdit.text.toString().trim())
-                                clearKeyboard(etPostEdit)
-                            }
-                            !etPostEdit.text.toString().checkIfNotEmpty() -> Toast.makeText(
-                                requireContext(),
-                                requireContext().getString(R.string.text_is_unfilled),
-                                Toast.LENGTH_SHORT
-                            ).show()
-
-                            etPostEdit.text.toString().trim() == currentText -> Toast.makeText(
-                                requireContext(),
-                                requireContext().getString(R.string.text_is_equal),
-                                Toast.LENGTH_SHORT
-                            ).show()
+            override fun onEdit(id: Long, currentText: String): Boolean = with(binding) {
+                cardViewEditMessage.setVisibility(true)
+                editableMessageContainer.setVisibility(true)
+                tvPreviousText.text = currentText
+                etPostEdit.setText(currentText)
+                AndroidUtils.showKeyboard(etPostEdit, requireContext())
+                ivEditPostSend.setDebouncedListener(50L) {
+                    when {
+                        etPostEdit.text.toString()
+                            .checkIfNotEmpty() && etPostEdit.text.toString() != currentText -> {
+                            viewModel.editPost(id, etPostEdit.text.toString().trim())
+                            clearKeyboard(etPostEdit)
                         }
+                        !etPostEdit.text.toString().checkIfNotEmpty() -> Toast.makeText(
+                            requireContext(),
+                            requireContext().getString(R.string.text_is_unfilled),
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        etPostEdit.text.toString().trim() == currentText -> Toast.makeText(
+                            requireContext(),
+                            requireContext().getString(R.string.text_is_equal),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
-                    return true
                 }
+                return true
             }
 
             override fun onLiked(id: Long): Boolean {
