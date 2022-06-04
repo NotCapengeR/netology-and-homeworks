@@ -18,9 +18,6 @@ class PostViewModel @Inject constructor(
     // это для перемещения постов, в мапах-то позиции нельзя менять)
     private val mutablePostsList: MutableList<Post> = mutableListOf()
 
-    val tag: MutableLiveData<String?> by lazy {
-        MutableLiveData<String?>()
-    }
     val postsList: MutableLiveData<List<Post>> by lazy {
         MutableLiveData<List<Post>>()
     }
@@ -28,10 +25,6 @@ class PostViewModel @Inject constructor(
     init {
         mutablePostsList.addAll(postRepository.getPosts())
         loadData()
-    }
-
-    fun currentTag(tag: String?) {
-        this.tag.value = tag
     }
 
     fun addPost(title: String, text: String): Long = postRepository.addPost(title, text).also {

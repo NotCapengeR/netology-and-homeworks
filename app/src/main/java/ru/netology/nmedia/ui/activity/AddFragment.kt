@@ -6,6 +6,8 @@ import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.AddFragmentBinding
 import ru.netology.nmedia.ui.base.BaseFragment
@@ -44,16 +46,17 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
     }
 
     private fun initView() = with(binding) {
+        (activity as AppCompatActivity).setSupportActionBar(toolbar)
+        setHasOptionsMenu(true)
+        mainNavController?.apply {
+            val appBarConfiguration = AppBarConfiguration(graph)
+            toolbar.setupWithNavController(this, appBarConfiguration)
+        }
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        (activity as AppCompatActivity).supportActionBar?.setHomeAsUpIndicator(R.drawable.keyboard_backspace)
+        (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
         tvDateTime.text = DateFormat.format("d MMMM yyyy, HH:mm", Date().time)
         cardViewSendPost.setDebouncedListener(600L, this@AddFragment)
-    }
-
-
-    companion object {
-        @JvmStatic
-        fun newInstance() = AddFragment()
-
-        const val ADD_FRAGMENT_TAG: String = "Add fragment"
     }
 
     override fun onClick(view: View) {

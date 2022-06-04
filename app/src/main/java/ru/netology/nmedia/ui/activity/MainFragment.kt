@@ -8,10 +8,11 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentMainBinding
-import ru.netology.nmedia.ui.activity.AddFragment.Companion.ADD_FRAGMENT_TAG
 import ru.netology.nmedia.ui.adapter.PostAdapter
 import ru.netology.nmedia.ui.adapter.PostListener
 import ru.netology.nmedia.ui.adapter.decorators.LinearVerticalSpacingDecoration
@@ -58,6 +59,13 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
 
 
     private fun initView() {
+        (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
+        setHasOptionsMenu(true)
+        mainNavController?.apply {
+            val appBarConfiguration = AppBarConfiguration(graph)
+            binding.toolbar.setupWithNavController(this, appBarConfiguration)
+        }
+        (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
         val adapter = PostAdapter(object : PostListener {
             override fun onAdded(title: String, text: String): Long {
                 return viewModel.addPost(title, text)
@@ -128,10 +136,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
             )
             cardViewAddPost.setDebouncedListener(500L) {
                 clearKeyboard(etPostEdit)
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_main, AddFragment.newInstance(), ADD_FRAGMENT_TAG)
-                    .addToBackStack(ADD_FRAGMENT_TAG)
-                    .commit()
+                mainNavController?.navigate(R.id.action_mainFragment_to_addFragment)
             }
             ivEditCancel.setDebouncedListener(50L) {
                 clearKeyboard(etPostEdit)
@@ -140,21 +145,5 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
         viewModel.postsList.observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }
-        viewModel.tag.observe(viewLifecycleOwner) { tag ->
-            with(binding) {
-                if (tag == MAIN_FRAGMENT_TAG) {
-                    cardViewAddPost.setVisibility(true)
-                } else {
-                    cardViewAddPost.setVisibility(false)
-                }
-            }
-        }
-    }
-
-    companion object {
-        @JvmStatic
-        fun newInstance() = MainFragment()
-
-        const val MAIN_FRAGMENT_TAG: String = "Main fragment"
     }
 }

@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.view.*
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import androidx.viewbinding.ViewBinding
 import ru.netology.nmedia.R
 import ru.netology.nmedia.ui.activity.FragmentInteractor
@@ -16,16 +19,10 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
     private var _binding: ViewBinding? = null
     abstract val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> VB
-
-
+    protected val mainNavController: NavController? by lazy { activity?.findNavController(R.id.nav_host_fragment) }
     @Suppress("UNCHECKED_CAST")
     protected val binding: VB
         get() = requireNotNull(_binding) as VB
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -71,7 +68,7 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
     }
 
     protected open fun onBackPressed(): String? {
-        activity?.onBackPressed()
+        (activity as AppCompatActivity).onBackPressed()
         val index =
             parentFragmentManager.fragments.indexOf(parentFragmentManager.fragments.last()) - 1
         return if (index >= 0) {
