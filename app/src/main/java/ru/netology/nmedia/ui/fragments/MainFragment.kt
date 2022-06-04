@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.ui.AppBarConfiguration
@@ -89,17 +88,11 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                             viewModel.editPost(id, etPostEdit.text.toString().trim())
                             clearKeyboard(etPostEdit)
                         }
-                        !etPostEdit.text.toString().checkIfNotEmpty() -> Toast.makeText(
-                            requireContext(),
-                            requireContext().getString(R.string.text_is_unfilled),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        !etPostEdit.text.toString().checkIfNotEmpty() ->
+                            makeToast(requireContext().getString(R.string.text_is_unfilled))
 
-                        etPostEdit.text.toString().trim() == currentText -> Toast.makeText(
-                            requireContext(),
-                            requireContext().getString(R.string.text_is_equal),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        etPostEdit.text.toString().trim() == currentText ->
+                            makeToast(requireContext().getString(R.string.text_is_equal))
                     }
                 }
                 return true

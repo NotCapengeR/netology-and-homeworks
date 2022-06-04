@@ -3,7 +3,6 @@ package ru.netology.nmedia.ui.fragments
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.view.*
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.ui.AppBarConfiguration
@@ -15,6 +14,7 @@ import ru.netology.nmedia.ui.viewmodel.PostViewModel
 import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
 import ru.netology.nmedia.utils.checkIfNotEmpty
 import ru.netology.nmedia.utils.getAppComponent
+import ru.netology.nmedia.utils.makeToast
 import ru.netology.nmedia.utils.setDebouncedListener
 import java.util.*
 import javax.inject.Inject
@@ -64,11 +64,7 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
                         viewModel.addPost(tvPostTitle.text.toString().trim(), tvPostText.text.toString().trim())
                         onBackPressed()
                     } else {
-                        Toast.makeText(
-                            requireContext(),
-                            requireContext().getString(R.string.text_is_unfilled),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        makeToast(requireContext().getString(R.string.text_is_unfilled))
                     }
                 }
             }
