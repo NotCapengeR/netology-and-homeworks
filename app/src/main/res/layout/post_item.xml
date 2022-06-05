@@ -52,9 +52,9 @@
         android:layout_width="30dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        app:iconGravity="textStart"
         android:src="@drawable/ic_baseline_more_vert_24"
         app:icon="@drawable/dots_vertical"
+        app:iconGravity="textStart"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/tvDateTime"
@@ -76,6 +76,124 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvDateTime" />
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/yTLayout"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/white_gray"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvPostText">
+
+        <ImageView
+            android:id="@+id/ytThumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cvPlay"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            app:cardBackgroundColor="@color/gray"
+            app:cardCornerRadius="15dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/ivPlay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/play" />
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cvAuthor"
+            android:layout_width="200dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginTop="5dp"
+            app:cardBackgroundColor="@color/black_overlay"
+            app:cardCornerRadius="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/ytAuthor"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:text="Автор видео здесь"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cvTitle"
+            android:layout_width="250dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            app:cardBackgroundColor="@color/black_overlay"
+            app:cardCornerRadius="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/ytTitle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:text="Лучшее в мире название"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cvDuration"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginBottom="5dp"
+            app:cardBackgroundColor="@color/black_overlay"
+            app:cardCornerRadius="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/ytVideoDuration"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingTop="5dp"
+                android:text="22:00:01"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/ivLikes"
         style="@style/Widget.AppCompat.LikeButton"
@@ -87,7 +205,7 @@
         android:textSize="20sp"
         app:icon="@drawable/heart_outline"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvPostText"
+        app:layout_constraintTop_toBottomOf="@+id/yTLayout"
         tools:ignore="ContentDescription"
         tools:srcCompat="@drawable/heart_outline" />
 
@@ -103,7 +221,7 @@
         android:textSize="20sp"
         app:icon="@drawable/comment_outline"
         app:layout_constraintStart_toEndOf="@id/ivLikes"
-        app:layout_constraintTop_toBottomOf="@+id/tvPostText"
+        app:layout_constraintTop_toBottomOf="@+id/yTLayout"
         tools:ignore="ContentDescription" />
 
     <com.google.android.material.button.MaterialButton
@@ -117,7 +235,7 @@
         android:textSize="20sp"
         app:icon="@drawable/share_outline"
         app:layout_constraintStart_toEndOf="@id/ivComments"
-        app:layout_constraintTop_toBottomOf="@+id/tvPostText"
+        app:layout_constraintTop_toBottomOf="@+id/yTLayout"
         tools:ignore="ContentDescription" />
 
     <ImageView
@@ -128,7 +246,7 @@
         android:layout_marginEnd="6dp"
         android:clickable="false"
         app:layout_constraintEnd_toStartOf="@id/tvViewsCount"
-        app:layout_constraintTop_toBottomOf="@+id/tvPostText"
+        app:layout_constraintTop_toBottomOf="@+id/yTLayout"
         app:srcCompat="@drawable/eye"
         tools:ignore="ContentDescription" />
 
@@ -142,7 +260,7 @@
         android:text="100.31 M"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvPostText" />
+        app:layout_constraintTop_toBottomOf="@+id/yTLayout" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

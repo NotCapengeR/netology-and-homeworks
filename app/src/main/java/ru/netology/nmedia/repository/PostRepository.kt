@@ -8,6 +8,8 @@ interface PostRepository {
 
     fun addPost(title: String, text: String): Long
 
+    suspend fun addImage(url: String, postId: Long)
+
     fun removePost(id: Long): Boolean
 
     fun editPost(id: Long, newText: String): Boolean

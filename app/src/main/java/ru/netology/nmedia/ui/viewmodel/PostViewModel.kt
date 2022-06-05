@@ -4,9 +4,12 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.repository.PostRepository
+import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
@@ -27,10 +30,36 @@ class PostViewModel @Inject constructor(
         loadData()
     }
 
-    fun addPost(title: String, text: String): Long = postRepository.addPost(title, text).also {
-        if (it > 0) {
-            val post = postRepository.getPostById(it) ?: return -1
-            mutablePostsList.add(post)
+    fun addPost(
+        title: String,
+        text: String,
+        url: String? = null
+    ): Long {
+        return postRepository.addPost(title, text).also {
+            if (it > 0) {
+                val post = postRepository.getPostById(it) ?: return -1L
+                mutablePostsList.add(post)
+                loadData()
+                if (url != null) {
+                    viewModelScope.launch {
+                        addImage(url, it)
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun addImage(url: String, id: Long) {
+        val index = mutablePostsList.indexOf(postRepository.getPostById(id))
+        if (index == -1) return
+        viewModelScope.launch(Dispatchers.IO) {
+            postRepository.addImage(url, id)
+        }
+        delay(1000L)
+        Timber.d("Hueta image: ${postRepository.getPostById(id)?.video?.items?.first()?.id}")
+        val post = postRepository.getPostById(id)
+        if (post != null) {
+            mutablePostsList[index] = post
             loadData()
         }
     }
@@ -45,14 +74,21 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun editPost(id: Long, newText: String): Boolean {
+    fun editPost(id: Long, newText: String, url: String? = null): Boolean {
         val post = postRepository.getPostById(id) ?: return false
         return postRepository.editPost(id, newText).also {
             if (it) {
                 val newPost = postRepository.getPostById(id) ?: return false
                 val postIndex = mutablePostsList.indexOf(post)
                 mutablePostsList[postIndex] = newPost
-                loadData()
+                if (url != null) {
+                    viewModelScope.launch {
+                        addImage(url, id)
+                    }
+                } else {
+                    loadData()
+                    Timber.d("Hueta: $mutablePostsList")
+                }
             }
         }
     }

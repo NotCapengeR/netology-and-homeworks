@@ -1,6 +1,7 @@
 package ru.netology.nmedia.ui.adapter
 
 import android.text.format.DateFormat
+import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -9,10 +10,12 @@ import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.PostItemBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.utils.setDebouncedListener
+import ru.netology.nmedia.utils.setVisibility
 import ru.netology.nmedia.utils.toPostText
 import timber.log.Timber
 
@@ -32,6 +35,8 @@ interface PostListener {
     fun onCommented(id: Long): Int
 
     fun onPostMoved(id: Long, movedBy: Int): Boolean
+
+    fun onLinkPressed(url: String)
 }
 
 class PostAdapter(
@@ -105,6 +110,27 @@ class PostAdapter(
             tvPostTitle.text = post.title
             tvDateTime.text = DateFormat.format("d MMMM yyyy, HH:mm", post.date)
             ivPostAvatar.setImageResource(post.avatarId)
+            yTLayout.setVisibility(post.video != null)
+            Linkify.addLinks(tvPostText, Linkify.WEB_URLS)
+            if (post.video != null) {
+                val video = post.video.items.first()
+                val thumbnail = video.snippet.thumbnails.thumbnail
+                ytVideoDuration.text =
+                    video.contentDetails.duration
+                        .replace("PT", "")
+                        .replace('S', ' ')
+                        .replace('H', ':')
+                        .replace('M', ':')
+                ytAuthor.text = video.snippet.channelTitle
+                ytTitle.text = video.snippet.title
+                Glide.with(root.context)
+                    .load(thumbnail.url)
+                    .centerCrop()
+                    .into(ytThumbnail)
+                ytThumbnail.setDebouncedListener {
+                    listener.onLinkPressed("$YOUTUBE_URL${video.id}")
+                }
+            }
             if (post.isLiked) {
                 ivLikes.setIconResource(R.drawable.heart)
             } else {
@@ -142,6 +168,7 @@ class PostAdapter(
     }
 
     private companion object {
+        private const val YOUTUBE_URL: String = "https://www.youtube.com/watch?v="
         private const val REMOVE_ID: Int = 1
         private const val MOVE_UP_ID: Int = 2
         private const val MOVE_DOWN_ID: Int = 3

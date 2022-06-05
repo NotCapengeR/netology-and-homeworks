@@ -1,15 +1,20 @@
 package ru.netology.nmedia.ui.fragments
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentMainBinding
 import ru.netology.nmedia.ui.adapter.PostAdapter
@@ -85,7 +90,10 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                     when {
                         etPostEdit.text.toString()
                             .checkIfNotEmpty() && etPostEdit.text.toString() != currentText -> {
-                            viewModel.editPost(id, etPostEdit.text.toString().trim())
+                            Linkify.addLinks(etPostEdit, Linkify.WEB_URLS)
+                            val url: String? =
+                                if (etPostEdit.urls.isNotEmpty()) etPostEdit.urls.first().url else null
+                            viewModel.editPost(id, etPostEdit.text.toString().trim(), url)
                             clearKeyboard(etPostEdit)
                         }
                         !etPostEdit.text.toString().checkIfNotEmpty() ->
@@ -113,10 +121,13 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
             override fun onPostMoved(id: Long, movedBy: Int): Boolean {
                 return viewModel.movePost(id, movedBy)
             }
+
+            override fun onLinkPressed(url: String) {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+            }
         })
         adapter.setHasStableIds(true)
-        with(binding)
-        {
+        with(binding) {
             rcViewPost.layoutManager =
                 LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
             rcViewPost.adapter = adapter

@@ -2,6 +2,7 @@ package ru.netology.nmedia.ui.fragments
 
 import android.os.Bundle
 import android.text.format.DateFormat
+import android.text.util.Linkify
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
@@ -60,8 +61,18 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
         when (view.id) {
             R.id.cardViewSendPost -> {
                 with(binding) {
-                    if (tvPostTitle.text.toString().checkIfNotEmpty() && tvPostText.text.toString().checkIfNotEmpty()) {
-                        viewModel.addPost(tvPostTitle.text.toString().trim(), tvPostText.text.toString().trim())
+                    if (tvPostTitle.text.toString().checkIfNotEmpty() &&
+                        tvPostText.text.toString().checkIfNotEmpty()
+                    ) {
+                        Linkify.addLinks(tvPostText, Linkify.WEB_URLS)
+                        val url: String? =
+                            if (tvPostText.urls.isNotEmpty()) tvPostText.urls.first().url else null
+                        viewModel.addPost(
+                            tvPostTitle.text.toString().trim(),
+                            tvPostText.text.toString().trim(),
+                            url
+                        )
+
                         onBackPressed()
                     } else {
                         makeToast(requireContext().getString(R.string.text_is_unfilled))

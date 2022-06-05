@@ -1,6 +1,7 @@
 package ru.netology.nmedia.dto
 
 import ru.netology.nmedia.R
+import ru.netology.nmedia.network.YouTubeVideo
 
 data class Post(
     val id: Long,
@@ -14,4 +15,5 @@ data class Post(
     val views: Int = 0,
     val isLiked: Boolean = false,
     val editHistory: MutableList<String> = mutableListOf(),
+    val video: YouTubeVideo? = null
 )
