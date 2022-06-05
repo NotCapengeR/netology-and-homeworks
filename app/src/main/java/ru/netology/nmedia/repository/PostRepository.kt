@@ -8,7 +8,9 @@ interface PostRepository {
 
     fun addPost(title: String, text: String): Long
 
-    suspend fun addImage(url: String, postId: Long)
+    suspend fun addVideo(url: String, postId: Long)
+
+    fun removeLink(id: Long): Boolean
 
     fun removePost(id: Long): Boolean
 

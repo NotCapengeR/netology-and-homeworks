@@ -9,7 +9,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.repository.PostRepository
-import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
@@ -28,6 +27,9 @@ class PostViewModel @Inject constructor(
     init {
         mutablePostsList.addAll(postRepository.getPosts())
         loadData()
+        viewModelScope.launch {
+            addVideo("https://www.youtube.com/watch?v=1dOsef2ZzQ8", 1)
+        }
     }
 
     fun addPost(
@@ -42,25 +44,37 @@ class PostViewModel @Inject constructor(
                 loadData()
                 if (url != null) {
                     viewModelScope.launch {
-                        addImage(url, it)
+                        addVideo(url, it)
                     }
                 }
             }
         }
     }
 
-    private suspend fun addImage(url: String, id: Long) {
+    private suspend fun addVideo(url: String, id: Long) {
         val index = mutablePostsList.indexOf(postRepository.getPostById(id))
         if (index == -1) return
         viewModelScope.launch(Dispatchers.IO) {
-            postRepository.addImage(url, id)
+            postRepository.addVideo(url, id)
         }
-        delay(1000L)
-        Timber.d("Hueta image: ${postRepository.getPostById(id)?.video?.items?.first()?.id}")
-        val post = postRepository.getPostById(id)
-        if (post != null) {
-            mutablePostsList[index] = post
-            loadData()
+        delay(1500L)
+        postRepository.getPostById(id)?.let {
+            if (it.video != null) {
+                mutablePostsList[index] = it
+                loadData()
+            }
+        }
+    }
+
+    fun removeLink(id: Long): Boolean {
+        val post = postRepository.getPostById(id) ?: return false
+        return postRepository.removeLink(id).also {
+            if (it) {
+                val newPost = postRepository.getPostById(id) ?: return false
+                val postIndex = mutablePostsList.indexOf(post)
+                mutablePostsList[postIndex] = newPost
+                loadData()
+            }
         }
     }
 
@@ -81,13 +95,11 @@ class PostViewModel @Inject constructor(
                 val newPost = postRepository.getPostById(id) ?: return false
                 val postIndex = mutablePostsList.indexOf(post)
                 mutablePostsList[postIndex] = newPost
+                loadData()
                 if (url != null) {
                     viewModelScope.launch {
-                        addImage(url, id)
+                        addVideo(url, id)
                     }
-                } else {
-                    loadData()
-                    Timber.d("Hueta: $mutablePostsList")
                 }
             }
         }
@@ -148,6 +160,7 @@ class PostViewModel @Inject constructor(
         }
     }
 }
+
 
 
 

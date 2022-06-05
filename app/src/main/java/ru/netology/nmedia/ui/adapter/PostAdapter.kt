@@ -37,6 +37,8 @@ interface PostListener {
     fun onPostMoved(id: Long, movedBy: Int): Boolean
 
     fun onLinkPressed(url: String)
+
+    fun onLinkRemoved(id: Long): Boolean
 }
 
 class PostAdapter(
@@ -129,6 +131,9 @@ class PostAdapter(
                     .into(ytThumbnail)
                 ytThumbnail.setDebouncedListener {
                     listener.onLinkPressed("$YOUTUBE_URL${video.id}")
+                }
+                ytCancel.setDebouncedListener {
+                    listener.onLinkRemoved(post.id)
                 }
             }
             if (post.isLiked) {

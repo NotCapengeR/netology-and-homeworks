@@ -10,11 +10,9 @@ import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentMainBinding
 import ru.netology.nmedia.ui.adapter.PostAdapter
@@ -124,6 +122,10 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
 
             override fun onLinkPressed(url: String) {
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+            }
+
+            override fun onLinkRemoved(id: Long): Boolean {
+                return viewModel.removeLink(id)
             }
         })
         adapter.setHasStableIds(true)
