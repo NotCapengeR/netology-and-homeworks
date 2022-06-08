@@ -8,12 +8,10 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.repository.PostRepository
 import java.util.*
 import javax.inject.Inject
-import kotlin.collections.HashMap
 
 class PostViewModel @Inject constructor(
     application: Application,
