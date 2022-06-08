@@ -1,7 +1,6 @@
 package ru.netology.nmedia.ui.viewmodel
 
 import android.app.Application
-import android.text.format.DateFormat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -151,10 +150,7 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun getDate(id: Long): String? {
-        val post = postRepository.getPostById(id) ?: return null
-        return DateFormat.format("d MMMM yyyy, HH:mm", post.date).toString()
-    }
+    fun getPostById(id: Long): Post? = postRepository.getPostById(id)
 
     private fun loadData() {
         viewModelScope.launch {

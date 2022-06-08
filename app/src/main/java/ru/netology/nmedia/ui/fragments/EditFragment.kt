@@ -1,6 +1,9 @@
 package ru.netology.nmedia.ui.fragments
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.text.format.DateFormat
 import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.View
@@ -8,16 +11,15 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.ui.AppBarConfiguration
-import ru.netology.nmedia.databinding.EditFragmentBinding
 import androidx.navigation.ui.setupWithNavController
+import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
+import ru.netology.nmedia.databinding.EditFragmentBinding
+import ru.netology.nmedia.ui.adapter.PostAdapter.Companion.YOUTUBE_URL
 import ru.netology.nmedia.ui.base.BaseFragment
 import ru.netology.nmedia.ui.viewmodel.PostViewModel
 import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
-import ru.netology.nmedia.utils.checkIfNotEmpty
-import ru.netology.nmedia.utils.getAppComponent
-import ru.netology.nmedia.utils.makeToast
-import ru.netology.nmedia.utils.setDebouncedListener
+import ru.netology.nmedia.utils.*
 import javax.inject.Inject
 
 class EditFragment : BaseFragment<EditFragmentBinding>() {
@@ -57,8 +59,43 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
         val id = requireArguments().get("post_id") as Long
         val currentText = requireArguments().get("post_text") as String
         val currentTitle = requireArguments().get("post_title") as String
-        val date = viewModel.getDate(id)
-        if (date != null) tvDateTime.text = date
+        val post = viewModel.getPostById(id)
+        if (post != null) {
+            tvDateTime.text = DateFormat.format("d MMMM yyyy, HH:mm", post.date)
+            ivLikes.text = post.likes.toPostText()
+            ivComments.text = post.comments.toPostText()
+            ivPostAvatar.setImageResource(post.avatarId)
+            ivShare.text = post.shared.toPostText()
+            ivLikes.isChecked = post.isLiked
+
+            if (post.isLiked) {
+                ivLikes.setIconResource(R.drawable.heart)
+            } else {
+                ivLikes.setIconResource(R.drawable.heart_outline)
+            }
+            if (post.video != null) {
+                val video = post.video.items.first()
+                val thumbnail = video.snippet.thumbnails.thumbnail
+                ytCancel.setVisibility(false)
+                ytVideoDuration.text =
+                    video.contentDetails.duration
+                        .replace("PT", "")
+                        .replace('S', ' ')
+                        .replace('H', ':')
+                        .replace('M', ':')
+                ytAuthor.text = video.snippet.channelTitle
+                ytTitle.text = video.snippet.title
+                Glide.with(requireContext())
+                    .load(thumbnail.url)
+                    .centerCrop()
+                    .into(ytThumbnail)
+                ytThumbnail.setDebouncedListener {
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(
+                        "$YOUTUBE_URL${video.id}")))
+                }
+
+            }
+        }
         tvPostText.setText(currentText)
         tvPostTitle.setText(currentTitle)
         cancelButton.setOnClickListener {

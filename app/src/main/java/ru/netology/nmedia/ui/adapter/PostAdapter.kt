@@ -172,8 +172,8 @@ class PostAdapter(
             oldItem.id == newItem.id
     }
 
-    private companion object {
-        private const val YOUTUBE_URL: String = "https://www.youtube.com/watch?v="
+    companion object {
+        const val YOUTUBE_URL: String = "https://www.youtube.com/watch?v="
         private const val REMOVE_ID: Int = 1
         private const val MOVE_UP_ID: Int = 2
         private const val MOVE_DOWN_ID: Int = 3
