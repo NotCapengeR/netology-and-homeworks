@@ -14,7 +14,7 @@ interface PostRepository {
 
     fun removePost(id: Long): Boolean
 
-    fun editPost(id: Long, newText: String): Boolean
+    fun editPost(id: Long, newText: String, newTitle: String): Boolean
 
     fun getPostById(id: Long): Post?
 

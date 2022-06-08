@@ -6,6 +6,7 @@ import ru.netology.nmedia.di.modules.AppModule
 import ru.netology.nmedia.di.modules.ViewModelModule
 import ru.netology.nmedia.ui.fragments.AddFragment
 import ru.netology.nmedia.ui.activity.MainActivity
+import ru.netology.nmedia.ui.fragments.EditFragment
 import ru.netology.nmedia.ui.fragments.MainFragment
 import javax.inject.Singleton
 
@@ -15,6 +16,7 @@ interface AppComponent {
 
     fun inject(fragment: MainFragment)
     fun inject(fragment: AddFragment)
+    fun inject(fragment: EditFragment)
     fun inject(activity: MainActivity)
 
 }

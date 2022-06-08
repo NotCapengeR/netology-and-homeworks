@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
@@ -78,29 +79,16 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 return viewModel.removePost(id)
             }
 
-            override fun onEdit(id: Long, currentText: String): Boolean = with(binding) {
-                cardViewEditMessage.setVisibility(true)
-                editableMessageContainer.setVisibility(true)
-                tvPreviousText.text = currentText
-                etPostEdit.setText(currentText)
-                AndroidUtils.showKeyboard(etPostEdit, requireContext())
-                ivEditPostSend.setDebouncedListener(50L) {
-                    when {
-                        etPostEdit.text.toString()
-                            .checkIfNotEmpty() && etPostEdit.text.toString() != currentText -> {
-                            Linkify.addLinks(etPostEdit, Linkify.WEB_URLS)
-                            val url: String? =
-                                if (etPostEdit.urls.isNotEmpty()) etPostEdit.urls.first().url else null
-                            viewModel.editPost(id, etPostEdit.text.toString().trim(), url)
-                            clearKeyboard(etPostEdit)
-                        }
-                        !etPostEdit.text.toString().checkIfNotEmpty() ->
-                            makeToast(requireContext().getString(R.string.text_is_unfilled))
-
-                        etPostEdit.text.toString().trim() == currentText ->
-                            makeToast(requireContext().getString(R.string.text_is_equal))
-                    }
-                }
+            override fun onEdit(
+                id: Long,
+                currentText: String,
+                currentTitle: String
+            ): Boolean = with(binding) {
+                mainNavController?.navigate(R.id.action_mainFragment_to_editFragment, bundleOf(
+                    "post_id" to id,
+                    "post_text" to currentText,
+                    "post_title" to currentTitle
+                ))
                 return true
             }
 

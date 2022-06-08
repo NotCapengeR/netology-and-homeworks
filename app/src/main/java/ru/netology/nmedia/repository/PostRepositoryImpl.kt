@@ -27,7 +27,10 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     init {
-        addPost("Университет Нетология", "Курс по Dagger 2: https://www.youtube.com/watch?v=1dOsef2ZzQ8")
+        addPost(
+            "Университет Нетология",
+            "Курс по Dagger 2: https://www.youtube.com/watch?v=1dOsef2ZzQ8"
+        )
     }
 
     private fun getIdFromYouTubeLink(link: String?): String? {
@@ -59,8 +62,10 @@ class PostRepositoryImpl @Inject constructor(
                     call: Call<YouTubeVideo>,
                     response: Response<YouTubeVideo>
                 ) {
-                    Timber.d("Response code: ${response.code()}, " +
-                            "body id: ${response.body()?.items?.first()?.id}")
+                    Timber.d(
+                        "Response code: ${response.code()}, " +
+                                "body id: ${response.body()?.items?.first()?.id}"
+                    )
                     if (response.code() == 200) {
                         posts[postId] = post.copy(video = response.body())
                     }
@@ -86,10 +91,11 @@ class PostRepositoryImpl @Inject constructor(
         return !posts.containsValue(post)
     }
 
-    override fun editPost(id: Long, newText: String): Boolean {
+    override fun editPost(id: Long, newText: String, newTitle: String): Boolean {
         val post = findPostById(id).post ?: return false
-        val newPost = post.copy(text = newText)
+        val newPost = post.copy(text = newText, title = newTitle)
         newPost.editHistory.add(post.text)
+        newPost.titleHistory.add(post.title)
         posts[id] = newPost
         return posts.containsValue(newPost)
     }

@@ -1,16 +1,19 @@
 package ru.netology.nmedia.ui.viewmodel
 
 import android.app.Application
+import android.text.format.DateFormat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.repository.PostRepository
 import java.util.*
 import javax.inject.Inject
+import kotlin.collections.HashMap
 
 class PostViewModel @Inject constructor(
     application: Application,
@@ -19,6 +22,11 @@ class PostViewModel @Inject constructor(
 
     // это для перемещения постов, в мапах-то позиции нельзя менять)
     private val mutablePostsList: MutableList<Post> = mutableListOf()
+
+    private val indexes: Map<Long, Pair<Int, Post>>
+        get() = mutablePostsList.associate { post ->
+            post.id to (mutablePostsList.indexOf(post) to post)
+        }
 
     val postsList: MutableLiveData<List<Post>> by lazy {
         MutableLiveData<List<Post>>()
@@ -52,49 +60,44 @@ class PostViewModel @Inject constructor(
     }
 
     private suspend fun addVideo(url: String, id: Long) {
-        val index = mutablePostsList.indexOf(postRepository.getPostById(id))
-        if (index == -1) return
+        val index = indexes[id]?.first ?: return
         viewModelScope.launch(Dispatchers.IO) {
             postRepository.addVideo(url, id)
         }
-        delay(1500L)
+        delay(1000)
         postRepository.getPostById(id)?.let {
-            if (it.video != null) {
-                mutablePostsList[index] = it
-                loadData()
-            }
+            mutablePostsList[index] = it
+            loadData()
         }
     }
 
     fun removeLink(id: Long): Boolean {
-        val post = postRepository.getPostById(id) ?: return false
+        val post = indexes[id] ?: return false
         return postRepository.removeLink(id).also {
             if (it) {
                 val newPost = postRepository.getPostById(id) ?: return false
-                val postIndex = mutablePostsList.indexOf(post)
-                mutablePostsList[postIndex] = newPost
+                mutablePostsList[post.first] = newPost
                 loadData()
             }
         }
     }
 
     fun removePost(id: Long): Boolean {
-        val post = postRepository.getPostById(id) ?: return false
+        val post = indexes[id] ?: return false
         return postRepository.removePost(id).also {
             if (it) {
-                mutablePostsList.remove(post)
+                mutablePostsList.remove(post.second)
                 loadData()
             }
         }
     }
 
-    fun editPost(id: Long, newText: String, url: String? = null): Boolean {
-        val post = postRepository.getPostById(id) ?: return false
-        return postRepository.editPost(id, newText).also {
+    fun editPost(id: Long, newText: String, newTitle: String, url: String? = null): Boolean {
+        val post = indexes[id] ?: return false
+        return postRepository.editPost(id, newText, newTitle).also {
             if (it) {
                 val newPost = postRepository.getPostById(id) ?: return false
-                val postIndex = mutablePostsList.indexOf(post)
-                mutablePostsList[postIndex] = newPost
+                mutablePostsList[post.first] = newPost
                 loadData()
                 if (url != null) {
                     viewModelScope.launch {
@@ -106,52 +109,53 @@ class PostViewModel @Inject constructor(
     }
 
     fun likePost(id: Long): Boolean {
-        val post = postRepository.getPostById(id) ?: return false
+        val post = indexes[id] ?: return false
         return postRepository.likePost(id).also {
             if (it) {
                 val newPost = postRepository.getPostById(id) ?: return false
-                val postIndex = mutablePostsList.indexOf(post)
-                mutablePostsList[postIndex] = newPost
+                mutablePostsList[post.first] = newPost
                 loadData()
             }
         }
     }
 
     fun sharePost(id: Long): Int {
-        val post = postRepository.getPostById(id) ?: return -1
+        val post = indexes[id] ?: return -1
         return postRepository.sharePost(id).also {
             if (it > 0) {
                 val newPost = postRepository.getPostById(id) ?: return -2
-                val postIndex = mutablePostsList.indexOf(post)
-                mutablePostsList[postIndex] = newPost
+                mutablePostsList[post.first] = newPost
                 loadData()
             }
         }
     }
 
     fun commentPost(id: Long): Int {
-        val post = postRepository.getPostById(id) ?: return -1
+        val post = indexes[id] ?: return -1
         return postRepository.commentPost(id).also {
             if (it > 0) {
                 val newPost = postRepository.getPostById(id) ?: return -2
-                val postIndex = mutablePostsList.indexOf(post)
-                mutablePostsList[postIndex] = newPost
+                mutablePostsList[post.first] = newPost
                 loadData()
             }
         }
     }
 
     fun movePost(id: Long, movedBy: Int): Boolean {
-        val post = postRepository.getPostById(id) ?: return false
-        val postIndex = mutablePostsList.indexOf(post)
-        val swappablePostIndex = postIndex - movedBy
+        val post = indexes[id] ?: return false
+        val swappablePostIndex = post.first - movedBy
         return try {
-            Collections.swap(mutablePostsList, postIndex, swappablePostIndex)
+            Collections.swap(mutablePostsList, post.first, swappablePostIndex)
             loadData()
             postsList.value == mutablePostsList.toList()
         } catch (ex: ArrayIndexOutOfBoundsException) {
             return false
         }
+    }
+
+    fun getDate(id: Long): String? {
+        val post = postRepository.getPostById(id) ?: return null
+        return DateFormat.format("d MMMM yyyy, HH:mm", post.date).toString()
     }
 
     private fun loadData() {

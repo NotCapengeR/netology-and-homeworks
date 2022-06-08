@@ -26,7 +26,7 @@ interface PostListener {
 
     fun onRemoved(id: Long): Boolean
 
-    fun onEdit(id: Long, currentText: String): Boolean
+    fun onEdit(id: Long, currentText: String, currentTitle: String): Boolean
 
     fun onLiked(id: Long): Boolean
 
@@ -85,7 +85,7 @@ class PostAdapter(
                     listener.onRemoved(post.id)
                 }
 
-                EDIT_ID -> listener.onEdit(post.id, post.text)
+                EDIT_ID -> listener.onEdit(post.id, post.text, post.title)
 
                 MOVE_DOWN_ID -> listener.onPostMoved(post.id, -1)
 

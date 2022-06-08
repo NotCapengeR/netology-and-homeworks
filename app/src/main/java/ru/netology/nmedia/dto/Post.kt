@@ -15,5 +15,6 @@ data class Post(
     val views: Int = 0,
     val isLiked: Boolean = false,
     val editHistory: MutableList<String> = mutableListOf(),
+    val titleHistory: MutableList<String> = mutableListOf(),
     val video: YouTubeVideo? = null
 )
