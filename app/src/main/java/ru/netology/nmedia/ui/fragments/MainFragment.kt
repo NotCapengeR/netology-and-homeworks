@@ -15,6 +15,9 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentMainBinding
+import ru.netology.nmedia.dto.Post.Companion.POST_ID
+import ru.netology.nmedia.dto.Post.Companion.POST_TEXT
+import ru.netology.nmedia.dto.Post.Companion.POST_TITLE
 import ru.netology.nmedia.ui.adapter.PostAdapter
 import ru.netology.nmedia.ui.adapter.PostListener
 import ru.netology.nmedia.ui.adapter.decorators.LinearVerticalSpacingDecoration
@@ -84,9 +87,9 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 currentTitle: String
             ): Boolean = with(binding) {
                 mainNavController?.navigate(R.id.action_mainFragment_to_editFragment, bundleOf(
-                    "post_id" to id,
-                    "post_text" to currentText,
-                    "post_title" to currentTitle
+                    POST_ID to id,
+                    POST_TEXT to currentText,
+                    POST_TITLE to currentTitle
                 ))
                 return mainNavController?.currentDestination?.id == R.id.editFragment
             }

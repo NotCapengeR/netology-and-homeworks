@@ -15,6 +15,9 @@ import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.EditFragmentBinding
+import ru.netology.nmedia.dto.Post.Companion.POST_ID
+import ru.netology.nmedia.dto.Post.Companion.POST_TEXT
+import ru.netology.nmedia.dto.Post.Companion.POST_TITLE
 import ru.netology.nmedia.ui.adapter.PostAdapter.Companion.YOUTUBE_URL
 import ru.netology.nmedia.ui.base.BaseFragment
 import ru.netology.nmedia.ui.viewmodel.PostViewModel
@@ -56,9 +59,9 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
             toolbar.setupWithNavController(this, appBarConfiguration)
         }
         (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
-        val id = requireArguments().get("post_id") as Long
-        val currentText = requireArguments().get("post_text") as String
-        val currentTitle = requireArguments().get("post_title") as String
+        val id = requireArguments().get(POST_ID) as Long
+        val currentText = requireArguments().get(POST_TEXT) as String
+        val currentTitle = requireArguments().get(POST_TITLE) as String
         val post = viewModel.getPostById(id)
         if (post != null) {
             tvDateTime.text = DateFormat.format("d MMMM yyyy, HH:mm", post.date)

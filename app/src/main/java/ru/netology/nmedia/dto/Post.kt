@@ -17,4 +17,10 @@ data class Post(
     val editHistory: MutableList<String> = mutableListOf(),
     val titleHistory: MutableList<String> = mutableListOf(),
     val video: YouTubeVideo? = null
-)
+) {
+    companion object {
+        const val POST_TITLE: String = "post_title"
+        const val POST_TEXT: String = "post_text"
+        const val POST_ID: String = "post_id"
+    }
+}
