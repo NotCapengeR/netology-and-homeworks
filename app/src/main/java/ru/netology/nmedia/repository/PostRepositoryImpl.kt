@@ -1,6 +1,9 @@
 package ru.netology.nmedia.repository
 
-import kotlinx.coroutines.*
+import android.content.Context
+import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -9,15 +12,21 @@ import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.network.ApiService
 import ru.netology.nmedia.network.YouTubeVideo
 import timber.log.Timber
+import java.lang.reflect.Type
 import java.util.*
 import java.util.regex.Pattern
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class PostRepositoryImpl @Inject constructor(
-    private val service: ApiService
+    private val service: ApiService,
+    private val gson: Gson,
+    private val type: Type,
+    private val context: Context
 ) : PostRepository {
 
-    private val posts: MutableMap<Long, Post> = HashMap()
+    private var posts: MutableMap<Long, Post> = HashMap()
     private val removedPosts: MutableMap<Long, Post> = HashMap()
     private var postId: Long = 1L
 
@@ -27,10 +36,21 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     init {
-        addPost(
-            "Университет Нетология",
-            "Курс по Dagger 2: https://www.youtube.com/watch?v=1dOsef2ZzQ8"
-        )
+        val file = context.filesDir.resolve(FILENAME)
+        if (file.exists()) {
+            context.openFileInput(FILENAME).bufferedReader().use {
+                val postsList: List<Post> = gson.fromJson(it, type)
+                if (postsList.isNotEmpty()) {
+                    postId = postsList.lastOrNull()?.id?.plus(1) ?: postId
+                    posts = postsList.associateBy { post -> post.id }.toMutableMap()
+                } else {
+                    writeFiles()
+                }
+            }
+        } else {
+            writeFiles()
+        }
+
     }
 
     private fun getIdFromYouTubeLink(link: String?): String? {
@@ -39,7 +59,6 @@ class PostRepositoryImpl @Inject constructor(
         return if (matcher.find()) {
             matcher.group(1)
         } else null
-
     }
 
     override fun getPosts(): MutableList<Post> = posts.values.toMutableList()
@@ -50,6 +69,7 @@ class PostRepositoryImpl @Inject constructor(
         val post = Post(postId, title, text, Date().time, R.mipmap.ic_launcher)
         posts[postId] = post
         postId++
+        writeFiles()
         return post.id
     }
 
@@ -68,6 +88,7 @@ class PostRepositoryImpl @Inject constructor(
                     )
                     if (response.code() == 200) {
                         posts[postId] = post.copy(video = response.body())
+                        writeFiles()
                     }
                 }
 
@@ -81,6 +102,7 @@ class PostRepositoryImpl @Inject constructor(
     override fun removeLink(id: Long): Boolean {
         val post = getPostById(id) ?: return false
         posts[id] = post.copy(video = null)
+        writeFiles()
         return posts[id]?.video == null
     }
 
@@ -88,6 +110,7 @@ class PostRepositoryImpl @Inject constructor(
         val post = findPostById(id).post ?: return false
         posts.remove(id)
         removedPosts[id] = post
+        writeFiles()
         return !posts.containsValue(post)
     }
 
@@ -97,6 +120,7 @@ class PostRepositoryImpl @Inject constructor(
         newPost.editHistory.add(post.text)
         newPost.titleHistory.add(post.title)
         posts[id] = newPost
+        writeFiles()
         return posts.containsValue(newPost)
     }
 
@@ -108,6 +132,7 @@ class PostRepositoryImpl @Inject constructor(
         } else {
             posts[id] = post.copy(likes = previousLikesCount + 1, isLiked = !post.isLiked)
         }
+        writeFiles()
         return true
     }
 
@@ -115,6 +140,7 @@ class PostRepositoryImpl @Inject constructor(
         val post = findPostById(id).post ?: return -1
         val nextValue = post.shared + 450
         posts[id] = post.copy(shared = nextValue)
+        writeFiles()
         return nextValue
     }
 
@@ -122,6 +148,7 @@ class PostRepositoryImpl @Inject constructor(
         val post = findPostById(id).post ?: return -1
         val nextValue = post.comments + 450
         posts[id] = post.copy(comments = nextValue)
+        writeFiles()
         return nextValue
     }
 
@@ -139,11 +166,18 @@ class PostRepositoryImpl @Inject constructor(
         //        }
     }
 
+    private fun writeFiles() {
+        context.openFileOutput(FILENAME, Context.MODE_PRIVATE).bufferedWriter().use {
+            it.write(gson.toJson(posts.values.toList()))
+        }
+    }
+
     private companion object {
         private const val URL_PATTERN: String =
             "https?://(?:[0-9A-Z-]+\\.)?(?:youtu\\.be/|youtube\\.com\\S*[^\\w\\-\\s])([\\w\\-]{11})(?=[^\\w\\-]|$)(?![?=&+%\\w]*(?:['\"][^<>]*>|</a>))[?=&+%\\w]*"
         private val COMPILED_PATTERN: Pattern =
             Pattern.compile(URL_PATTERN, Pattern.CASE_INSENSITIVE)
+        private const val FILENAME: String = "posts.json"
     }
 
 }

@@ -3,17 +3,21 @@ package ru.netology.nmedia
 import android.app.Application
 import ru.netology.nmedia.di.AppComponent
 import ru.netology.nmedia.di.DaggerAppComponent
+import ru.netology.nmedia.di.modules.AppModule
 import timber.log.Timber
-import javax.inject.Inject
 
-class App @Inject constructor(): Application() {
+class App : Application() {
 
-    val appComponent: AppComponent = DaggerAppComponent.create()
+    lateinit var appComponent: AppComponent
 
     override fun onCreate() {
         super.onCreate()
+        appComponent = DaggerAppComponent.builder()
+            .appModule(AppModule(this))
+            .build()
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
+            Timber.d("Hueta context 1: $this")
         }
     }
 }

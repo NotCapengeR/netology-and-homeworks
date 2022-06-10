@@ -65,6 +65,10 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
         val post = viewModel.getPostById(id)
         if (post != null) {
             tvDateTime.text = DateFormat.format("d MMMM yyyy, HH:mm", post.date)
+            ivLikes.tag = post.id
+            ytCancel.tag = post.id
+            ivComments.tag = post.id
+            ivShare.tag = post.id
             ivLikes.text = post.likes.toPostText()
             ivComments.text = post.comments.toPostText()
             ivPostAvatar.setImageResource(post.avatarId)
@@ -77,9 +81,9 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
                 ivLikes.setIconResource(R.drawable.heart_outline)
             }
             if (post.video != null) {
+                yTLayout.setVisibility(true)
                 val video = post.video.items.first()
                 val thumbnail = video.snippet.thumbnails.thumbnail
-                ytCancel.setVisibility(false)
                 ytVideoDuration.text =
                     video.contentDetails.duration
                         .replace("PT", "")
@@ -96,13 +100,41 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(
                         "$YOUTUBE_URL${video.id}")))
                 }
+                ytCancel.setDebouncedListener(50L) {
+                    viewModel.removeLink(it.tag as Long)
+                    yTLayout.setVisibility(false)
+                }
 
+            } else {
+                yTLayout.setVisibility(false)
             }
         }
         tvPostText.setText(currentText)
         tvPostTitle.setText(currentTitle)
         cancelButton.setOnClickListener {
             onBackPressed()
+        }
+        ivLikes.setDebouncedListener(50L) {
+            viewModel.likePost(it.tag as Long)
+            val newPost = viewModel.getPostById(it.tag as Long)
+            ivLikes.text = newPost?.likes?.toPostText()
+            ivLikes.isChecked = newPost?.isLiked ?: false
+
+            if (newPost?.isLiked == true) {
+                ivLikes.setIconResource(R.drawable.heart)
+            } else {
+                ivLikes.setIconResource(R.drawable.heart_outline)
+            }
+        }
+        ivShare.setDebouncedListener(50L) {
+            viewModel.sharePost(it.tag as Long)
+            val newPost = viewModel.getPostById(it.tag as Long)
+            ivShare.text = newPost?.shared?.toPostText()
+        }
+        ivComments.setDebouncedListener(50L) {
+            viewModel.commentPost(it.tag as Long)
+            val newPost = viewModel.getPostById(it.tag as Long)
+            ivComments.text = newPost?.comments?.toPostText()
         }
         cardViewSendPost.setDebouncedListener {
             when {

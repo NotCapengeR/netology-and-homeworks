@@ -32,9 +32,6 @@ class PostViewModel @Inject constructor(
     init {
         mutablePostsList.addAll(postRepository.getPosts())
         loadData()
-        viewModelScope.launch {
-            addVideo("https://www.youtube.com/watch?v=1dOsef2ZzQ8", 1)
-        }
     }
 
     fun addPost(
