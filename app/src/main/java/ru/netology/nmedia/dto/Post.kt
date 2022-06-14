@@ -22,5 +22,20 @@ data class Post(
         const val POST_TITLE: String = "post_title"
         const val POST_TEXT: String = "post_text"
         const val POST_ID: String = "post_id"
+        val EMPTY_POST: Post = Post(
+            0L,
+            "",
+            "",
+            0L,
+            0,
+            0,
+            0,
+            0,
+            0,
+            false,
+            mutableListOf(),
+            mutableListOf(),
+            null
+        )
     }
 }

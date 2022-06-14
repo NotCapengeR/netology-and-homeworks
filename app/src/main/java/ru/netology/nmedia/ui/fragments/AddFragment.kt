@@ -15,7 +15,6 @@ import ru.netology.nmedia.ui.viewmodel.PostViewModel
 import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
 import ru.netology.nmedia.utils.checkIfNotEmpty
 import ru.netology.nmedia.utils.getAppComponent
-import ru.netology.nmedia.utils.makeToast
 import ru.netology.nmedia.utils.setDebouncedListener
 import java.util.*
 import javax.inject.Inject
@@ -75,7 +74,7 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
 
                         onBackPressed()
                     } else {
-                        makeToast(requireContext().getString(R.string.text_is_unfilled))
+                        showToast(R.string.text_is_unfilled)
                     }
                 }
             }

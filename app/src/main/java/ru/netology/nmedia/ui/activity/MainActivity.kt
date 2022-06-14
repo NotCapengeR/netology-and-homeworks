@@ -1,13 +1,12 @@
 package ru.netology.nmedia.ui.activity
 
-import androidx.appcompat.app.AppCompatActivity
-import ru.netology.nmedia.R
-import ru.netology.nmedia.utils.FragmentObserver
+import android.view.LayoutInflater
+import ru.netology.nmedia.databinding.ActivityMainBinding
+import ru.netology.nmedia.ui.base.BaseActivity
 
 
-class MainActivity : AppCompatActivity(R.layout.activity_main), FragmentObserver {
+class MainActivity : BaseActivity<ActivityMainBinding>() {
 
-    override fun onStartFragment() {}
-
-    override fun onStopFragment() {}
+    override val bindingInflater: (LayoutInflater) -> ActivityMainBinding
+        get() = ActivityMainBinding::inflate
 }

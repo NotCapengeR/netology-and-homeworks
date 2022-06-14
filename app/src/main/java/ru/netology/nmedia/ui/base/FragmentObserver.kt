@@ -1,4 +1,4 @@
-package ru.netology.nmedia.utils
+package ru.netology.nmedia.ui.base
 
 interface FragmentObserver {
 

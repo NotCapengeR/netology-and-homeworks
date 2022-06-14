@@ -3,22 +3,22 @@ package ru.netology.nmedia.ui.base
 import android.os.Bundle
 import android.view.*
 import android.widget.EditText
+import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.viewbinding.ViewBinding
 import ru.netology.nmedia.R
-import ru.netology.nmedia.ui.activity.MainActivity
 import ru.netology.nmedia.utils.AndroidUtils
-import ru.netology.nmedia.utils.FragmentObserver
-import ru.netology.nmedia.utils.checkIfNotEmpty
 
 abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
     private var _binding: ViewBinding? = null
     abstract val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> VB
     protected val mainNavController: NavController? by lazy { activity?.findNavController(R.id.nav_host_fragment) }
+
     @Suppress("UNCHECKED_CAST")
     protected val binding: VB
         get() = requireNotNull(_binding) as VB
@@ -29,7 +29,7 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = bindingInflater.invoke(inflater, container, false)
-        (activity as MainActivity).onStartFragment()
+        (activity as FragmentObserver).onStartFragment()
         clearKeyboard()
         return binding.root
     }
@@ -59,15 +59,30 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
         _binding = null
     }
 
-    protected open fun clearKeyboard(editText: EditText? = null): Boolean? {
+    protected open fun clearKeyboard(editText: EditText? = null) {
         AndroidUtils.hideKeyboard(activity as AppCompatActivity)
-        return if (editText != null) {
-            !editText.text.toString().checkIfNotEmpty()
-        } else null
+        editText?.text?.clear()
+        editText?.clearFocus()
     }
 
-    protected open fun onBackPressed(): String? {
+    protected open fun showKeyboard(mEtSearch: EditText) {
+        AndroidUtils.showKeyboard(mEtSearch, requireContext())
+    }
+
+    protected fun onBackPressed() {
         (activity as AppCompatActivity).onBackPressed()
-        return parentFragmentManager.fragments.last().tag
+    }
+
+    fun showToast(message: String?, isLong: Boolean = false) {
+        if (message == null) return
+        if (isLong) {
+            Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+        } else {
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun showToast(@StringRes msgResId: Int, isLong: Boolean = false) {
+        showToast(getString(msgResId), isLong)
     }
 }

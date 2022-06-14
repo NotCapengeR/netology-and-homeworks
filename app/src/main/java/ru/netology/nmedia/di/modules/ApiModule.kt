@@ -5,6 +5,7 @@ import dagger.Provides
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.netology.nmedia.network.ApiService
+import javax.inject.Singleton
 
 @Module
 class ApiModule {
@@ -14,6 +15,7 @@ class ApiModule {
     }
 
     @Provides
+    @Singleton
     fun provideApiService(): ApiService = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())

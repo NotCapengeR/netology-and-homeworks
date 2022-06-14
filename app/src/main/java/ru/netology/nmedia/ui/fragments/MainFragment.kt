@@ -54,12 +54,10 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
     }
 
 
-    override fun clearKeyboard(editText: EditText?): Boolean = with(binding) {
+    override fun clearKeyboard(editText: EditText?): Unit = with(binding) {
         super.clearKeyboard(editText)
         cardViewEditMessage.setVisibility(false)
         editableMessageContainer.setVisibility(false)
-        editText?.text?.clear()
-        return !editText?.text.toString().checkIfNotEmpty()
     }
 
 

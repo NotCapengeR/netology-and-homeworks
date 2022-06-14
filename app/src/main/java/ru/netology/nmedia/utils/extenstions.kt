@@ -3,7 +3,6 @@ package ru.netology.nmedia.utils
 import android.content.Context
 import android.os.SystemClock
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import ru.netology.nmedia.App
 import ru.netology.nmedia.di.AppComponent
@@ -55,22 +54,6 @@ fun Fragment.getAppComponent(): AppComponent =
 fun Context.getAppComponent(): AppComponent = when (this) {
     is App -> appComponent
     else -> (this.applicationContext as App).appComponent
-}
-
-fun Fragment.makeToast(message: String, isLong: Boolean = false) {
-    if (isLong) {
-        Toast.makeText(this.requireContext(), message, Toast.LENGTH_LONG).show()
-    } else {
-        Toast.makeText(this.requireContext(), message, Toast.LENGTH_SHORT).show()
-    }
-}
-
-fun Context.makeToast(message: String, isLong: Boolean = false) {
-    if (isLong) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-    } else {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
 }
 
 fun String.checkIfNotEmpty(): Boolean = this.trim().isNotEmpty()

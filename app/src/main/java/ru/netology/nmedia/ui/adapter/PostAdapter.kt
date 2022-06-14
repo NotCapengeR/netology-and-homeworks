@@ -9,11 +9,11 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.PostItemBinding
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.ui.base.BaseViewHolder
 import ru.netology.nmedia.utils.setDebouncedListener
 import ru.netology.nmedia.utils.setVisibility
 import ru.netology.nmedia.utils.toPostText
@@ -96,8 +96,7 @@ class PostAdapter(
         popupMenu.show()
     }
 
-    inner class PostViewHolder(private val binding: PostItemBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    inner class PostViewHolder(private val binding: PostItemBinding) : BaseViewHolder(binding.root) {
 
         fun bind(post: Post) = with(binding) {
             menuButton.tag = post
@@ -163,13 +162,12 @@ class PostAdapter(
 
     override fun getItemId(position: Int): Long = getItem(position).id
 
-
     object DiffUtilCallback : DiffUtil.ItemCallback<Post>() {
         override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean =
             oldItem == newItem
 
         override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean =
-            oldItem.id == newItem.id
+            oldItem == newItem
     }
 
     companion object {

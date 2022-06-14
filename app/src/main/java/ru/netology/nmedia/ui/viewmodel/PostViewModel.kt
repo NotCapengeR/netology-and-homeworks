@@ -1,7 +1,6 @@
 package ru.netology.nmedia.ui.viewmodel
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -9,13 +8,14 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.repository.PostRepository
+import ru.netology.nmedia.ui.base.BaseViewModel
 import java.util.*
 import javax.inject.Inject
 
 class PostViewModel @Inject constructor(
     application: Application,
     private val postRepository: PostRepository
-) : AndroidViewModel(application) {
+) : BaseViewModel(application) {
 
     // это для перемещения постов, в мапах-то позиции нельзя менять)
     private val mutablePostsList: MutableList<Post> = mutableListOf()

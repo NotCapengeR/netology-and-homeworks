@@ -38,9 +38,11 @@ interface RepositoryModule {
 class MemoryModule {
 
     @Provides
+    @Singleton
     fun provideGson(): Gson = Gson()
 
     @Provides
+    @Singleton
     fun provideType(): Type =
         TypeToken.getParameterized(List::class.java, Post::class.java).type
 }

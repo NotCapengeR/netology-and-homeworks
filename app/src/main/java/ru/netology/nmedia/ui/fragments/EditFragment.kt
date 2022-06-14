@@ -140,7 +140,7 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
             when {
                 !tvPostText.text.toString().checkIfNotEmpty()
                         || !tvPostTitle.text.toString().checkIfNotEmpty() ->
-                    makeToast(requireContext().getString(R.string.text_is_unfilled))
+                    showToast(R.string.text_is_unfilled)
                 else -> {
                     Linkify.addLinks(tvPostText, Linkify.WEB_URLS)
                     val url: String? =
