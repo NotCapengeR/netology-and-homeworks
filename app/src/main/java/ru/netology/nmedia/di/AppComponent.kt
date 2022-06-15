@@ -4,6 +4,7 @@ import dagger.Component
 import ru.netology.nmedia.App
 import ru.netology.nmedia.di.modules.ApiModule
 import ru.netology.nmedia.di.modules.AppModule
+import ru.netology.nmedia.di.modules.MemoryModule
 import ru.netology.nmedia.di.modules.ViewModelModule
 import ru.netology.nmedia.ui.activity.MainActivity
 import ru.netology.nmedia.ui.fragments.AddFragment
@@ -12,7 +13,7 @@ import ru.netology.nmedia.ui.fragments.MainFragment
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [ViewModelModule::class, AppModule::class, ApiModule::class])
+@Component(modules = [ViewModelModule::class, MemoryModule::class, ApiModule::class])
 interface AppComponent {
 
     @Component.Builder

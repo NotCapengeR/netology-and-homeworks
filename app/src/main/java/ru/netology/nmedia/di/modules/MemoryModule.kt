@@ -13,27 +13,7 @@ import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
 import javax.inject.Singleton
 
-@Module(includes = [RepositoryModule::class])
-class AppModule(private val application: App) {
-
-    @Provides
-    @Singleton
-    fun provideContext(): Context = application
-
-    @Provides
-    @Singleton
-    fun provideApp(): Application = application
-}
-
-@Module(includes = [MemoryModule::class])
-interface RepositoryModule {
-
-    @Binds
-    @Singleton
-    fun bindPostRepository(postRepository: PostRepositoryImpl): PostRepository
-}
-
-@Module(includes = [AppModule::class])
+@Module(includes = [AppModule::class, RepositoryModule::class])
 class MemoryModule {
 
     @Provides
@@ -45,3 +25,24 @@ class MemoryModule {
     @Singleton
     fun provideGson(): Gson = Gson()
 }
+
+@Module
+class AppModule(private val application: App) {
+
+    @Provides
+    @Singleton
+    fun provideContext(): Context = application
+
+    @Provides
+    @Singleton
+    fun provideApp(): Application = application
+}
+
+@Module
+interface RepositoryModule {
+
+    @Binds
+    @Singleton
+    fun bindPostRepository(postRepository: PostRepositoryImpl): PostRepository
+}
+
