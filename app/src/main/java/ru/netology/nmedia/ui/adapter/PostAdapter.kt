@@ -17,7 +17,6 @@ import ru.netology.nmedia.ui.base.BaseViewHolder
 import ru.netology.nmedia.utils.setDebouncedListener
 import ru.netology.nmedia.utils.setVisibility
 import ru.netology.nmedia.utils.toPostText
-import timber.log.Timber
 
 
 interface PostListener {
@@ -65,25 +64,20 @@ class PostAdapter(
         val popupMenu = PopupMenu(context, view)
         val post = view.tag as Post
         val position = currentList.indexOf(post)
-        Timber.d("Position: $position, id: ${post.id}")
 
         popupMenu.menu.add(0, EDIT_ID, Menu.NONE, context.getString(R.string.edit))
         popupMenu.menu.add(0, REMOVE_ID, Menu.NONE, context.getString(R.string.post_remove))
-        popupMenu.menu
-            .add(0, MOVE_UP_ID, Menu.NONE, context.getString(R.string.post_move_up)).apply {
+        popupMenu.menu.add(0, MOVE_UP_ID, Menu.NONE, context.getString(R.string.post_move_up)).apply {
                 isEnabled = position > 0
             }
-        popupMenu.menu
-            .add(0, MOVE_DOWN_ID, Menu.NONE, context.getString(R.string.post_mode_down)).apply {
+        popupMenu.menu.add(0, MOVE_DOWN_ID, Menu.NONE, context.getString(R.string.post_mode_down)).apply {
                 isEnabled = position < this@PostAdapter.currentList.size - 1
             }
 
         popupMenu.setOnMenuItemClickListener {
             when (it.itemId) {
-                REMOVE_ID -> {
-                    Timber.d("Position: $position")
-                    listener.onRemoved(post.id)
-                }
+                REMOVE_ID -> listener.onRemoved(post.id)
+
 
                 EDIT_ID -> listener.onEdit(post.id, post.text, post.title)
 
@@ -152,7 +146,6 @@ class PostAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostAdapter.PostViewHolder {
         val binding =
             PostItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        Timber.tag("questions")
         return PostViewHolder(binding)
     }
 

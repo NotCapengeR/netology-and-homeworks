@@ -24,8 +24,10 @@ import ru.netology.nmedia.ui.adapter.decorators.LinearVerticalSpacingDecoration
 import ru.netology.nmedia.ui.base.BaseFragment
 import ru.netology.nmedia.ui.viewmodel.PostViewModel
 import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
-import ru.netology.nmedia.utils.*
-import timber.log.Timber
+import ru.netology.nmedia.utils.AndroidUtils
+import ru.netology.nmedia.utils.getAppComponent
+import ru.netology.nmedia.utils.setDebouncedListener
+import ru.netology.nmedia.utils.setVisibility
 import javax.inject.Inject
 
 class MainFragment : BaseFragment<FragmentMainBinding>() {
@@ -75,7 +77,6 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
             }
 
             override fun onRemoved(id: Long): Boolean {
-                Timber.d("Removed post with id $id")
                 return viewModel.removePost(id)
             }
 
