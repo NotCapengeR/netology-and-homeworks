@@ -42,25 +42,11 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity(), FragmentObs
     fun showToast(@StringRes msgResId: Int, isLong: Boolean = false) {
         showToast(getString(msgResId), isLong)
     }
+}
 
-//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-//        menu.clear()
-//        menuInflater.inflate(R.menu.main, menu)
-//        return true
-//    }
-//
-//
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        return when (item.itemId) {
-//            android.R.id.home -> {
-//                onBackPressed()
-//                true
-//            }
-//            R.id.delete -> {
-//                onBackPressed()
-//                true
-//            }
-//            else -> super.onOptionsItemSelected(item)
-//        }
-//    }
+interface FragmentObserver {
+
+    fun onStartFragment()
+
+    fun onStopFragment()
 }
