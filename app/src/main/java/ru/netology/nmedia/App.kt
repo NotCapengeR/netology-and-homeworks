@@ -17,7 +17,6 @@ class App : Application() {
             .build()
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
-            Timber.d("Hueta context 1: $this")
         }
     }
 }

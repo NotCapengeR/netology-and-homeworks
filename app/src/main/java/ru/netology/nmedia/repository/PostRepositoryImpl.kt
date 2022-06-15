@@ -1,7 +1,10 @@
 package ru.netology.nmedia.repository
 
 import android.content.Context
+import android.content.SharedPreferences
+import androidx.core.content.edit
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Call
@@ -9,6 +12,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import ru.netology.nmedia.R
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.dto.Post.Companion.POST_ID
 import ru.netology.nmedia.network.ApiService
 import ru.netology.nmedia.network.YouTubeVideo
 import timber.log.Timber
@@ -22,8 +26,8 @@ import javax.inject.Singleton
 class PostRepositoryImpl @Inject constructor(
     private val service: ApiService,
     private val gson: Gson,
-    private val type: Type,
-    private val context: Context
+    private val context: Context,
+    private val preferences: SharedPreferences
 ) : PostRepository {
 
     private var posts: MutableMap<Long, Post> = HashMap()
@@ -41,16 +45,21 @@ class PostRepositoryImpl @Inject constructor(
             context.openFileInput(FILENAME).bufferedReader().use {
                 val postsList: List<Post> = gson.fromJson(it, type)
                 if (postsList.isNotEmpty()) {
-                    postId = postsList.lastOrNull()?.id?.plus(1) ?: postId
+                    postId = preferences.getLong(POST_ID, postId)
                     posts = postsList.associateBy { post -> post.id }.toMutableMap()
                 } else {
                     writeFiles()
+                    preferences.edit {
+                        putLong(POST_ID, postId)
+                    }
                 }
             }
         } else {
             writeFiles()
+            preferences.edit {
+                putLong(POST_ID, postId)
+            }
         }
-
     }
 
     private fun getIdFromYouTubeLink(link: String?): String? {
@@ -69,6 +78,9 @@ class PostRepositoryImpl @Inject constructor(
         val post = Post(postId, title, text, Date().time, R.mipmap.ic_launcher)
         posts[postId] = post
         postId++
+        preferences.edit {
+            putLong(POST_ID, postId)
+        }
         writeFiles()
         return post.id
     }
@@ -173,11 +185,12 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     private companion object {
+        private val type: Type =
+            TypeToken.getParameterized(List::class.java, Post::class.java).type
         private const val URL_PATTERN: String =
             "https?://(?:[0-9A-Z-]+\\.)?(?:youtu\\.be/|youtube\\.com\\S*[^\\w\\-\\s])([\\w\\-]{11})(?=[^\\w\\-]|$)(?![?=&+%\\w]*(?:['\"][^<>]*>|</a>))[?=&+%\\w]*"
         private val COMPILED_PATTERN: Pattern =
             Pattern.compile(URL_PATTERN, Pattern.CASE_INSENSITIVE)
         private const val FILENAME: String = "posts.json"
     }
-
 }

@@ -2,16 +2,15 @@ package ru.netology.nmedia.di.modules
 
 import android.app.Application
 import android.content.Context
+import android.content.SharedPreferences
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import ru.netology.nmedia.App
-import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.dto.Post.Companion.POST_ID
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
-import java.lang.reflect.Type
 import javax.inject.Singleton
 
 @Module(includes = [RepositoryModule::class])
@@ -34,15 +33,15 @@ interface RepositoryModule {
     fun bindPostRepository(postRepository: PostRepositoryImpl): PostRepository
 }
 
-@Module
+@Module(includes = [AppModule::class])
 class MemoryModule {
 
     @Provides
     @Singleton
-    fun provideGson(): Gson = Gson()
+    fun provideSharedPrefs(context: Context): SharedPreferences =
+        context.getSharedPreferences(POST_ID, Context.MODE_PRIVATE)
 
     @Provides
     @Singleton
-    fun provideType(): Type =
-        TypeToken.getParameterized(List::class.java, Post::class.java).type
+    fun provideGson(): Gson = Gson()
 }
