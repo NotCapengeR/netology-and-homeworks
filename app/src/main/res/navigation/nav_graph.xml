@@ -17,25 +17,29 @@
         <action
             android:id="@+id/action_mainFragment_to_editFragment"
             app:destination="@id/editFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_detailsFragment"
+            app:destination="@id/detailsFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/addFragment"
         android:name="ru.netology.nmedia.ui.fragments.AddFragment"
         android:label="add_fragment"
-        tools:layout="@layout/add_fragment">
-        <action
-            android:id="@+id/action_addFragment_to_mainFragment"
-            app:destination="@id/mainFragment" />
-    </fragment>
+        tools:layout="@layout/add_fragment"/>
     <fragment
         android:id="@+id/editFragment"
         android:name="ru.netology.nmedia.ui.fragments.EditFragment"
         tools:layout="@layout/edit_fragment"
-        android:label="EditFragment" >
+        android:label="EditFragment" />
+    <fragment
+        android:id="@+id/detailsFragment"
+        android:name="ru.netology.nmedia.ui.fragments.DetailsFragment"
+        android:label="details_fragment"
+        tools:layout="@layout/details_fragment" >
         <action
-            android:id="@+id/action_editFragment_to_mainFragment"
-            app:destination="@id/mainFragment" />
+            android:id="@+id/action_detailsFragment_to_editFragment"
+            app:destination="@id/editFragment" />
     </fragment>
 
 

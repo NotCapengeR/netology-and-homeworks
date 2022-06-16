@@ -116,6 +116,19 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
             override fun onLinkRemoved(id: Long): Boolean {
                 return viewModel.removeLink(id)
             }
+
+            override fun onItemPressed(
+                id: Long,
+                currentText: String,
+                currentTitle: String
+            ) {
+                mainNavController?.navigate(R.id.action_mainFragment_to_detailsFragment,
+                bundleOf(
+                    POST_ID to id,
+                    POST_TEXT to currentText,
+                    POST_TITLE to currentTitle
+                ))
+            }
         })
         adapter.setHasStableIds(true)
         with(binding) {

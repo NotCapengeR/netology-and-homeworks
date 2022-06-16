@@ -2,13 +2,13 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/fragment_main"
+    android:id="@+id/add_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
     android:clickable="true"
     android:focusable="true"
-    tools:context=".ui.fragments.MainFragment">
+    tools:context=".ui.fragments.AddFragment">
 
 
     <androidx.appcompat.widget.Toolbar
@@ -190,6 +190,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="6dp"
                 android:clickable="false"
+                android:focusable="false"
                 app:layout_constraintEnd_toStartOf="@id/tvViewsCount"
                 app:layout_constraintTop_toBottomOf="@+id/tvPostText"
                 app:srcCompat="@drawable/eye"

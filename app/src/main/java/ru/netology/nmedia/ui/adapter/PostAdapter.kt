@@ -38,6 +38,8 @@ interface PostListener {
     fun onLinkPressed(url: String)
 
     fun onLinkRemoved(id: Long): Boolean
+
+    fun onItemPressed(id: Long, currentText: String, currentTitle: String)
 }
 
 class PostAdapter(
@@ -54,6 +56,8 @@ class PostAdapter(
             R.id.ivComments -> listener.onCommented(post.id)
 
             R.id.ivShare -> listener.onShared(post.id)
+
+            R.id.post_item -> listener.onItemPressed(post.id, post.text, post.title)
 
             else -> {/* do nothing */}
         }
@@ -93,6 +97,7 @@ class PostAdapter(
     inner class PostViewHolder(private val binding: PostItemBinding) : BaseViewHolder(binding.root) {
 
         fun bind(post: Post) = with(binding) {
+            postItem.tag = post
             menuButton.tag = post
             ivLikes.tag = post
             ivComments.tag = post
@@ -135,6 +140,7 @@ class PostAdapter(
                 ivLikes.setIconResource(R.drawable.heart_outline)
             }
             ivLikes.isChecked = post.isLiked
+            postItem.setDebouncedListener(onClickListener = this@PostAdapter)
             ivLikes.setDebouncedListener(50L, this@PostAdapter)
             menuButton.setDebouncedListener(200L, this@PostAdapter)
             ivShare.setDebouncedListener(50L, this@PostAdapter)

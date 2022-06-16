@@ -12,6 +12,7 @@
     <string name="edit_message">Редактировать пост</string>
     <string name="text_is_unfilled">Поле текста не заполнено!</string>
     <string name="text_is_equal">Текст не изменился!</string>
+    <string name="post_deleted">Пост успешно удалён!</string>
     <string name="post_title">Заголовок поста</string>
     <string name="post_text">Текст поста</string>
 </resources>

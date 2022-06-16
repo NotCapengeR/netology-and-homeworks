@@ -3,6 +3,7 @@ package ru.netology.nmedia.ui.base
 import android.os.Bundle
 import android.view.*
 import android.widget.EditText
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +18,7 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
     private var _binding: ViewBinding? = null
     abstract val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> VB
+    protected var popupMenu: PopupMenu? = null
     protected val mainNavController: NavController? by lazy { activity?.findNavController(R.id.nav_host_fragment) }
 
     @Suppress("UNCHECKED_CAST")
@@ -70,10 +72,10 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
     }
 
     protected fun onBackPressed() {
-        (activity as AppCompatActivity).onBackPressed()
+        mainNavController?.navigateUp()
     }
 
-    fun showToast(message: String?, isLong: Boolean = false) {
+    protected fun showToast(message: String?, isLong: Boolean = false) {
         if (message == null) return
         if (isLong) {
             Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
@@ -82,7 +84,13 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
         }
     }
 
-    fun showToast(@StringRes msgResId: Int, isLong: Boolean = false) {
+    protected fun showToast(@StringRes msgResId: Int, isLong: Boolean = false) {
         showToast(getString(msgResId), isLong)
+    }
+
+    protected open fun setPopupMenu(args: Bundle? = null) {}
+
+    protected open fun showPopupMenu(args: Bundle? = null) {
+        popupMenu?.show()
     }
 }

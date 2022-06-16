@@ -2,13 +2,13 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/edit_fragment"
+    android:id="@+id/details_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
     android:clickable="true"
     android:focusable="true"
-    tools:context=".ui.fragments.EditFragment">
+    tools:context=".ui.fragments.DetailsFragment">
 
 
     <androidx.appcompat.widget.Toolbar
@@ -53,7 +53,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:src="@drawable/ic_baseline_account_circle_24" />
 
-            <EditText
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvPostTitle"
                 android:layout_width="270dp"
                 android:layout_height="wrap_content"
@@ -63,10 +63,11 @@
                 android:hint="@string/post_title"
                 android:maxLength="40"
                 android:maxLines="1"
+                android:textColor="@color/black"
                 android:textColorHint="@color/white_gray"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@id/cancelButton"
+                app:layout_constraintEnd_toStartOf="@id/menuButton"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@id/ivPostAvatar"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -84,20 +85,19 @@
                 tools:text="20 Марта, 2020 года" />
 
             <ImageView
-                android:id="@+id/cancelButton"
+                android:id="@+id/menuButton"
                 android:layout_width="28dp"
                 android:layout_height="50dp"
                 android:layout_marginEnd="10dp"
                 android:background="?android:attr/selectableItemBackground"
-                android:src="@drawable/close"
+                android:src="@drawable/dots_vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toEndOf="@+id/tvDateTime"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/close"
                 tools:ignore="ContentDescription" />
 
-            <EditText
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvPostText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -186,20 +186,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvPostText"
                 tools:text="11" />
-
-            <TextView
-                android:id="@+id/tvAddNotification"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_marginTop="30dp"
-                android:text="@string/notifyAddPost"
-                android:textColor="@color/gray"
-                android:textSize="20sp"
-                android:textStyle="italic"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ivComments"
-                tools:text="@string/notifyAddPost" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/yTLayout"
@@ -339,35 +325,6 @@
                 </androidx.cardview.widget.CardView>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardViewSendPost"
-                android:layout_width="match_parent"
-                android:layout_height="90dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="100dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="20dp"
-                android:background="?android:attr/selectableItemBackground"
-                app:cardBackgroundColor="@color/lime"
-                app:cardCornerRadius="30dp"
-                app:cardElevation="4dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvAddNotification">
-
-                <TextView
-                    android:id="@+id/tvSend"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="@string/send_post"
-                    android:textColor="@color/black"
-                    android:textSize="60sp"
-                    android:textStyle="bold" />
-
-            </androidx.cardview.widget.CardView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -13,6 +13,7 @@
     <string name="edit_message">Edit Post</string>
     <string name="text_is_unfilled">Text is unfilled!</string>
     <string name="text_is_equal">Text hasn\'t changed!</string>
+    <string name="post_deleted">Post was successfully deleted!</string>
     <string name="post_title">Post title</string>
     <string name="post_text">Post text</string>
 </resources>
