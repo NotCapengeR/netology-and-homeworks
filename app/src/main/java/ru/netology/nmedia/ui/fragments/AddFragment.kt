@@ -10,6 +10,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.AddFragmentBinding
+import ru.netology.nmedia.dto.Post.Companion.POST_DATE_PATTERN
 import ru.netology.nmedia.ui.base.BaseFragment
 import ru.netology.nmedia.ui.viewmodel.PostViewModel
 import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
@@ -52,7 +53,7 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
             toolbar.setupWithNavController(this, appBarConfiguration)
         }
         (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
-        tvDateTime.text = DateFormat.format("d MMMM yyyy, HH:mm", Date().time)
+        tvDateTime.text = DateFormat.format(POST_DATE_PATTERN, Date().time)
         cardViewSendPost.setDebouncedListener(600L, this@AddFragment)
     }
 

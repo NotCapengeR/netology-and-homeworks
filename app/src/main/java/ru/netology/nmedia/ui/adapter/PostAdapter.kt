@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.PostItemBinding
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.dto.Post.Companion.POST_DATE_PATTERN
 import ru.netology.nmedia.ui.base.BaseViewHolder
 import ru.netology.nmedia.utils.setDebouncedListener
 import ru.netology.nmedia.utils.setVisibility
@@ -108,27 +109,20 @@ class PostAdapter(
             tvViewsCount.text = post.views.toPostText()
             tvPostText.text = post.text
             tvPostTitle.text = post.title
-            tvDateTime.text = DateFormat.format("d MMMM yyyy, HH:mm", post.date)
+            tvDateTime.text = DateFormat.format(POST_DATE_PATTERN, post.date)
             ivPostAvatar.setImageResource(post.avatarId)
             yTLayout.setVisibility(post.video != null)
             Linkify.addLinks(tvPostText, Linkify.WEB_URLS)
             if (post.video != null) {
-                val video = post.video.items.first()
-                val thumbnail = video.snippet.thumbnails.thumbnail
-                ytVideoDuration.text =
-                    video.contentDetails.duration
-                        .replace("PT", "")
-                        .replace('S', ' ')
-                        .replace('H', ':')
-                        .replace('M', ':')
-                ytAuthor.text = video.snippet.channelTitle
-                ytTitle.text = video.snippet.title
+                ytVideoDuration.text = post.video.duration
+                ytAuthor.text = post.video.author
+                ytTitle.text = post.video.title
                 Glide.with(root.context)
-                    .load(thumbnail.url)
+                    .load(post.video.thumbnailUrl)
                     .centerCrop()
                     .into(ytThumbnail)
                 ytThumbnail.setDebouncedListener {
-                    listener.onLinkPressed("$YOUTUBE_URL${video.id}")
+                    listener.onLinkPressed("$YOUTUBE_URL${post.video.id}")
                 }
                 ytCancel.setDebouncedListener {
                     listener.onLinkRemoved(post.id)

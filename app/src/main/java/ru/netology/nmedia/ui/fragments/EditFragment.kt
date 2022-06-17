@@ -13,6 +13,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.EditFragmentBinding
+import ru.netology.nmedia.dto.Post.Companion.POST_DATE_PATTERN
 import ru.netology.nmedia.dto.Post.Companion.POST_ID
 import ru.netology.nmedia.dto.Post.Companion.POST_TEXT
 import ru.netology.nmedia.dto.Post.Companion.POST_TITLE
@@ -62,7 +63,7 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
         val currentTitle = requireArguments().get(POST_TITLE) as String
         val post = viewModel.getPostById(id)
         if (post != null) {
-            tvDateTime.text = DateFormat.format("d MMMM yyyy, HH:mm", post.date)
+            tvDateTime.text = DateFormat.format(POST_DATE_PATTERN, post.date)
             ivLikes.tag = post.id
             ytCancel.tag = post.id
             ivComments.tag = post.id
@@ -80,23 +81,16 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
             }
             if (post.video != null) {
                 yTLayout.setVisibility(true)
-                val video = post.video.items.first()
-                val thumbnail = video.snippet.thumbnails.thumbnail
-                ytVideoDuration.text =
-                    video.contentDetails.duration
-                        .replace("PT", "")
-                        .replace('S', ' ')
-                        .replace('H', ':')
-                        .replace('M', ':')
-                ytAuthor.text = video.snippet.channelTitle
-                ytTitle.text = video.snippet.title
+                ytVideoDuration.text = post.video.duration
+                ytAuthor.text = post.video.author
+                ytTitle.text = post.video.title
                 Glide.with(requireContext())
-                    .load(thumbnail.url)
+                    .load(post.video.thumbnailUrl)
                     .centerCrop()
                     .into(ytThumbnail)
                 ytThumbnail.setDebouncedListener {
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(
-                        "$YOUTUBE_URL${video.id}")))
+                        "$YOUTUBE_URL${post.video.id}")))
                 }
                 ytCancel.setDebouncedListener(50L) {
                     viewModel.removeLink(it.tag as Long)

@@ -13,6 +13,7 @@ import retrofit2.Response
 import ru.netology.nmedia.R
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.dto.Post.Companion.POST_ID
+import ru.netology.nmedia.dto.YouTubeVideoData
 import ru.netology.nmedia.network.ApiService
 import ru.netology.nmedia.network.YouTubeVideo
 import timber.log.Timber
@@ -99,7 +100,7 @@ class PostRepositoryImpl @Inject constructor(
                                 "body id: ${response.body()?.items?.first()?.id}"
                     )
                     if (response.code() == 200) {
-                        posts[postId] = post.copy(video = response.body())
+                        posts[postId] = post.copy(video = YouTubeVideoData.parser(response.body()))
                         writeFiles()
                     }
                 }

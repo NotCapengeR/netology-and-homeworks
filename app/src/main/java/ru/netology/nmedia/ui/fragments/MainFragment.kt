@@ -32,6 +32,7 @@ import javax.inject.Inject
 
 class MainFragment : BaseFragment<FragmentMainBinding>() {
 
+
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: PostViewModel by activityViewModels {

@@ -18,6 +18,7 @@ import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.ui.adapter.PostAdapter
 import ru.netology.nmedia.ui.base.BaseFragment
 import ru.netology.nmedia.databinding.DetailsFragmentBinding
+import ru.netology.nmedia.dto.Post.Companion.POST_DATE_PATTERN
 import ru.netology.nmedia.ui.viewmodel.PostViewModel
 import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
 import ru.netology.nmedia.utils.getAppComponent
@@ -63,7 +64,7 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
         val id = requireArguments().get(Post.POST_ID) as Long
         val post = viewModel.getPostById(id)
         if (post != null) {
-            tvDateTime.text = DateFormat.format("d MMMM yyyy, HH:mm", post.date)
+            tvDateTime.text = DateFormat.format(POST_DATE_PATTERN, post.date)
             ivLikes.tag = post.id
             ytCancel.tag = post.id
             ivComments.tag = post.id
@@ -85,25 +86,18 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
             }
             if (post.video != null) {
                 yTLayout.setVisibility(true)
-                val video = post.video.items.first()
-                val thumbnail = video.snippet.thumbnails.thumbnail
-                ytVideoDuration.text =
-                    video.contentDetails.duration
-                        .replace("PT", "")
-                        .replace('S', ' ')
-                        .replace('H', ':')
-                        .replace('M', ':')
-                ytAuthor.text = video.snippet.channelTitle
-                ytTitle.text = video.snippet.title
+                ytVideoDuration.text = post.video.duration
+                ytAuthor.text = post.video.author
+                ytTitle.text =  post.video.title
                 Glide.with(requireContext())
-                    .load(thumbnail.url)
+                    .load(post.video.thumbnailUrl)
                     .centerCrop()
                     .into(ytThumbnail)
                 ytThumbnail.setDebouncedListener {
                     startActivity(
                         Intent(
                             Intent.ACTION_VIEW, Uri.parse(
-                                "${PostAdapter.YOUTUBE_URL}${video.id}"
+                                "${PostAdapter.YOUTUBE_URL}${post.video.id}"
                             )
                         )
                     )
@@ -172,15 +166,13 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
                 }
 
 
-                EDIT_ID -> {
-                    mainNavController?.navigate(R.id.action_detailsFragment_to_editFragment, bundleOf(
+                EDIT_ID -> mainNavController?.navigate(
+                    R.id.action_detailsFragment_to_editFragment, bundleOf(
                         Post.POST_ID to id,
                         Post.POST_TEXT to currentText,
                         Post.POST_TITLE to currentTitle
                     )
-                    )
-                }
-
+                )
             }
             return@setOnMenuItemClickListener true
         }
