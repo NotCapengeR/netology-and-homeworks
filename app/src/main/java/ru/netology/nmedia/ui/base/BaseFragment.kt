@@ -71,7 +71,7 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
         AndroidUtils.showKeyboard(mEtSearch, requireContext())
     }
 
-    protected fun onBackPressed() {
+    protected open fun onBackPressed() {
         mainNavController?.navigateUp()
     }
 

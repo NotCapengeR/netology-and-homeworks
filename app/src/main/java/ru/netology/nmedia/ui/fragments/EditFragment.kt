@@ -15,8 +15,6 @@ import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.EditFragmentBinding
 import ru.netology.nmedia.dto.Post.Companion.POST_DATE_PATTERN
 import ru.netology.nmedia.dto.Post.Companion.POST_ID
-import ru.netology.nmedia.dto.Post.Companion.POST_TEXT
-import ru.netology.nmedia.dto.Post.Companion.POST_TITLE
 import ru.netology.nmedia.ui.adapter.PostAdapter.Companion.YOUTUBE_URL
 import ru.netology.nmedia.ui.base.BaseFragment
 import ru.netology.nmedia.ui.viewmodel.PostViewModel
@@ -31,7 +29,6 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-
     private val viewModel: PostViewModel by activityViewModels {
         viewModelFactory
     }
@@ -59,9 +56,14 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
         }
         (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
         val id = requireArguments().get(POST_ID) as Long
-        val currentText = requireArguments().get(POST_TEXT) as String
-        val currentTitle = requireArguments().get(POST_TITLE) as String
+        if (id != viewModel.editablePost.value?.id) {
+            viewModel.changePost(id)
+        }
         val post = viewModel.getPostById(id)
+        viewModel.editablePost.observe(viewLifecycleOwner) {
+            tvPostText.setText(it.text)
+            tvPostTitle.setText(it.title)
+        }
         if (post != null) {
             tvDateTime.text = DateFormat.format(POST_DATE_PATTERN, post.date)
             ivLikes.tag = post.id
@@ -89,8 +91,13 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
                     .centerCrop()
                     .into(ytThumbnail)
                 ytThumbnail.setDebouncedListener {
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(
-                        "$YOUTUBE_URL${post.video.id}")))
+                    startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW, Uri.parse(
+                                "$YOUTUBE_URL${post.video.id}"
+                            )
+                        )
+                    )
                 }
                 ytCancel.setDebouncedListener(50L) {
                     viewModel.removeLink(it.tag as Long)
@@ -101,8 +108,6 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
                 yTLayout.setVisibility(false)
             }
         }
-        tvPostText.setText(currentText)
-        tvPostTitle.setText(currentTitle)
         cancelButton.setOnClickListener {
             onBackPressed()
         }
@@ -150,8 +155,17 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
         }
     }
 
+    override fun onDestroyView() {
+        viewModel.interactWithPost(
+            newTitle = binding.tvPostTitle.text.toString(),
+            newText = binding.tvPostText.text.toString()
+        )
+        super.onDestroyView()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
         inflater.inflate(R.menu.empty, menu)
     }
+
 }

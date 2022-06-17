@@ -22,7 +22,7 @@ data class Post(
         const val POST_DATE_PATTERN: String = "d MMMM yyyy, HH:mm"
         const val POST_DATE_ABSOLUTE: String = "dd-MM-yyyy, HH:mm:ss"
         val EMPTY_POST: Post = Post(
-            -1L,
+            0L,
             "",
             "",
             0L,

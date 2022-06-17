@@ -31,7 +31,16 @@
         android:id="@+id/editFragment"
         android:name="ru.netology.nmedia.ui.fragments.EditFragment"
         tools:layout="@layout/edit_fragment"
-        android:label="EditFragment" />
+        android:label="EditFragment" >
+        <argument
+            android:name="post_text"
+            app:argType="string"
+            android:defaultValue=" " />
+        <argument
+            android:name="post_title"
+            app:argType="string"
+            android:defaultValue=" " />
+    </fragment>
     <fragment
         android:id="@+id/detailsFragment"
         android:name="ru.netology.nmedia.ui.fragments.DetailsFragment"

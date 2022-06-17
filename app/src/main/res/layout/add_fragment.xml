@@ -66,7 +66,7 @@
                 android:textColorHint="@color/white_gray"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@id/menuButton"
+                app:layout_constraintEnd_toStartOf="@id/cancel_button"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@id/ivPostAvatar"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -84,17 +84,17 @@
                 app:layout_constraintTop_toBottomOf="@+id/tvPostTitle" />
 
             <ImageView
-                android:id="@+id/menuButton"
+                android:background="?android:attr/selectableItemBackground"
+                android:id="@+id/cancel_button"
                 android:layout_width="28dp"
                 android:layout_height="50dp"
-                android:clickable="false"
-                android:focusable="false"
-                android:src="@drawable/ic_baseline_more_vert_24"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/close"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toEndOf="@+id/tvDateTime"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/dots_vertical"
+                app:srcCompat="@drawable/close"
                 tools:ignore="ContentDescription" />
 
             <EditText
@@ -119,6 +119,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:clickable="false"
+                android:focusable="false"
                 android:src="@drawable/heart_outline"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvPostText"
@@ -143,6 +144,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="10dp"
                 android:clickable="false"
+                android:focusable="false"
                 app:layout_constraintStart_toEndOf="@id/tvLikesCount"
                 app:layout_constraintTop_toBottomOf="@+id/tvPostText"
                 app:srcCompat="@drawable/comment_outline"
@@ -167,6 +169,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="10dp"
                 android:clickable="false"
+                android:focusable="false"
                 app:layout_constraintStart_toEndOf="@id/tvCommentsCount"
                 app:layout_constraintTop_toBottomOf="@+id/tvPostText"
                 app:srcCompat="@drawable/share_outline"
