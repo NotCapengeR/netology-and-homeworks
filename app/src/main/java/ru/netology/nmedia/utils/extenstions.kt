@@ -6,7 +6,9 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import ru.netology.nmedia.App
 import ru.netology.nmedia.di.AppComponent
+import ru.netology.nmedia.dto.Post
 import java.text.DecimalFormat
+import java.text.SimpleDateFormat
 
 private val df = DecimalFormat("###.#")
 
@@ -57,3 +59,13 @@ fun Context.getAppComponent(): AppComponent = when (this) {
 }
 
 fun String.checkIfNotEmpty(): Boolean = this.trim().isNotEmpty()
+
+fun String.toDateTime(): Long? {
+    val formatter = SimpleDateFormat(Post.POST_DATE_ABSOLUTE)
+    return formatter.parse(this)?.time
+}
+
+fun Boolean.toSQL(): String = when (this) {
+    true -> "TRUE"
+    false -> "FALSE"
+}

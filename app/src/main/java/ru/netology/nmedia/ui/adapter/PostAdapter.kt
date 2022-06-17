@@ -18,6 +18,7 @@ import ru.netology.nmedia.ui.base.BaseViewHolder
 import ru.netology.nmedia.utils.setDebouncedListener
 import ru.netology.nmedia.utils.setVisibility
 import ru.netology.nmedia.utils.toPostText
+import timber.log.Timber
 
 
 interface PostListener {
@@ -114,6 +115,7 @@ class PostAdapter(
             yTLayout.setVisibility(post.video != null)
             Linkify.addLinks(tvPostText, Linkify.WEB_URLS)
             if (post.video != null) {
+                Timber.d("YT video id: ${post.video.id}")
                 ytVideoDuration.text = post.video.duration
                 ytAuthor.text = post.video.author
                 ytTitle.text = post.video.title

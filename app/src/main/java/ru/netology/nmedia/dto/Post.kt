@@ -1,7 +1,6 @@
 package ru.netology.nmedia.dto
 
 import ru.netology.nmedia.R
-import ru.netology.nmedia.network.YouTubeVideo
 
 data class Post(
     val id: Long,
@@ -14,8 +13,6 @@ data class Post(
     val shared: Int = 0,
     val views: Int = 0,
     val isLiked: Boolean = false,
-    val editHistory: MutableList<String> = mutableListOf(),
-    val titleHistory: MutableList<String> = mutableListOf(),
     val video: YouTubeVideoData? = null
 ) {
     companion object {
@@ -23,9 +20,9 @@ data class Post(
         const val POST_TEXT: String = "post_text"
         const val POST_ID: String = "post_id"
         const val POST_DATE_PATTERN: String = "d MMMM yyyy, HH:mm"
-        const val POST_DATE_ABSOLUTE: String = "dd-MM-yyyy, HH:mm:ss.SSS"
+        const val POST_DATE_ABSOLUTE: String = "dd-MM-yyyy, HH:mm:ss"
         val EMPTY_POST: Post = Post(
-            0L,
+            -1L,
             "",
             "",
             0L,
@@ -35,8 +32,6 @@ data class Post(
             0,
             0,
             false,
-            mutableListOf(),
-            mutableListOf(),
             null
         )
     }

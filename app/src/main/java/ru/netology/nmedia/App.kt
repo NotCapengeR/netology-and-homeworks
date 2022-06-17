@@ -1,11 +1,13 @@
 package ru.netology.nmedia
 
 import android.app.Application
+import ru.netology.nmedia.database.PostDB
 import ru.netology.nmedia.di.AppComponent
 import ru.netology.nmedia.di.DaggerAppComponent
 import ru.netology.nmedia.di.modules.AppModule
 import ru.netology.nmedia.utils.getAppComponent
 import timber.log.Timber
+import javax.inject.Inject
 
 class App : Application() {
 
