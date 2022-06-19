@@ -31,7 +31,6 @@ class PostRepositoryImpl @Inject constructor(
         return PostSearchResult.Success(post)
     }
 
-
     init {
         val postsList = dao.getAll()
         postsList.forEach {
@@ -48,6 +47,8 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     override fun getPosts(): MutableList<Post> = posts.values.toMutableList()
+
+    override fun getAllPosts(): List<Post> = dao.getAll()
 
     override fun getPostById(id: Long): Post? = findPostById(id).post
 
@@ -109,18 +110,16 @@ class PostRepositoryImpl @Inject constructor(
         val post = findPostById(id).post ?: return false
         val previousLikesCount = post.likes
         val changed = !post.isLiked
-        posts[id] = post.copy(
-            likes = if (post.isLiked) previousLikesCount - 1 else previousLikesCount + 1,
-            isLiked = changed
-        )
-        dao.likePost(id, previousLikesCount, changed)
+        val nextValue = if (post.isLiked) previousLikesCount - 1 else previousLikesCount + 1
+        posts[id] = post.copy(likes = nextValue, isLiked = changed)
+        dao.likePost(post, previousLikesCount, changed, nextValue)
         return true
     }
 
     override fun sharePost(id: Long): Int {
         val post = findPostById(id).post ?: return -1
         val nextValue = post.shared + 1
-        dao.sharePost(id)
+        dao.sharePost(post, nextValue)
         posts[id] = post.copy(shared = nextValue)
         return nextValue
     }
@@ -128,25 +127,10 @@ class PostRepositoryImpl @Inject constructor(
     override fun commentPost(id: Long): Int {
         val post = findPostById(id).post ?: return -1
         val nextValue = post.comments + 1
-        dao.sharePost(id)
+        dao.commentPost(post, nextValue)
         posts[id] = post.copy(comments = nextValue)
         return nextValue
     }
-
-    override fun onPostMoved(id: Long, movedBy: Int): Pair<Post, Post>? {
-        return null
-        //  может когда-нибудь придётся переделать...
-        //        val post = findPostById(id).post ?: return null
-        //        val postsList = getPosts()
-        //        val postIndex = postsList.indexOf(post)
-        //        return try {
-        //            val swappablePost = postsList[postIndex - movedBy]
-        //            Pair(post, swappablePost)
-        //        } catch (ex: ArrayIndexOutOfBoundsException) {
-        //            null
-        //        }
-    }
-
 
     private companion object {
         private const val URL_PATTERN: String =

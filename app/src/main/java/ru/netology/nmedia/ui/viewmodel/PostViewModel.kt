@@ -46,8 +46,6 @@ class PostViewModel @Inject constructor(
         else -> {}
     }
 
-
-
     init {
         mutablePostsList.addAll(postRepository.getPosts())
         loadData()

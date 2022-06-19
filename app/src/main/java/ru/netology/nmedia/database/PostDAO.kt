@@ -33,11 +33,16 @@ interface PostDAO {
 
     fun editPost(id: Long, newText: String, newTitle: String): Int
 
-    fun likePost(id: Long, previousLikesCount: Int, changed: Boolean): Int
+    fun likePost(
+        post: Post,
+        previousLikesCount: Int,
+        changed: Boolean,
+        nextValue: Int
+    ): Int
 
-    fun sharePost(id: Long): Int
+    fun sharePost(post: Post, nextValue: Int): Int
 
-    fun commentPost(id: Long): Int
+    fun commentPost(post: Post, nextValue: Int): Int
 }
 
 @Singleton
@@ -192,13 +197,14 @@ class PostDAOImpl @Inject constructor(
         )
     }
 
-    override fun likePost(id: Long, previousLikesCount: Int, changed: Boolean): Int {
-        val post = getPostById(id) ?: return -1
+    override fun likePost(
+        post: Post,
+        previousLikesCount: Int,
+        changed: Boolean,
+        nextValue: Int
+    ): Int {
         val value = ContentValues().apply {
-            put(
-                PostEntry.COLUMN_NAME_LIKES_COUNT,
-                if (post.isLiked) previousLikesCount - 1 else previousLikesCount + 1
-            )
+            put(PostEntry.COLUMN_NAME_LIKES_COUNT, nextValue)
             put(PostEntry.COLUMN_NAME_IS_LIKED, changed.toSQL())
         }
         return db.update(
@@ -209,29 +215,27 @@ class PostDAOImpl @Inject constructor(
         )
     }
 
-    override fun sharePost(id: Long): Int {
-        val post = getPostById(id) ?: return -1
+    override fun sharePost(post: Post, nextValue: Int): Int {
         val value = ContentValues().apply {
-            put(PostEntry.COLUMN_NAME_SHARE_COUNT, post.shared + 1)
+            put(PostEntry.COLUMN_NAME_SHARE_COUNT, nextValue)
         }
         return db.update(
             PostEntry.TABLE_NAME,
             value,
             "${PostEntry.COLUMN_NAME_ID} = ?",
-            arrayOf(id.toString())
+            arrayOf(post.id.toString())
         )
     }
 
-    override fun commentPost(id: Long): Int {
-        val post = getPostById(id) ?: return -1
+    override fun commentPost(post: Post, nextValue: Int): Int {
         val value = ContentValues().apply {
-            put(PostEntry.COLUMN_NAME_COMMENTS_COUNT, post.comments + 1)
+            put(PostEntry.COLUMN_NAME_COMMENTS_COUNT, nextValue)
         }
         return db.update(
             PostEntry.TABLE_NAME,
             value,
             "${PostEntry.COLUMN_NAME_ID} = ?",
-            arrayOf(id.toString())
+            arrayOf(post.id.toString())
         )
     }
 }

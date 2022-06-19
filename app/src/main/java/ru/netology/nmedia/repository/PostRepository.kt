@@ -6,6 +6,8 @@ interface PostRepository {
 
     fun getPosts(): List<Post>
 
+    fun getAllPosts(): List<Post>
+
     fun addPost(title: String, text: String): Long
 
     suspend fun addVideo(url: String, postId: Long)
@@ -23,6 +25,4 @@ interface PostRepository {
     fun sharePost(id: Long): Int
 
     fun commentPost(id: Long): Int
-
-    fun onPostMoved(id: Long, movedBy: Int): Pair<Post, Post>?
 }
