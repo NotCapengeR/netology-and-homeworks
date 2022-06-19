@@ -14,6 +14,7 @@ import ru.netology.nmedia.utils.toSQL
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
+import javax.inject.Singleton
 
 interface PostDAO {
 
@@ -38,6 +39,7 @@ interface PostDAO {
     fun commentPost(id: Long): Int
 }
 
+@Singleton
 class PostDAOImpl @Inject constructor(
     private val db: SQLiteDatabase
 ) : PostDAO {
@@ -232,13 +234,10 @@ class PostDAOImpl @Inject constructor(
         )
     }
 
-    companion object {
-        @JvmStatic
-        fun parseFromSQLBoolean(strBoolean: String): Boolean? =
-            when (strBoolean.uppercase().trim()) {
-                "TRUE" -> true
-                "FALSE" -> false
-                else -> null
-            }
-    }
+    private fun parseFromSQLBoolean(strBoolean: String): Boolean? =
+        when (strBoolean.uppercase().trim()) {
+            "TRUE" -> true
+            "FALSE" -> false
+            else -> null
+        }
 }

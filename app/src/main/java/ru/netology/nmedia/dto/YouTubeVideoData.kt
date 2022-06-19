@@ -12,7 +12,6 @@ data class YouTubeVideoData(
 
     companion object {
 
-        @JvmStatic
         fun parser(data: YouTubeVideo?): YouTubeVideoData? {
             return if (data == null) {
                 null
@@ -29,7 +28,6 @@ data class YouTubeVideoData(
             )
         }
 
-        @JvmStatic
         fun buildVideoData(
             id: String?,
             author: String?,
