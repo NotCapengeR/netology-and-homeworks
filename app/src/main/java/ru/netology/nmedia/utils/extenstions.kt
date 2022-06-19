@@ -69,3 +69,9 @@ fun Boolean.toSQL(): String = when (this) {
     true -> "TRUE"
     false -> "FALSE"
 }
+
+fun String.toSQLBoolean(): Boolean? = when (this.uppercase().trim()) {
+    "TRUE" -> true
+    "FALSE" -> false
+    else -> null
+}

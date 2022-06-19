@@ -11,6 +11,7 @@ import ru.netology.nmedia.utils.toDateTime
 import ru.netology.nmedia.database.PostDB.PostEntry
 import ru.netology.nmedia.dto.YouTubeVideoData
 import ru.netology.nmedia.utils.toSQL
+import ru.netology.nmedia.utils.toSQLBoolean
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
@@ -91,9 +92,9 @@ class PostDAOImpl @Inject constructor(
                     getInt(getColumnIndexOrThrow(PostEntry.COLUMN_NAME_COMMENTS_COUNT))
                 val shares = getInt(getColumnIndexOrThrow(PostEntry.COLUMN_NAME_SHARE_COUNT))
                 val views = getInt(getColumnIndexOrThrow(PostEntry.COLUMN_NAME_VIEWS_COUNT))
-                val isLiked: Boolean = parseFromSQLBoolean(
-                    getString(getColumnIndexOrThrow(PostEntry.COLUMN_NAME_IS_LIKED))
-                ) ?: Timber.e("Post isLiked value is invalid!").let { false }
+                val isLiked: Boolean =
+                    getString(getColumnIndexOrThrow(PostEntry.COLUMN_NAME_IS_LIKED)).toSQLBoolean()
+                        ?: Timber.e("Post isLiked value is invalid!").let { false }
                 val ytId =
                     getStringOrNull(getColumnIndexOrThrow(PostEntry.COLUMN_NAME_YT_ID))
                 val ytAuthor =
@@ -233,11 +234,4 @@ class PostDAOImpl @Inject constructor(
             arrayOf(id.toString())
         )
     }
-
-    private fun parseFromSQLBoolean(strBoolean: String): Boolean? =
-        when (strBoolean.uppercase().trim()) {
-            "TRUE" -> true
-            "FALSE" -> false
-            else -> null
-        }
 }
