@@ -9,6 +9,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import ru.netology.nmedia.App
+import ru.netology.nmedia.database.PostDAO
+import ru.netology.nmedia.database.PostDAOImpl
 import ru.netology.nmedia.database.PostDB
 import ru.netology.nmedia.dto.Post.Companion.POST_ID
 import ru.netology.nmedia.repository.PostRepository
@@ -50,5 +52,9 @@ interface RepositoryModule {
     @Binds
     @Singleton
     fun bindPostRepository(postRepository: PostRepositoryImpl): PostRepository
+
+    @Binds
+    @Singleton
+    fun bindPostDAO(postDAO: PostDAOImpl): PostDAO
 }
 

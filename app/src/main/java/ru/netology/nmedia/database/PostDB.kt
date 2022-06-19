@@ -48,12 +48,6 @@ class PostDB @Inject constructor(
                     "${PostEntry.COLUMN_NAME_YT_THUMBNAIL_URL} TEXT DEFAULT NULL); "
         private const val SQL_LITE_DELETE: String =
             "DROP TABLE IF EXISTS ${PostEntry.TABLE_NAME};"
-        @JvmStatic
-        fun parseFromSQLBoolean(boolean: String): Boolean? = when (boolean) {
-            "TRUE" -> true
-            "FALSE" -> false
-            else -> null
-        }
     }
 
     object PostEntry : BaseColumns {

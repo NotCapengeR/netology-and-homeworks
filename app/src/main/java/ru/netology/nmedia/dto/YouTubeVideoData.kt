@@ -28,5 +28,18 @@ data class YouTubeVideoData(
                 thumbnailUrl = data.items.first().snippet.thumbnails.thumbnail.url
             )
         }
+
+        @JvmStatic
+        fun buildVideoData(
+            id: String?,
+            author: String?,
+            title: String?,
+            duration: String?,
+            url: String?
+        ): YouTubeVideoData? {
+            return if (id != null && author != null && title != null && duration != null && url != null) {
+                YouTubeVideoData(id, author, title, duration, url)
+            } else null
+        }
     }
 }

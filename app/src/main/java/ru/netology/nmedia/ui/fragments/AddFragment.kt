@@ -108,6 +108,14 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
         }
     }
 
+    override fun onBackPressed() {
+        prefs.edit {
+            putString(POST_TITLE, binding.tvPostTitle.text.toString())
+            putString(POST_TEXT, binding.tvPostText.text.toString())
+        }
+        super.onBackPressed()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
         inflater.inflate(R.menu.empty, menu)
