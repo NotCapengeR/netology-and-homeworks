@@ -22,6 +22,13 @@ class PostViewModel @Inject constructor(
     val editablePost: MutableLiveData<Post> by lazy {
         MutableLiveData(Post.EMPTY_POST)
     }
+    private val indexes: Map<Long, Pair<Int, Post>>
+        get() = mutablePostsList.associate { post ->
+            post.id to (mutablePostsList.indexOf(post) to post)
+        }
+    val postsList: MutableLiveData<List<Post>> by lazy {
+        MutableLiveData<List<Post>>()
+    }
 
 
     fun changePost(id: Long = 0L) {
@@ -40,14 +47,6 @@ class PostViewModel @Inject constructor(
     }
 
 
-    private val indexes: Map<Long, Pair<Int, Post>>
-        get() = mutablePostsList.associate { post ->
-            post.id to (mutablePostsList.indexOf(post) to post)
-        }
-
-    val postsList: MutableLiveData<List<Post>> by lazy {
-        MutableLiveData<List<Post>>()
-    }
 
     init {
         mutablePostsList.addAll(postRepository.getPosts())
