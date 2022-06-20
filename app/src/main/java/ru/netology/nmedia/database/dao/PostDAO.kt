@@ -43,8 +43,8 @@ interface PostDAO {
         ytThumbnail: String?
     )
 
-    @Query("UPDATE posts SET yt_id = null, yt_author = null, yt_title = null," +
-            " yt_duration = null, yt_thumbnail_url = null WHERE id = :id"
+    @Query("UPDATE posts SET yt_id = NULL, yt_author = NULL, yt_title = NULL," +
+            " yt_duration = NULL, yt_thumbnail_url = NULL WHERE id = :id"
     )
     fun removeVideo(id: Long): Int
 

@@ -55,12 +55,13 @@ class PostRepositoryImpl @Inject constructor(
     override fun getPostById(id: Long): Post? = findPostById(id).post
 
     override suspend fun addPost(title: String, text: String): Long {
-        val id = withContext(scope.coroutineContext + Dispatchers.IO) {
+        return withContext(scope.coroutineContext + Dispatchers.IO) {
             dao.addPost(title, text)
+        }.also {
+            if (it > 0L) {
+                posts[it] = Post.parser(dao.getPostById(it))
+            }
         }
-        val post = Post.parser(dao.getPostById(id))
-        posts[id] = post
-        return id
     }
 
 
