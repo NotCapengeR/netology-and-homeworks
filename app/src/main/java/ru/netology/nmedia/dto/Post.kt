@@ -1,11 +1,8 @@
 package ru.netology.nmedia.dto
 
 import ru.netology.nmedia.R
-import ru.netology.nmedia.database.dao.PostDAO
 import ru.netology.nmedia.database.entities.PostEntity
 import ru.netology.nmedia.utils.toDateTime
-import ru.netology.nmedia.utils.toPostTime
-import java.lang.IllegalArgumentException
 
 data class Post(
     val id: Long,
@@ -45,7 +42,7 @@ data class Post(
                 id = entity.id,
                 title = entity.title,
                 text = entity.text,
-                date = entity.date.toPostTime() ?: throw IllegalArgumentException("Invalid date pattern"),
+                date = entity.date.toDateTime() ?: throw IllegalArgumentException("Invalid date pattern"),
                 avatarId = entity.avatarId,
                 likes = entity.likes,
                 comments = entity.comments,

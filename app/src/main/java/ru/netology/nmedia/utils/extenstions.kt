@@ -65,11 +65,6 @@ fun String.toDateTime(): Long? {
     return formatter.parse(this)?.time
 }
 
-fun String.toPostTime(): Long? {
-    val formatter = SimpleDateFormat(Post.POST_DATE_PATTERN)
-    return formatter.parse(this)?.time
-}
-
 fun Boolean.toSQL(): String = when (this) {
     true -> "TRUE"
     false -> "FALSE"

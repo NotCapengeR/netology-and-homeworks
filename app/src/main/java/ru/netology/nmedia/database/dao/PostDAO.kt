@@ -25,7 +25,7 @@ interface PostDAO {
     fun addPost(
         title: String,
         text: String,
-        date: String = DateFormat.format(Post.POST_DATE_PATTERN, Date().time).toString()
+        date: String = DateFormat.format(Post.POST_DATE_ABSOLUTE, Date().time).toString()
     ): Long
 
     @Query("UPDATE posts SET title = :newTitle, text = :newText WHERE id = :id")
