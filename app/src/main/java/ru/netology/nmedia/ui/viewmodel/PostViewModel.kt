@@ -3,12 +3,11 @@ package ru.netology.nmedia.ui.viewmodel
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.ui.base.BaseViewModel
+import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
@@ -51,23 +50,23 @@ class PostViewModel @Inject constructor(
         loadData()
     }
 
-    fun addPost(
+    suspend fun addPost(
         title: String,
         text: String,
         url: String? = null
     ): Long {
-        return postRepository.addPost(title, text).also {
-            if (it > 0) {
-                val post = postRepository.getPostById(it) ?: return -1L
-                mutablePostsList.add(post)
-                loadData()
-                if (url != null) {
-                    viewModelScope.launch {
+        return viewModelScope.async {
+            postRepository.addPost(title, text).also {
+                if (it > 0L) {
+                    val post = postRepository.getPostById(it) ?: return@also
+                    mutablePostsList.add(post)
+                    loadData()
+                    if (url != null) {
                         addVideo(url, it)
                     }
                 }
             }
-        }
+        }.await()
     }
 
     private suspend fun addVideo(url: String, id: Long) {
@@ -82,7 +81,7 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun removeLink(id: Long): Boolean {
+    suspend fun removeLink(id: Long): Boolean {
         val post = indexes[id] ?: return false
         return postRepository.removeLink(id).also {
             if (it) {
@@ -93,25 +92,33 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun removePost(id: Long): Boolean {
+    suspend fun removePost(id: Long): Boolean {
         val post = indexes[id] ?: return false
-        return postRepository.removePost(id).also {
-            if (it) {
-                mutablePostsList.remove(post.second)
-                loadData()
+        return withContext(viewModelScope.coroutineContext) {
+            postRepository.removePost(id).also {
+                if (it) {
+                    mutablePostsList.remove(post.second)
+                    loadData()
+                }
             }
         }
     }
 
-    fun editPost(id: Long, newText: String, newTitle: String, url: String? = null): Boolean {
+    suspend fun editPost(
+        id: Long,
+        newText: String,
+        newTitle: String,
+        url: String? = null
+    ): Boolean {
         val post = indexes[id] ?: return false
-        return postRepository.editPost(id, newText, newTitle).also {
-            if (it) {
-                val newPost = postRepository.getPostById(id) ?: return false
-                mutablePostsList[post.first] = newPost
-                loadData()
-                if (url != null) {
-                    viewModelScope.launch {
+        return withContext(viewModelScope.coroutineContext) {
+            Timber.d("Post was edited: $id")
+            postRepository.editPost(id, newText, newTitle).also {
+                if (it) {
+                    val newPost = postRepository.getPostById(id) ?: return@also
+                    mutablePostsList[post.first] = newPost
+                    loadData()
+                    if (url != null) {
                         addVideo(url, id)
                     }
                 }
@@ -119,35 +126,41 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun likePost(id: Long): Boolean {
+    suspend fun likePost(id: Long): Boolean {
         val post = indexes[id] ?: return false
-        return postRepository.likePost(id).also {
-            if (it) {
-                val newPost = postRepository.getPostById(id) ?: return false
-                mutablePostsList[post.first] = newPost
-                loadData()
+        return withContext(viewModelScope.coroutineContext) {
+            postRepository.likePost(id).also {
+                if (it) {
+                    val newPost = postRepository.getPostById(id) ?: return@also
+                    mutablePostsList[post.first] = newPost
+                    loadData()
+                }
             }
         }
     }
 
-    fun sharePost(id: Long): Int {
+    suspend fun sharePost(id: Long): Int {
         val post = indexes[id] ?: return -1
-        return postRepository.sharePost(id).also {
-            if (it > 0) {
-                val newPost = postRepository.getPostById(id) ?: return -2
-                mutablePostsList[post.first] = newPost
-                loadData()
+        return withContext(viewModelScope.coroutineContext) {
+            postRepository.sharePost(id).also {
+                if (it > 0) {
+                    val newPost = postRepository.getPostById(id) ?: return@also
+                    mutablePostsList[post.first] = newPost
+                    loadData()
+                }
             }
         }
     }
 
-    fun commentPost(id: Long): Int {
+    suspend fun commentPost(id: Long): Int {
         val post = indexes[id] ?: return -1
-        return postRepository.commentPost(id).also {
-            if (it > 0) {
-                val newPost = postRepository.getPostById(id) ?: return -2
-                mutablePostsList[post.first] = newPost
-                loadData()
+        return withContext(viewModelScope.coroutineContext) {
+            postRepository.commentPost(id).also {
+                if (it > 0) {
+                    val newPost = postRepository.getPostById(id) ?: return@also
+                    mutablePostsList[post.first] = newPost
+                    loadData()
+                }
             }
         }
     }
@@ -167,7 +180,7 @@ class PostViewModel @Inject constructor(
     fun getPostById(id: Long): Post? = postRepository.getPostById(id)
 
     private fun loadData() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Main) {
             postsList.value = mutablePostsList.toList()
         }
     }

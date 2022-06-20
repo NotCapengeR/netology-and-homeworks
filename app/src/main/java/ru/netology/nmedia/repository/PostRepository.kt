@@ -8,21 +8,21 @@ interface PostRepository {
 
     fun getAllPosts(): List<Post>
 
-    fun addPost(title: String, text: String): Long
+    suspend fun addPost(title: String, text: String): Long
 
     suspend fun addVideo(url: String, postId: Long)
 
-    fun removeLink(id: Long): Boolean
+    suspend fun removeLink(id: Long): Boolean
 
-    fun removePost(id: Long): Boolean
+    suspend fun removePost(id: Long): Boolean
 
-    fun editPost(id: Long, newText: String, newTitle: String): Boolean
+    suspend fun editPost(id: Long, newText: String, newTitle: String): Boolean
 
     fun getPostById(id: Long): Post?
 
-    fun likePost(id: Long): Boolean
+    suspend fun likePost(id: Long): Boolean
 
-    fun sharePost(id: Long): Int
+    suspend fun sharePost(id: Long): Int
 
-    fun commentPost(id: Long): Int
+    suspend fun commentPost(id: Long): Int
 }

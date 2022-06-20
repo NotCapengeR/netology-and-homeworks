@@ -10,9 +10,11 @@ import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
+import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.ui.adapter.PostAdapter
@@ -88,7 +90,7 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
                 yTLayout.setVisibility(true)
                 ytVideoDuration.text = post.video.duration
                 ytAuthor.text = post.video.author
-                ytTitle.text =  post.video.title
+                ytTitle.text = post.video.title
                 Glide.with(requireContext())
                     .load(post.video.thumbnailUrl)
                     .centerCrop()
@@ -103,8 +105,10 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
                     )
                 }
                 ytCancel.setDebouncedListener(50L) {
-                    viewModel.removeLink(it.tag as Long)
-                    yTLayout.setVisibility(false)
+                    lifecycleScope.launch {
+                        viewModel.removeLink(it.tag as Long)
+                        yTLayout.setVisibility(false)
+                    }
                 }
 
             } else {
@@ -113,26 +117,32 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
         }
 
         ivLikes.setDebouncedListener(50L) {
-            viewModel.likePost(it.tag as Long)
-            val newPost = viewModel.getPostById(it.tag as Long)
-            ivLikes.text = newPost?.likes?.toPostText()
-            ivLikes.isChecked = newPost?.isLiked ?: false
+            lifecycleScope.launch {
+                viewModel.likePost(it.tag as Long)
+                val newPost = viewModel.getPostById(it.tag as Long)
+                ivLikes.text = newPost?.likes?.toPostText()
+                ivLikes.isChecked = newPost?.isLiked ?: false
 
-            if (newPost?.isLiked == true) {
-                ivLikes.setIconResource(R.drawable.heart)
-            } else {
-                ivLikes.setIconResource(R.drawable.heart_outline)
+                if (newPost?.isLiked == true) {
+                    ivLikes.setIconResource(R.drawable.heart)
+                } else {
+                    ivLikes.setIconResource(R.drawable.heart_outline)
+                }
             }
         }
         ivShare.setDebouncedListener(50L) {
-            viewModel.sharePost(it.tag as Long)
-            val newPost = viewModel.getPostById(it.tag as Long)
-            ivShare.text = newPost?.shared?.toPostText()
+            lifecycleScope.launch {
+                viewModel.sharePost(it.tag as Long)
+                val newPost = viewModel.getPostById(it.tag as Long)
+                ivShare.text = newPost?.shared?.toPostText()
+            }
         }
         ivComments.setDebouncedListener(50L) {
-            viewModel.commentPost(it.tag as Long)
-            val newPost = viewModel.getPostById(it.tag as Long)
-            ivComments.text = newPost?.comments?.toPostText()
+            lifecycleScope.launch {
+                viewModel.commentPost(it.tag as Long)
+                val newPost = viewModel.getPostById(it.tag as Long)
+                ivComments.text = newPost?.comments?.toPostText()
+            }
         }
         menuButton.setDebouncedListener(50L) {
             showPopupMenu()
@@ -156,11 +166,13 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
 
         popupMenu?.setOnMenuItemClickListener {
             when (it.itemId) {
-                REMOVE_ID ->  {
-                    viewModel.removePost(id).also { isDeleted ->
-                        if (isDeleted) {
-                            showToast(R.string.post_deleted)
-                            onBackPressed()
+                REMOVE_ID -> {
+                    lifecycleScope.launch {
+                        viewModel.removePost(id).also { isDeleted ->
+                            if (isDeleted) {
+                                showToast(R.string.post_deleted)
+                                onBackPressed()
+                            }
                         }
                     }
                 }

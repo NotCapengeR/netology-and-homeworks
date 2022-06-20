@@ -9,8 +9,10 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.AddFragmentBinding
 import ru.netology.nmedia.dto.Post.Companion.POST_DATE_PATTERN
@@ -24,6 +26,7 @@ import ru.netology.nmedia.utils.getAppComponent
 import ru.netology.nmedia.utils.setDebouncedListener
 import java.util.*
 import javax.inject.Inject
+import kotlin.coroutines.coroutineContext
 
 class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
 
@@ -87,11 +90,13 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
                         Linkify.addLinks(tvPostText, Linkify.WEB_URLS)
                         val url: String? =
                             if (tvPostText.urls.isNotEmpty()) tvPostText.urls.first().url else null
-                        viewModel.addPost(
-                            tvPostTitle.text.toString().trim(),
-                            tvPostText.text.toString().trim(),
-                            url
-                        )
+                        lifecycleScope.launch {
+                            viewModel.addPost(
+                                tvPostTitle.text.toString().trim(),
+                                tvPostText.text.toString().trim(),
+                                url
+                            )
+                        }
                         onBackPressed()
                         prefs.edit {
                             putString(POST_TITLE, " ")
@@ -104,7 +109,8 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
             }
 
             R.id.cancel_button -> onBackPressed()
-            else -> {/* do nothing */}
+            else -> {/* do nothing */
+            }
         }
     }
 

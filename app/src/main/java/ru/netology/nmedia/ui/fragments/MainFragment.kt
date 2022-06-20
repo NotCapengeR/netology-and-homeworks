@@ -10,9 +10,12 @@ import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentMainBinding
 import ru.netology.nmedia.dto.Post.Companion.POST_ID
@@ -73,12 +76,11 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
         }
         (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
         val adapter = PostAdapter(object : PostListener {
-            override fun onAdded(title: String, text: String): Long {
-                return viewModel.addPost(title, text)
-            }
 
-            override fun onRemoved(id: Long): Boolean {
-                return viewModel.removePost(id)
+            override suspend fun onRemoved(id: Long): Boolean {
+                return withContext(lifecycleScope.coroutineContext + Dispatchers.Main) {
+                    viewModel.removePost(id)
+                }
             }
 
             override fun onEdit(
@@ -86,24 +88,32 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 currentText: String,
                 currentTitle: String
             ): Boolean = with(binding) {
-                mainNavController?.navigate(R.id.action_mainFragment_to_editFragment, bundleOf(
-                    POST_ID to id,
-                    POST_TEXT to currentText,
-                    POST_TITLE to currentTitle
-                ))
+                mainNavController?.navigate(
+                    R.id.action_mainFragment_to_editFragment, bundleOf(
+                        POST_ID to id,
+                        POST_TEXT to currentText,
+                        POST_TITLE to currentTitle
+                    )
+                )
                 return mainNavController?.currentDestination?.id == R.id.editFragment
             }
 
-            override fun onLiked(id: Long): Boolean {
-                return viewModel.likePost(id)
+            override suspend fun onLiked(id: Long): Boolean {
+                return withContext(lifecycleScope.coroutineContext + Dispatchers.Main) {
+                    viewModel.likePost(id)
+                }
             }
 
-            override fun onShared(id: Long): Int {
-                return viewModel.sharePost(id)
+            override suspend fun onShared(id: Long): Int {
+                return withContext(lifecycleScope.coroutineContext + Dispatchers.Main) {
+                    viewModel.sharePost(id)
+                }
             }
 
-            override fun onCommented(id: Long): Int {
-                return viewModel.commentPost(id)
+            override suspend fun onCommented(id: Long): Int {
+                return withContext(lifecycleScope.coroutineContext + Dispatchers.Main) {
+                    viewModel.commentPost(id)
+                }
             }
 
             override fun onPostMoved(id: Long, movedBy: Int): Boolean {
@@ -114,8 +124,10 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
             }
 
-            override fun onLinkRemoved(id: Long): Boolean {
-                return viewModel.removeLink(id)
+            override suspend fun onLinkRemoved(id: Long): Boolean {
+                return withContext(lifecycleScope.coroutineContext + Dispatchers.Main) {
+                    viewModel.removeLink(id)
+                }
             }
 
             override fun onItemPressed(
@@ -123,12 +135,14 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 currentText: String,
                 currentTitle: String
             ) {
-                mainNavController?.navigate(R.id.action_mainFragment_to_detailsFragment,
-                bundleOf(
-                    POST_ID to id,
-                    POST_TEXT to currentText,
-                    POST_TITLE to currentTitle
-                ))
+                mainNavController?.navigate(
+                    R.id.action_mainFragment_to_detailsFragment,
+                    bundleOf(
+                        POST_ID to id,
+                        POST_TEXT to currentText,
+                        POST_TITLE to currentTitle
+                    )
+                )
             }
         })
         adapter.setHasStableIds(true)

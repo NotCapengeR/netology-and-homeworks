@@ -2,7 +2,7 @@ package ru.netology.nmedia.repository
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
@@ -24,7 +24,7 @@ class PostRepositoryImpl @Inject constructor(
 ) : PostRepository {
 
     private val posts: MutableMap<Long, Post> = HashMap()
-    private val scope = CoroutineScope(Dispatchers.Main + Job())
+    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     private fun findPostById(id: Long): PostSearchResult {
         val post = posts[id] ?: return PostSearchResult.NotFound
@@ -54,12 +54,15 @@ class PostRepositoryImpl @Inject constructor(
 
     override fun getPostById(id: Long): Post? = findPostById(id).post
 
-    override fun addPost(title: String, text: String): Long {
-        val id = dao.addPost(title, text)
+    override suspend fun addPost(title: String, text: String): Long {
+        val id = withContext(scope.coroutineContext + Dispatchers.IO) {
+            dao.addPost(title, text)
+        }
         val post = Post.parser(dao.getPostById(id))
         posts[id] = post
         return id
     }
+
 
     override suspend fun addVideo(url: String, postId: Long) = withContext(Dispatchers.IO) {
         val id = getIdFromYouTubeLink(url) ?: return@withContext
@@ -93,50 +96,61 @@ class PostRepositoryImpl @Inject constructor(
         })
     }
 
-    override fun removeLink(id: Long): Boolean {
+    override suspend fun removeLink(id: Long): Boolean {
         val post = getPostById(id) ?: return false
         posts[id] = post.copy(video = null)
-        dao.removeVideo(id)
-        return posts[id]?.video == null
+        return withContext(scope.coroutineContext + Dispatchers.IO) {
+            dao.removeVideo(id)
+        } > 0
     }
 
-    override fun removePost(id: Long): Boolean {
+    override suspend fun removePost(id: Long): Boolean {
+        return withContext(scope.coroutineContext + Dispatchers.IO) {
+            posts.remove(id)
+            dao.deletePostById(id)
+        } > 0
+    }
+
+    override suspend fun editPost(id: Long, newText: String, newTitle: String): Boolean {
         val post = findPostById(id).post ?: return false
-        posts.remove(id)
-        dao.deletePostById(id)
-        return !posts.containsValue(post)
+        return withContext(scope.coroutineContext + Dispatchers.IO) {
+            val newPost = post.copy(text = newText, title = newTitle)
+            posts[id] = newPost
+            dao.editPost(
+                id,
+                newTitle,
+                newText
+            )
+        } > 0
     }
 
-    override fun editPost(id: Long, newText: String, newTitle: String): Boolean {
+    override suspend fun likePost(id: Long): Boolean {
         val post = findPostById(id).post ?: return false
-        val newPost = post.copy(text = newText, title = newTitle)
-        dao.editPost(id, newTitle, newText)
-        posts[id] = newPost
-        return posts.containsValue(newPost)
+        return withContext(scope.coroutineContext + Dispatchers.IO) {
+            val changed = !post.isLiked
+            val nextValue = if (post.isLiked) post.likes - 1 else post.likes + 1
+            posts[id] = post.copy(likes = nextValue, isLiked = changed)
+            dao.likePostById(post.id, nextValue, changed)
+        } > 0
     }
 
-    override fun likePost(id: Long): Boolean {
-        val post = findPostById(id).post ?: return false
-        val changed = !post.isLiked
-        val nextValue = if (post.isLiked) post.likes - 1 else post.likes + 1
-        posts[id] = post.copy(likes = nextValue, isLiked = changed)
-        dao.likePostById(post.id, nextValue, changed)
-        return true
-    }
-
-    override fun sharePost(id: Long): Int {
+    override suspend fun sharePost(id: Long): Int {
         val post = findPostById(id).post ?: return -1
         val nextValue = post.shared + 1
-        dao.sharePostById(post.id, nextValue)
-        posts[id] = post.copy(shared = nextValue)
+        withContext(scope.coroutineContext + Dispatchers.IO) {
+            dao.sharePostById(post.id, nextValue)
+            posts[id] = post.copy(shared = nextValue)
+        }
         return nextValue
     }
 
-    override fun commentPost(id: Long): Int {
+    override suspend fun commentPost(id: Long): Int {
         val post = findPostById(id).post ?: return -1
         val nextValue = post.comments + 1
-        dao.commentPostById(post.id, nextValue)
-        posts[id] = post.copy(comments = nextValue)
+        withContext(scope.coroutineContext + Dispatchers.IO) {
+            dao.commentPostById(post.id, nextValue)
+            posts[id] = post.copy(comments = nextValue)
+        }
         return nextValue
     }
 

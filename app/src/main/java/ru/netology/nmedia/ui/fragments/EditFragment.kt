@@ -8,9 +8,11 @@ import android.text.util.Linkify
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
+import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.EditFragmentBinding
 import ru.netology.nmedia.dto.Post.Companion.POST_DATE_PATTERN
@@ -100,8 +102,10 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
                     )
                 }
                 ytCancel.setDebouncedListener(50L) {
-                    viewModel.removeLink(it.tag as Long)
-                    yTLayout.setVisibility(false)
+                    lifecycleScope.launch {
+                        viewModel.removeLink(it.tag as Long)
+                        yTLayout.setVisibility(false)
+                    }
                 }
 
             } else {
@@ -112,26 +116,32 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
             onBackPressed()
         }
         ivLikes.setDebouncedListener(50L) {
-            viewModel.likePost(it.tag as Long)
-            val newPost = viewModel.getPostById(it.tag as Long)
-            ivLikes.text = newPost?.likes?.toPostText()
-            ivLikes.isChecked = newPost?.isLiked ?: false
+            lifecycleScope.launch {
+                viewModel.likePost(it.tag as Long)
+                val newPost = viewModel.getPostById(it.tag as Long)
+                ivLikes.text = newPost?.likes?.toPostText()
+                ivLikes.isChecked = newPost?.isLiked ?: false
 
-            if (newPost?.isLiked == true) {
-                ivLikes.setIconResource(R.drawable.heart)
-            } else {
-                ivLikes.setIconResource(R.drawable.heart_outline)
+                if (newPost?.isLiked == true) {
+                    ivLikes.setIconResource(R.drawable.heart)
+                } else {
+                    ivLikes.setIconResource(R.drawable.heart_outline)
+                }
             }
         }
         ivShare.setDebouncedListener(50L) {
-            viewModel.sharePost(it.tag as Long)
-            val newPost = viewModel.getPostById(it.tag as Long)
-            ivShare.text = newPost?.shared?.toPostText()
+            lifecycleScope.launch {
+                viewModel.sharePost(it.tag as Long)
+                val newPost = viewModel.getPostById(it.tag as Long)
+                ivShare.text = newPost?.shared?.toPostText()
+            }
         }
         ivComments.setDebouncedListener(50L) {
-            viewModel.commentPost(it.tag as Long)
-            val newPost = viewModel.getPostById(it.tag as Long)
-            ivComments.text = newPost?.comments?.toPostText()
+            lifecycleScope.launch {
+                viewModel.commentPost(it.tag as Long)
+                val newPost = viewModel.getPostById(it.tag as Long)
+                ivComments.text = newPost?.comments?.toPostText()
+            }
         }
         cardViewSendPost.setDebouncedListener {
             when {
@@ -142,13 +152,15 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
                     Linkify.addLinks(tvPostText, Linkify.WEB_URLS)
                     val url: String? =
                         if (tvPostText.urls.isNotEmpty()) tvPostText.urls.first().url else null
-                    viewModel.editPost(
-                        id,
-                        tvPostText.text.toString().trim(),
-                        tvPostTitle.text.toString().trim(),
-                        url
-                    )
-                    clearKeyboard(tvPostText)
+                    lifecycleScope.launch {
+                        viewModel.editPost(
+                            id,
+                            tvPostText.text.toString().trim(),
+                            tvPostTitle.text.toString().trim(),
+                            url
+                        )
+                    }
+                    clearKeyboard()
                     onBackPressed()
                 }
             }
