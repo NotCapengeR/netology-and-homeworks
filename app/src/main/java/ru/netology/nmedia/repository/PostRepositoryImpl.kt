@@ -99,8 +99,8 @@ class PostRepositoryImpl @Inject constructor(
 
     override suspend fun removeLink(id: Long): Boolean {
         val post = getPostById(id) ?: return false
-        posts[id] = post.copy(video = null)
         return withContext(scope.coroutineContext + Dispatchers.IO) {
+            posts[id] = post.copy(video = null)
             dao.removeVideo(id)
         } > 0
     }
