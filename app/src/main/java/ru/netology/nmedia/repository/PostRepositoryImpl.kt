@@ -7,7 +7,7 @@ import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import ru.netology.nmedia.database.PostDAO
+import ru.netology.nmedia.database.dao.PostDAO
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.dto.YouTubeVideoData
 import ru.netology.nmedia.network.ApiService
@@ -34,7 +34,7 @@ class PostRepositoryImpl @Inject constructor(
     init {
         val postsList = dao.getAll()
         postsList.forEach {
-            posts[it.id] = it
+            posts[it.id] = Post.parser(it)
         }
     }
 
@@ -48,13 +48,15 @@ class PostRepositoryImpl @Inject constructor(
 
     override fun getPosts(): MutableList<Post> = posts.values.toMutableList()
 
-    override fun getAllPosts(): List<Post> = dao.getAll()
+    override fun getAllPosts(): List<Post> = dao.getAll().map {
+        Post.parser(it)
+    }
 
     override fun getPostById(id: Long): Post? = findPostById(id).post
 
     override fun addPost(title: String, text: String): Long {
         val id = dao.addPost(title, text)
-        val post = dao.getPostById(id) ?: return -1L
+        val post = Post.parser(dao.getPostById(id))
         posts[id] = post
         return id
     }
@@ -73,7 +75,14 @@ class PostRepositoryImpl @Inject constructor(
                 )
                 if (response.code() == 200) {
                     val video = YouTubeVideoData.parser(response.body())
-                    dao.addVideo(post.id, video)
+                    dao.addVideo(
+                        post.id,
+                        video?.id,
+                        video?.author,
+                        video?.title,
+                        video?.duration,
+                        video?.thumbnailUrl
+                    )
                     posts[postId] = post.copy(video = video)
                 }
             }
@@ -94,32 +103,31 @@ class PostRepositoryImpl @Inject constructor(
     override fun removePost(id: Long): Boolean {
         val post = findPostById(id).post ?: return false
         posts.remove(id)
-        dao.deletePost(id)
+        dao.deletePostById(id)
         return !posts.containsValue(post)
     }
 
     override fun editPost(id: Long, newText: String, newTitle: String): Boolean {
         val post = findPostById(id).post ?: return false
         val newPost = post.copy(text = newText, title = newTitle)
-        dao.editPost(id, newText, newTitle)
+        dao.editPost(id, newTitle, newText)
         posts[id] = newPost
         return posts.containsValue(newPost)
     }
 
     override fun likePost(id: Long): Boolean {
         val post = findPostById(id).post ?: return false
-        val previousLikesCount = post.likes
         val changed = !post.isLiked
-        val nextValue = if (post.isLiked) previousLikesCount - 1 else previousLikesCount + 1
+        val nextValue = if (post.isLiked) post.likes - 1 else post.likes + 1
         posts[id] = post.copy(likes = nextValue, isLiked = changed)
-        dao.likePost(post, previousLikesCount, changed, nextValue)
+        dao.likePostById(post.id, nextValue, changed)
         return true
     }
 
     override fun sharePost(id: Long): Int {
         val post = findPostById(id).post ?: return -1
         val nextValue = post.shared + 1
-        dao.sharePost(post, nextValue)
+        dao.sharePostById(post.id, nextValue)
         posts[id] = post.copy(shared = nextValue)
         return nextValue
     }
@@ -127,7 +135,7 @@ class PostRepositoryImpl @Inject constructor(
     override fun commentPost(id: Long): Int {
         val post = findPostById(id).post ?: return -1
         val nextValue = post.comments + 1
-        dao.commentPost(post, nextValue)
+        dao.commentPostById(post.id, nextValue)
         posts[id] = post.copy(comments = nextValue)
         return nextValue
     }

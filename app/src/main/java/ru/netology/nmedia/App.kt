@@ -6,6 +6,7 @@ import androidx.core.content.edit
 import ru.netology.nmedia.di.AppComponent
 import ru.netology.nmedia.di.DaggerAppComponent
 import ru.netology.nmedia.di.modules.AppModule
+import ru.netology.nmedia.di.modules.MemoryModule
 import ru.netology.nmedia.dto.Post.Companion.POST_TEXT
 import ru.netology.nmedia.dto.Post.Companion.POST_TITLE
 import ru.netology.nmedia.utils.getAppComponent

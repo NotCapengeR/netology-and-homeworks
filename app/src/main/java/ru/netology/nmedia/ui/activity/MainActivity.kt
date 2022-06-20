@@ -1,10 +1,8 @@
 package ru.netology.nmedia.ui.activity
 
-import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.activity.viewModels
-import ru.netology.nmedia.database.PostDB
 import ru.netology.nmedia.databinding.ActivityMainBinding
 import ru.netology.nmedia.ui.base.BaseActivity
 import ru.netology.nmedia.ui.viewmodel.ViewModelFactory

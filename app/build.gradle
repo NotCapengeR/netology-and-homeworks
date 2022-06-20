@@ -38,6 +38,10 @@ android {
 }
 
 dependencies {
+    implementation("androidx.room:room-runtime:2.4.2")
+    implementation "androidx.room:room-ktx:2.4.2"
+    kapt "androidx.room:room-compiler:2.4.2"
+    annotationProcessor("androidx.room:room-compiler:2.4.2")
     kapt("com.google.dagger:dagger-compiler:2.36")
     kapt("com.google.dagger:dagger-android-processor:2.36")
     kapt("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.3.0")

@@ -3,15 +3,15 @@ package ru.netology.nmedia.di.modules
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
-import android.database.sqlite.SQLiteDatabase
+import androidx.room.Room
 import com.google.gson.Gson
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import ru.netology.nmedia.App
-import ru.netology.nmedia.database.PostDAO
-import ru.netology.nmedia.database.PostDAOImpl
 import ru.netology.nmedia.database.PostDB
+import ru.netology.nmedia.database.PostDB.Companion.DB_NAME
+import ru.netology.nmedia.database.dao.PostDAO
 import ru.netology.nmedia.dto.Post.Companion.POST_ID
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
@@ -31,7 +31,17 @@ class MemoryModule {
 
     @Provides
     @Singleton
-    fun provideDB(db: PostDB): SQLiteDatabase = db.writableDatabase
+    fun provideDB(context: Context): PostDB = Room.databaseBuilder(
+        context,
+        PostDB::class.java,
+        DB_NAME
+    ).fallbackToDestructiveMigration()
+        .allowMainThreadQueries()
+        .build()
+
+    @Provides
+    @Singleton
+    fun providePostDAO(db: PostDB): PostDAO = db.getDao()
 }
 
 @Module
@@ -53,8 +63,5 @@ interface RepositoryModule {
     @Singleton
     fun bindPostRepository(postRepository: PostRepositoryImpl): PostRepository
 
-    @Binds
-    @Singleton
-    fun bindPostDAO(postDAO: PostDAOImpl): PostDAO
 }
 
