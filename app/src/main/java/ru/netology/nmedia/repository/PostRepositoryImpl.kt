@@ -72,9 +72,9 @@ class PostRepositoryImpl @Inject constructor(
     }
 
 
-    override suspend fun addVideo(url: String, postId: Long) = withContext(Dispatchers.IO) {
-        val id = getIdFromYouTubeLink(url) ?: return@withContext
-        val post = getPostById(postId) ?: return@withContext
+    override fun addVideo(url: String, postId: Long) {
+        val id = getIdFromYouTubeLink(url) ?: return
+        val post = getPostById(postId) ?: return
         service.getVideoData(id).enqueue(object : Callback<YouTubeVideo> {
             override fun onResponse(
                 call: Call<YouTubeVideo>,
@@ -85,16 +85,18 @@ class PostRepositoryImpl @Inject constructor(
                             "body id: ${response.body()?.items?.first()?.id}"
                 )
                 if (response.code() == 200) {
-                    val video = YouTubeVideoData.parser(response.body())
-                    dao.addVideo(
-                        post.id,
-                        video?.id,
-                        video?.author,
-                        video?.title,
-                        video?.duration,
-                        video?.thumbnailUrl
-                    )
-                    posts[postId] = post.copy(video = video)
+                    scope.launch(Dispatchers.IO) {
+                        val video = YouTubeVideoData.parser(response.body())
+                        dao.addVideo(
+                            post.id,
+                            video?.id,
+                            video?.author,
+                            video?.title,
+                            video?.duration,
+                            video?.thumbnailUrl
+                        )
+                        posts[postId] = post.copy(video = video)
+                    }
                 }
             }
 

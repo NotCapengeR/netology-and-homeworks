@@ -75,9 +75,7 @@ class PostViewModel @Inject constructor(
 
     private suspend fun addVideo(url: String, id: Long) {
         val index = indexes[id]?.first ?: return
-        viewModelScope.launch(Dispatchers.IO) {
-            postRepository.addVideo(url, id)
-        }
+        postRepository.addVideo(url, id)
         delay(1000)
         postRepository.getPostById(id)?.let {
             mutablePostsList[index] = it

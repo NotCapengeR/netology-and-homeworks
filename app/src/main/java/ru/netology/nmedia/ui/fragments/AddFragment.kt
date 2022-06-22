@@ -57,10 +57,7 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    prefs.edit {
-                        putString(POST_TITLE, binding.tvPostTitle.text.toString())
-                        putString(POST_TEXT, binding.tvPostText.text.toString())
-                    }
+                    saveTextState()
                     onBackPressed()
                 }
             })
@@ -105,17 +102,25 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
             }
 
             R.id.cancel_button -> onBackPressed()
-            else -> {/* do nothing */
-            }
+            else -> {/* do nothing */}
         }
     }
 
     override fun onBackPressed() {
+        saveTextState()
+        super.onBackPressed()
+    }
+
+    private fun saveTextState() {
         prefs.edit {
             putString(POST_TITLE, binding.tvPostTitle.text.toString())
             putString(POST_TEXT, binding.tvPostText.text.toString())
         }
-        super.onBackPressed()
+    }
+
+    override fun onDestroyView() {
+        saveTextState()
+        super.onDestroyView()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

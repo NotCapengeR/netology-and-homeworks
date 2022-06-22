@@ -163,7 +163,6 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
             }
         }
         viewModel.postsList.observe(viewLifecycleOwner) {
-            binding.progressEmpty.setVisibility(it.isEmpty())
             adapter.submitList(it)
         }
     }

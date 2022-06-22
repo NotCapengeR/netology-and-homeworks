@@ -52,7 +52,7 @@ data class Post(
                 video = YouTubeVideoData.buildVideoData(
                     entity.ytId,
                     entity.ytAuthor,
-                    entity.title,
+                    entity.ytTitle,
                     entity.ytDuration,
                     entity.ytThumbnailUrl
                 )
