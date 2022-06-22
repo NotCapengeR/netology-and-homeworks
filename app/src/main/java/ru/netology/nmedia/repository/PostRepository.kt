@@ -6,7 +6,7 @@ interface PostRepository {
 
     suspend fun getPosts(): List<Post>
 
-    fun getAllPosts(): List<Post>
+    suspend fun getAllPosts(): List<Post>
 
     suspend fun addPost(title: String, text: String): Long
 

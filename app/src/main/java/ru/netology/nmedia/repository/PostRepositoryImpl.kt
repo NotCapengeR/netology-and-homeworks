@@ -52,9 +52,10 @@ class PostRepositoryImpl @Inject constructor(
             posts.values.toMutableList()
         }
 
-    override fun getAllPosts(): List<Post> = dao.getAll().map {
-        Post.parser(it)
-    }
+    override suspend fun getAllPosts(): List<Post> =
+        withContext(scope.coroutineContext + Dispatchers.IO) {
+            dao.getAll().map { Post.parser(it) }
+        }
 
     override fun getPostById(id: Long): Post? = findPostById(id).post
 
