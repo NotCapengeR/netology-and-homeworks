@@ -17,7 +17,7 @@ data class PostEntity(
     @ColumnInfo(name = "text")
     val text: String,
     @ColumnInfo(name = "date")
-    val date: String = DateFormat.format(Post.POST_DATE_PATTERN, Date().time).toString(),
+    val date: String = DateFormat.format(Post.POST_DATE_ABSOLUTE, Date().time).toString(),
     @ColumnInfo(name = "avatar_id", defaultValue = R.mipmap.ic_launcher.toString())
     val avatarId: Int = R.mipmap.ic_launcher,
     @ColumnInfo(name = "likes_count", defaultValue = "0")
