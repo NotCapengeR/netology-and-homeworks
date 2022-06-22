@@ -31,8 +31,8 @@ class PostRepositoryImpl @Inject constructor(
     init {
         scope.launch(Dispatchers.Main) {
             val postsList = withContext(scope.coroutineContext + Dispatchers.IO) {
-                dao.getAll()
-            }.map { Post.parser(it) }
+                dao.getAll().map { Post.parser(it) }
+            }
             posts = postsList
                 .associateBy { it.id }
                 .toMutableMap()
