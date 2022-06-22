@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.text.format.DateFormat
 import android.text.util.Linkify
 import android.view.*
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.fragment.app.activityViewModels
@@ -120,7 +119,6 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
         prefs.edit {
             putString(ADD_FRAGMENT_TITLE, binding.tvPostTitle.text.toString())
             putString(ADD_FRAGMENT_TEXT, binding.tvPostText.text.toString())
-            putInt(ADD_FRAGMENT_POST_ID, 0)
         }
     }
 
