@@ -8,19 +8,18 @@ import android.text.util.Linkify
 import android.view.*
 import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
-import ru.netology.nmedia.dto.Post
-import ru.netology.nmedia.ui.adapter.PostAdapter
-import ru.netology.nmedia.ui.base.BaseFragment
 import ru.netology.nmedia.databinding.DetailsFragmentBinding
 import ru.netology.nmedia.dto.Post.Companion.POST_DATE_PATTERN
+import ru.netology.nmedia.ui.adapter.PostAdapter
+import ru.netology.nmedia.ui.base.BaseFragment
 import ru.netology.nmedia.ui.viewmodel.PostViewModel
 import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
 import ru.netology.nmedia.utils.getAppComponent
@@ -31,13 +30,13 @@ import javax.inject.Inject
 
 class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
 
-    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> DetailsFragmentBinding
-        get() = DetailsFragmentBinding::inflate
-
     @Inject lateinit var viewModelFactory: ViewModelFactory
+    private val args: DetailsFragmentArgs by navArgs()
     private val viewModel: PostViewModel by activityViewModels {
         viewModelFactory
     }
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> DetailsFragmentBinding
+        get() = DetailsFragmentBinding::inflate
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -61,7 +60,7 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
             toolbar.setupWithNavController(this, appBarConfiguration)
         }
         (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
-        val id = requireArguments().get(Post.POST_ID) as Long
+        val id = args.postId
         val post = viewModel.getPostById(id)
         if (post != null) {
             tvDateTime.text = DateFormat.format(POST_DATE_PATTERN, post.date)
@@ -152,11 +151,11 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
         inflater.inflate(R.menu.empty, menu)
     }
 
-    override fun showPopupMenu(args: Bundle?) {
+    override fun showPopupMenu(key: String?) {
         val view = binding.menuButton
         val id: Long = view.tag as Long
-        val currentText = requireArguments().get(Post.POST_TEXT) as String
-        val currentTitle = requireArguments().get(Post.POST_TITLE) as String
+        val currentText = args.postText
+        val currentTitle = args.postTitle
         popupMenu = PopupMenu(view.context, view)
         popupMenu?.menu?.add(0, REMOVE_ID, Menu.NONE, getString(R.string.post_remove))
         popupMenu?.menu?.add(0, EDIT_ID, Menu.NONE, getString(R.string.edit))
@@ -176,17 +175,12 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
                 }
 
 
-                EDIT_ID -> mainNavController?.navigate(
-                    R.id.action_detailsFragment_to_editFragment, bundleOf(
-                        Post.POST_ID to id,
-                        Post.POST_TEXT to currentText,
-                        Post.POST_TITLE to currentTitle
-                    )
-                )
+                EDIT_ID -> mainNavController?.navigate(DetailsFragmentDirections
+                    .actionDetailsFragmentToEditFragment(currentText, currentTitle, id))
             }
             return@setOnMenuItemClickListener true
         }
-        super.showPopupMenu(args)
+        super.showPopupMenu(key)
     }
 
     private companion object {

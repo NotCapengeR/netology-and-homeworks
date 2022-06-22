@@ -26,7 +26,12 @@
         android:id="@+id/addFragment"
         android:name="ru.netology.nmedia.ui.fragments.AddFragment"
         android:label="add_fragment"
-        tools:layout="@layout/add_fragment"/>
+        tools:layout="@layout/add_fragment">
+        <argument
+            android:name="post_id"
+            app:argType="long"
+            android:defaultValue="0L" />
+    </fragment>
     <fragment
         android:id="@+id/editFragment"
         android:name="ru.netology.nmedia.ui.fragments.EditFragment"
@@ -34,12 +39,13 @@
         android:label="EditFragment" >
         <argument
             android:name="post_text"
-            app:argType="string"
-            android:defaultValue=" " />
+            app:argType="string"/>
         <argument
             android:name="post_title"
-            app:argType="string"
-            android:defaultValue=" " />
+            app:argType="string"/>
+        <argument
+            android:name="post_id"
+            app:argType="long" />
     </fragment>
     <fragment
         android:id="@+id/detailsFragment"
@@ -49,6 +55,15 @@
         <action
             android:id="@+id/action_detailsFragment_to_editFragment"
             app:destination="@id/editFragment" />
+        <argument
+            android:name="post_text"
+            app:argType="string" />
+        <argument
+            android:name="post_title"
+            app:argType="string" />
+        <argument
+            android:name="post_id"
+            app:argType="long" />
     </fragment>
 
 

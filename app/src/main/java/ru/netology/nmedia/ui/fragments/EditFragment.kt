@@ -1,14 +1,17 @@
 package ru.netology.nmedia.ui.fragments
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.text.util.Linkify
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.edit
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
@@ -16,22 +19,24 @@ import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.EditFragmentBinding
 import ru.netology.nmedia.dto.Post.Companion.POST_DATE_PATTERN
-import ru.netology.nmedia.dto.Post.Companion.POST_ID
 import ru.netology.nmedia.ui.adapter.PostAdapter.Companion.YOUTUBE_URL
 import ru.netology.nmedia.ui.base.BaseFragment
 import ru.netology.nmedia.ui.viewmodel.PostViewModel
 import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
 import ru.netology.nmedia.utils.*
+import timber.log.Timber
 import javax.inject.Inject
 
 class EditFragment : BaseFragment<EditFragmentBinding>() {
 
-    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> EditFragmentBinding
-        get() = EditFragmentBinding::inflate
     @Inject lateinit var viewModelFactory: ViewModelFactory
+    @Inject lateinit var prefs: SharedPreferences
+    private val args: EditFragmentArgs by navArgs()
     private val viewModel: PostViewModel by activityViewModels {
         viewModelFactory
     }
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> EditFragmentBinding
+        get() = EditFragmentBinding::inflate
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,14 +60,20 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
             toolbar.setupWithNavController(this, appBarConfiguration)
         }
         (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
-        val id = requireArguments().get(POST_ID) as Long
-        if (id != viewModel.editablePost.value?.id) {
-            viewModel.changePost(id)
-        }
+        val id = args.postId
         val post = viewModel.getPostById(id)
-        viewModel.editablePost.observe(viewLifecycleOwner) {
-            tvPostText.setText(it.text)
-            tvPostTitle.setText(it.title)
+        if (!(prefs.getString(EDIT_FRAGMENT_TEXT, ""))?.trim().isNullOrBlank()
+            && !(prefs.getString(EDIT_FRAGMENT_TITLE, ""))?.trim().isNullOrBlank()
+            && prefs.getLong(EDIT_FRAGMENT_POST_ID, 0L) == id
+        ) {
+            tvPostText.setText(prefs.getString(EDIT_FRAGMENT_TEXT, " "))
+            tvPostTitle.setText(prefs.getString(EDIT_FRAGMENT_TITLE, " "))
+        } else {
+            tvPostText.setText(post?.text)
+            tvPostTitle.setText(post?.title)
+        }
+        prefs.edit {
+            putLong(EDIT_FRAGMENT_POST_ID, id)
         }
         if (post != null) {
             tvDateTime.text = DateFormat.format(POST_DATE_PATTERN, post.date)
@@ -98,6 +109,7 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
                             )
                         )
                     )
+                    saveState()
                 }
                 ytCancel.setDebouncedListener(50L) {
                     lifecycleScope.launch {
@@ -160,22 +172,43 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
                     }
                     clearKeyboard()
                     onBackPressed()
+                    prefs.edit {
+                        putString(EDIT_FRAGMENT_TEXT, " ")
+                        putString(EDIT_FRAGMENT_TITLE, " ")
+                        putLong(EDIT_FRAGMENT_POST_ID, 0L)
+                    }
                 }
             }
         }
     }
 
     override fun onDestroyView() {
-        viewModel.interactWithPost(
-            newTitle = binding.tvPostTitle.text.toString(),
-            newText = binding.tvPostText.text.toString()
-        )
+        if (prefs.getLong(EDIT_FRAGMENT_POST_ID, 0L) != 0L) {
+            saveState()
+        }
         super.onDestroyView()
+    }
+
+
+    private fun saveState() = with(binding) {
+        Timber.d("State has been saved!!!")
+        prefs.edit {
+            putString(EDIT_FRAGMENT_TEXT, tvPostText.text.toString())
+            putString(EDIT_FRAGMENT_TITLE, tvPostTitle.text.toString())
+            putLong(EDIT_FRAGMENT_POST_ID, args.postId)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
         inflater.inflate(R.menu.empty, menu)
+    }
+
+
+    private companion object {
+        private const val EDIT_FRAGMENT_POST_ID: String ="edit_fragment_post_id"
+        private const val EDIT_FRAGMENT_TEXT: String = "edit_fragment_text"
+        private const val EDIT_FRAGMENT_TITLE: String = "edit_fragment_title"
     }
 
 }

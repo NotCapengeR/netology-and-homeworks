@@ -11,7 +11,6 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity(), FragmentObs
 
     private var _binding: ViewBinding? = null
     abstract val bindingInflater: (LayoutInflater) -> VB
-
     @Suppress("UNCHECKED_CAST")
     protected val binding: VB
         get() = requireNotNull(_binding) as VB

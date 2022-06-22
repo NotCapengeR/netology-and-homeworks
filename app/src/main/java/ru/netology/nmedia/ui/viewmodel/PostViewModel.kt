@@ -18,9 +18,6 @@ class PostViewModel @Inject constructor(
 
     // это для перемещения постов, в мапах-то позиции нельзя менять)
     private val mutablePostsList: MutableList<Post> = mutableListOf()
-    val editablePost: MutableLiveData<Post> by lazy {
-        MutableLiveData(Post.EMPTY_POST)
-    }
     private val indexes: Map<Long, Pair<Int, Post>>
         get() = mutablePostsList.associate { post ->
             post.id to (mutablePostsList.indexOf(post) to post)
@@ -30,28 +27,13 @@ class PostViewModel @Inject constructor(
     }
 
 
-    fun changePost(id: Long = 0L) {
-        editablePost.value = postRepository.getPostById(id) ?: Post.EMPTY_POST
-    }
-
-    @JvmOverloads
-    fun interactWithPost(newTitle: String? = null, newText: String? = null) = when {
-        newTitle != null && newText != null ->
-            editablePost.value = editablePost.value?.copy(title = newTitle, text = newText)
-        newTitle == null && newText != null ->
-            editablePost.value = editablePost.value?.copy(text = newText)
-        newTitle != null && newText == null ->
-            editablePost.value = editablePost.value?.copy(title = newTitle)
-        else -> {}
-    }
-
     init {
         viewModelScope.launch(Dispatchers.Main) {
-            do {
-                mutablePostsList.addAll(postRepository.getPosts())
-            } while (mutablePostsList.isEmpty())
+            delay(500L)
+            mutablePostsList.addAll(postRepository.getPosts())
             loadData()
         }
+
     }
 
     suspend fun addPost(

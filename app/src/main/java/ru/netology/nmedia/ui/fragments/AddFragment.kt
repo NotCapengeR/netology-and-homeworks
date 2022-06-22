@@ -10,14 +10,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.AddFragmentBinding
 import ru.netology.nmedia.dto.Post.Companion.POST_DATE_PATTERN
-import ru.netology.nmedia.dto.Post.Companion.POST_TEXT
-import ru.netology.nmedia.dto.Post.Companion.POST_TITLE
 import ru.netology.nmedia.ui.base.BaseFragment
 import ru.netology.nmedia.ui.viewmodel.PostViewModel
 import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
@@ -30,10 +30,11 @@ import javax.inject.Inject
 class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
 
     @Inject lateinit var viewModelFactory: ViewModelFactory
+    @Inject lateinit var prefs: SharedPreferences
+    private val args: AddFragmentArgs by navArgs()
     private val viewModel: PostViewModel by activityViewModels {
         viewModelFactory
     }
-    @Inject lateinit var prefs: SharedPreferences
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> AddFragmentBinding
         get() = AddFragmentBinding::inflate
 
@@ -54,18 +55,17 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
     private fun initView() = with(binding) {
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
         setHasOptionsMenu(true)
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    saveTextState()
-                    onBackPressed()
-                }
-            })
-        tvPostText.setText(prefs.getString(POST_TEXT, ""))
-        tvPostTitle.setText(prefs.getString(POST_TITLE, ""))
+        tvPostText.setText(prefs.getString(ADD_FRAGMENT_TEXT, ""))
+        tvPostTitle.setText(prefs.getString(ADD_FRAGMENT_TEXT, ""))
+        prefs.edit {
+            putInt(ADD_FRAGMENT_POST_ID, 1)
+        }
         mainNavController?.apply {
             val appBarConfiguration = AppBarConfiguration(graph)
             toolbar.setupWithNavController(this, appBarConfiguration)
+            NavigationUI.setupActionBarWithNavController(
+                requireActivity() as AppCompatActivity, mainNavController!!, appBarConfiguration
+            )
         }
         (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
         tvDateTime.text = DateFormat.format(POST_DATE_PATTERN, Date().time)
@@ -92,8 +92,9 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
                         }
                         onBackPressed()
                         prefs.edit {
-                            putString(POST_TITLE, " ")
-                            putString(POST_TEXT, " ")
+                            putString(ADD_FRAGMENT_TITLE, " ")
+                            putString(ADD_FRAGMENT_TEXT, " ")
+                            putInt(ADD_FRAGMENT_POST_ID, 0)
                         }
                     } else {
                         showToast(R.string.text_is_unfilled)
@@ -102,29 +103,35 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
             }
 
             R.id.cancel_button -> onBackPressed()
+
             else -> {/* do nothing */}
         }
     }
 
-    override fun onBackPressed() {
-        saveTextState()
-        super.onBackPressed()
+    override fun onDestroyView() {
+        if (prefs.getInt(ADD_FRAGMENT_POST_ID, 0) != 0) {
+            saveTextState()
+        }
+        super.onDestroyView()
     }
+
 
     private fun saveTextState() {
         prefs.edit {
-            putString(POST_TITLE, binding.tvPostTitle.text.toString())
-            putString(POST_TEXT, binding.tvPostText.text.toString())
+            putString(ADD_FRAGMENT_TITLE, binding.tvPostTitle.text.toString())
+            putString(ADD_FRAGMENT_TEXT, binding.tvPostText.text.toString())
+            putInt(ADD_FRAGMENT_POST_ID, 0)
         }
-    }
-
-    override fun onDestroyView() {
-        saveTextState()
-        super.onDestroyView()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
         inflater.inflate(R.menu.empty, menu)
+    }
+
+    private companion object {
+        private const val ADD_FRAGMENT_POST_ID: String ="add_fragment_post_id"
+        private const val ADD_FRAGMENT_TEXT: String = "add_fragment_text"
+        private const val ADD_FRAGMENT_TITLE: String = "add_fragment_title"
     }
 }

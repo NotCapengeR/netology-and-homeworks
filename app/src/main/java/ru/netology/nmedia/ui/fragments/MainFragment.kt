@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.ui.AppBarConfiguration
@@ -18,9 +17,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentMainBinding
-import ru.netology.nmedia.dto.Post.Companion.POST_ID
-import ru.netology.nmedia.dto.Post.Companion.POST_TEXT
-import ru.netology.nmedia.dto.Post.Companion.POST_TITLE
 import ru.netology.nmedia.ui.adapter.PostAdapter
 import ru.netology.nmedia.ui.adapter.PostListener
 import ru.netology.nmedia.ui.adapter.decorators.LinearVerticalSpacingDecoration
@@ -87,13 +83,8 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 currentText: String,
                 currentTitle: String
             ): Boolean = with(binding) {
-                mainNavController?.navigate(
-                    R.id.action_mainFragment_to_editFragment, bundleOf(
-                        POST_ID to id,
-                        POST_TEXT to currentText,
-                        POST_TITLE to currentTitle
-                    )
-                )
+                mainNavController?.navigate(MainFragmentDirections
+                    .actionMainFragmentToEditFragment(currentText, currentTitle, id))
                 return mainNavController?.currentDestination?.id == R.id.editFragment
             }
 
@@ -134,14 +125,8 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 currentText: String,
                 currentTitle: String
             ) {
-                mainNavController?.navigate(
-                    R.id.action_mainFragment_to_detailsFragment,
-                    bundleOf(
-                        POST_ID to id,
-                        POST_TEXT to currentText,
-                        POST_TITLE to currentTitle
-                    )
-                )
+                mainNavController?.navigate(MainFragmentDirections.
+                actionMainFragmentToDetailsFragment(currentText, currentTitle, id))
             }
         })
         adapter.setHasStableIds(true)
