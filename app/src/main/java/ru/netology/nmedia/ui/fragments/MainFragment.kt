@@ -35,7 +35,8 @@ import javax.inject.Inject
 
 class MainFragment : BaseFragment<FragmentMainBinding>() {
 
-    @Inject lateinit var viewModelFactory: ViewModelFactory
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: PostViewModel by activityViewModels {
         viewModelFactory
     }
@@ -162,6 +163,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
             }
         }
         viewModel.postsList.observe(viewLifecycleOwner) {
+            binding.progressEmpty.setVisibility(it.isEmpty())
             adapter.submitList(it)
         }
     }

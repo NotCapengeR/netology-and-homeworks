@@ -4,7 +4,7 @@ import ru.netology.nmedia.dto.Post
 
 interface PostRepository {
 
-    fun getPosts(): List<Post>
+    suspend fun getPosts(): List<Post>
 
     fun getAllPosts(): List<Post>
 

@@ -46,8 +46,12 @@ class PostViewModel @Inject constructor(
     }
 
     init {
-        mutablePostsList.addAll(postRepository.getPosts())
-        loadData()
+        viewModelScope.launch(Dispatchers.Main) {
+            do {
+                mutablePostsList.addAll(postRepository.getPosts())
+            } while (mutablePostsList.isEmpty())
+            loadData()
+        }
     }
 
     suspend fun addPost(

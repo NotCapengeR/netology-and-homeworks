@@ -1,9 +1,6 @@
 package ru.netology.nmedia.repository
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -23,7 +20,7 @@ class PostRepositoryImpl @Inject constructor(
     private val dao: PostDAO
 ) : PostRepository {
 
-    private val posts: MutableMap<Long, Post> = HashMap()
+    private var posts: MutableMap<Long, Post> = HashMap()
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     private fun findPostById(id: Long): PostSearchResult {
@@ -32,9 +29,13 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     init {
-        val postsList = dao.getAll()
-        postsList.forEach {
-            posts[it.id] = Post.parser(it)
+        scope.launch(Dispatchers.Main) {
+            val postsList = withContext(scope.coroutineContext + Dispatchers.IO) {
+                dao.getAll()
+            }.map { Post.parser(it) }
+            posts = postsList
+                .associateBy { it.id }
+                .toMutableMap()
         }
     }
 
@@ -46,7 +47,10 @@ class PostRepositoryImpl @Inject constructor(
         } else null
     }
 
-    override fun getPosts(): MutableList<Post> = posts.values.toMutableList()
+    override suspend fun getPosts(): MutableList<Post> =
+        withContext(scope.coroutineContext + Dispatchers.IO) {
+            posts.values.toMutableList()
+        }
 
     override fun getAllPosts(): List<Post> = dao.getAll().map {
         Post.parser(it)
@@ -59,7 +63,9 @@ class PostRepositoryImpl @Inject constructor(
             dao.addPost(title, text)
         }.also {
             if (it > 0L) {
-                posts[it] = Post.parser(dao.getPostById(it))
+                withContext(scope.coroutineContext + Dispatchers.IO) {
+                    posts[it] = Post.parser(dao.getPostById(it))
+                }
             }
         }
     }

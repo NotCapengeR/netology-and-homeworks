@@ -36,7 +36,6 @@ class MemoryModule {
         PostDB::class.java,
         DB_NAME
     ).fallbackToDestructiveMigration()
-        .allowMainThreadQueries()
         .build()
 
     @Provides
