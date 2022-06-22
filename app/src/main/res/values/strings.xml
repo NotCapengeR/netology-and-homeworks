@@ -16,4 +16,10 @@
     <string name="post_deleted">Post was successfully deleted!</string>
     <string name="post_title">Post title</string>
     <string name="post_text">Post text</string>
+    <string name="channel_remote_name_like">Likes notification</string>
+    <string name="channel_remote_name_like_descriptions">Receive notifications of new likes</string>
+    <string name="channel_remote_name_new_posts">New posts notification</string>
+    <string name="channel_remote_name_new_posts_descriptions">Receive notifications of new posts</string>
+    <string name="notification_user_liked">User %1$s liked a post %2$s</string>
+    <string name="notification_new_post">User %1$s has published a new post:</string>
 </resources>

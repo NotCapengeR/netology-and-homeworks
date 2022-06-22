@@ -27,10 +27,6 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         getAppComponent().inject(this)
-        pref.edit {
-            putString(POST_TEXT, "")
-            putString(POST_TITLE, "")
-        }
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }

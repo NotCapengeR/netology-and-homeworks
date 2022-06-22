@@ -34,9 +34,7 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> DetailsFragmentBinding
         get() = DetailsFragmentBinding::inflate
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-
+    @Inject lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: PostViewModel by activityViewModels {
         viewModelFactory
     }

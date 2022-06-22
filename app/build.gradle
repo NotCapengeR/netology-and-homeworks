@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id("kotlin-parcelize")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -38,6 +39,9 @@ android {
 }
 
 dependencies {
+    implementation platform("com.google.firebase:firebase-bom:30.1.0")
+    implementation("com.google.firebase:firebase-messaging-ktx:23.0.5")
+    implementation("com.google.android.gms:play-services-base:18.0.1")
     implementation("androidx.room:room-runtime:2.4.2")
     implementation "androidx.room:room-ktx:2.4.2"
     kapt "androidx.room:room-compiler:2.4.2"

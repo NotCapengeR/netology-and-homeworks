@@ -28,9 +28,7 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
 
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> EditFragmentBinding
         get() = EditFragmentBinding::inflate
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    @Inject lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: PostViewModel by activityViewModels {
         viewModelFactory
     }

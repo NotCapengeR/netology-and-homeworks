@@ -26,18 +26,14 @@ import ru.netology.nmedia.utils.getAppComponent
 import ru.netology.nmedia.utils.setDebouncedListener
 import java.util.*
 import javax.inject.Inject
-import kotlin.coroutines.coroutineContext
 
 class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    @Inject lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: PostViewModel by activityViewModels {
         viewModelFactory
     }
-
-    @Inject
-    lateinit var prefs: SharedPreferences
+    @Inject lateinit var prefs: SharedPreferences
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> AddFragmentBinding
         get() = AddFragmentBinding::inflate
 

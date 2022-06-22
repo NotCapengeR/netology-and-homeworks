@@ -15,4 +15,10 @@
     <string name="post_deleted">Пост успешно удалён!</string>
     <string name="post_title">Заголовок поста</string>
     <string name="post_text">Текст поста</string>
+    <string name="channel_remote_name_like">Уведомления о новых лайках</string>
+    <string name="channel_remote_name_like_descriptions">Получать уведомления о новых лайках</string>
+    <string name="channel_remote_name_new_posts">Уведомления о новых постах</string>
+    <string name="channel_remote_name_new_posts_descriptions">Получать уведомления о новых постах</string>
+    <string name="notification_user_liked">Пользователь %1$s поставил лайк посту %2$s</string>
+    <string name="notification_new_post">Пользователь %1$s опубликовал новый пост:</string>
 </resources>

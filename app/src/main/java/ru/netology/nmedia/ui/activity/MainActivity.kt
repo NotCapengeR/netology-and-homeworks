@@ -12,8 +12,7 @@ import javax.inject.Inject
 
 class MainActivity : BaseActivity<ActivityMainBinding>() {
 
-    @Inject
-    lateinit var factory: ViewModelFactory
+    @Inject lateinit var factory: ViewModelFactory
 
     private val viewModel: MainViewModel by viewModels {
         factory
