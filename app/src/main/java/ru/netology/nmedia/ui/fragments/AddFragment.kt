@@ -1,5 +1,6 @@
 package ru.netology.nmedia.ui.fragments
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.format.DateFormat
@@ -37,13 +38,9 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> AddFragmentBinding
         get() = AddFragmentBinding::inflate
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
         getAppComponent().inject(this)
-        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -62,9 +59,6 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
         mainNavController?.apply {
             val appBarConfiguration = AppBarConfiguration(graph)
             toolbar.setupWithNavController(this, appBarConfiguration)
-            NavigationUI.setupActionBarWithNavController(
-                requireActivity() as AppCompatActivity, mainNavController!!, appBarConfiguration
-            )
         }
         (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
         tvDateTime.text = DateFormat.format(POST_DATE_PATTERN, Date().time)

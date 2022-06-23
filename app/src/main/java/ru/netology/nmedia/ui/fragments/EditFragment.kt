@@ -1,5 +1,6 @@
 package ru.netology.nmedia.ui.fragments
 
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
@@ -38,13 +39,9 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> EditFragmentBinding
         get() = EditFragmentBinding::inflate
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
         getAppComponent().inject(this)
-        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -7,7 +7,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewbinding.ViewBinding
 
-abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity(), FragmentObserver {
+abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
 
     private var _binding: ViewBinding? = null
     abstract val bindingInflater: (LayoutInflater) -> VB
@@ -25,10 +25,6 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity(), FragmentObs
         _binding = null
     }
 
-    override fun onStartFragment() {}
-
-    override fun onStopFragment() {}
-
     fun showToast(message: String?, isLong: Boolean = false) {
         if (message == null) return
         if (isLong) {
@@ -41,11 +37,4 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity(), FragmentObs
     fun showToast(@StringRes msgResId: Int, isLong: Boolean = false) {
         showToast(getString(msgResId), isLong)
     }
-}
-
-interface FragmentObserver {
-
-    fun onStartFragment()
-
-    fun onStopFragment()
 }

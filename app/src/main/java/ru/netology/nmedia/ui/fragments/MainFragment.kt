@@ -1,5 +1,6 @@
 package ru.netology.nmedia.ui.fragments
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -40,13 +41,9 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
         get() = FragmentMainBinding::inflate
 
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
         getAppComponent().inject(this)
-        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

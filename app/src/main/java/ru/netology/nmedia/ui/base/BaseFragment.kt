@@ -31,7 +31,6 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = bindingInflater.invoke(inflater, container, false)
-        (activity as FragmentObserver).onStartFragment()
         clearKeyboard()
         return binding.root
     }
@@ -57,7 +56,6 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        (activity as FragmentObserver).onStopFragment()
         _binding = null
     }
 
