@@ -1,6 +1,7 @@
 package ru.netology.nmedia.repository
 
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -20,23 +21,17 @@ class PostRepositoryImpl @Inject constructor(
     private val dao: PostDAO
 ) : PostRepository {
 
-    private var posts: MutableMap<Long, Post> = HashMap()
+    private val posts: Map<Long, Post>
+    get() = runBlocking(Dispatchers.IO) {
+        getAllPosts().first().associateBy {
+            it.id
+        }
+    }
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     private fun findPostById(id: Long): PostSearchResult {
         val post = posts[id] ?: return PostSearchResult.NotFound
         return PostSearchResult.Success(post)
-    }
-
-    init {
-        scope.launch(Dispatchers.Main) {
-            val postsList = withContext(scope.coroutineContext + Dispatchers.IO) {
-                dao.getAll().map { Post.parser(it) }
-            }
-            posts = postsList
-                .associateBy { it.id }
-                .toMutableMap()
-        }
     }
 
     private fun getIdFromYouTubeLink(link: String?): String? {
@@ -52,22 +47,15 @@ class PostRepositoryImpl @Inject constructor(
             posts.values.toMutableList()
         }
 
-    override suspend fun getAllPosts(): List<Post> =
-        withContext(scope.coroutineContext + Dispatchers.IO) {
-            dao.getAll().map { Post.parser(it) }
-        }
+    override fun getAllPosts(): Flow<List<Post>> = dao.getAll()
+        .map { entities -> Post.mapEntitiesToPosts(entities) }
+        .flowOn(Dispatchers.IO)
 
     override fun getPostById(id: Long): Post? = findPostById(id).post
 
     override suspend fun addPost(title: String, text: String): Long {
         return withContext(scope.coroutineContext + Dispatchers.IO) {
             dao.addPost(title, text)
-        }.also {
-            if (it > 0L) {
-                withContext(scope.coroutineContext + Dispatchers.IO) {
-                    posts[it] = Post.parser(dao.getPostById(it))
-                }
-            }
         }
     }
 
@@ -95,7 +83,6 @@ class PostRepositoryImpl @Inject constructor(
                             video?.duration,
                             video?.thumbnailUrl
                         )
-                        posts[postId] = post.copy(video = video)
                     }
                 }
             }
@@ -107,25 +94,19 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     override suspend fun removeLink(id: Long): Boolean {
-        val post = getPostById(id) ?: return false
         return withContext(scope.coroutineContext + Dispatchers.IO) {
-            posts[id] = post.copy(video = null)
             dao.removeVideo(id)
         } > 0
     }
 
     override suspend fun removePost(id: Long): Boolean {
         return withContext(scope.coroutineContext + Dispatchers.IO) {
-            posts.remove(id)
             dao.deletePostById(id)
         } > 0
     }
 
     override suspend fun editPost(id: Long, newText: String, newTitle: String): Boolean {
-        val post = findPostById(id).post ?: return false
         return withContext(scope.coroutineContext + Dispatchers.IO) {
-            val newPost = post.copy(text = newText, title = newTitle)
-            posts[id] = newPost
             dao.editPost(
                 id,
                 newTitle,
@@ -139,7 +120,6 @@ class PostRepositoryImpl @Inject constructor(
         return withContext(scope.coroutineContext + Dispatchers.IO) {
             val changed = !post.isLiked
             val nextValue = if (post.isLiked) post.likes - 1 else post.likes + 1
-            posts[id] = post.copy(likes = nextValue, isLiked = changed)
             dao.likePostById(post.id, nextValue, changed)
         } > 0
     }
@@ -149,7 +129,6 @@ class PostRepositoryImpl @Inject constructor(
         val nextValue = post.shared + 1
         withContext(scope.coroutineContext + Dispatchers.IO) {
             dao.sharePostById(post.id, nextValue)
-            posts[id] = post.copy(shared = nextValue)
         }
         return nextValue
     }
@@ -159,7 +138,6 @@ class PostRepositoryImpl @Inject constructor(
         val nextValue = post.comments + 1
         withContext(scope.coroutineContext + Dispatchers.IO) {
             dao.commentPostById(post.id, nextValue)
-            posts[id] = post.copy(comments = nextValue)
         }
         return nextValue
     }

@@ -1,12 +1,13 @@
 package ru.netology.nmedia.repository
 
+import kotlinx.coroutines.flow.Flow
 import ru.netology.nmedia.dto.Post
 
 interface PostRepository {
 
     suspend fun getPosts(): List<Post>
 
-    suspend fun getAllPosts(): List<Post>
+    fun getAllPosts(): Flow<List<Post>>
 
     suspend fun addPost(title: String, text: String): Long
 

@@ -37,8 +37,6 @@ interface PostListener {
 
     suspend fun onCommented(id: Long): Int
 
-    fun onPostMoved(id: Long, movedBy: Int): Boolean
-
     fun onLinkPressed(url: String)
 
     suspend fun onLinkRemoved(id: Long): Boolean
@@ -78,18 +76,9 @@ class PostAdapter(
         val context = view.context
         val popupMenu = PopupMenu(context, view)
         val post = view.tag as Post
-        val position = currentList.indexOf(post)
 
         popupMenu.menu.add(0, EDIT_ID, Menu.NONE, context.getString(R.string.edit))
         popupMenu.menu.add(0, REMOVE_ID, Menu.NONE, context.getString(R.string.post_remove))
-        popupMenu.menu.add(0, MOVE_UP_ID, Menu.NONE, context.getString(R.string.post_move_up))
-            .apply {
-                isEnabled = position > 0
-            }
-        popupMenu.menu.add(0, MOVE_DOWN_ID, Menu.NONE, context.getString(R.string.post_mode_down))
-            .apply {
-                isEnabled = position < this@PostAdapter.currentList.size - 1
-            }
 
         popupMenu.setOnMenuItemClickListener {
             when (it.itemId) {
@@ -99,9 +88,6 @@ class PostAdapter(
 
                 EDIT_ID -> listener.onEdit(post.id, post.text, post.title)
 
-                MOVE_DOWN_ID -> listener.onPostMoved(post.id, -1)
-
-                MOVE_UP_ID -> listener.onPostMoved(post.id, 1)
             }
             return@setOnMenuItemClickListener true
         }
@@ -183,9 +169,7 @@ class PostAdapter(
     companion object {
         const val YOUTUBE_URL: String = "https://www.youtube.com/watch?v="
         private const val REMOVE_ID: Int = 1
-        private const val MOVE_UP_ID: Int = 2
-        private const val MOVE_DOWN_ID: Int = 3
-        private const val EDIT_ID: Int = 4
+        private const val EDIT_ID: Int = 2
     }
 }
 

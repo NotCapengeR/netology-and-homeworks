@@ -18,8 +18,6 @@ data class Post(
     val video: YouTubeVideoData? = null
 ) {
     companion object {
-        const val POST_TITLE: String = "post_title"
-        const val POST_TEXT: String = "post_text"
         const val POST_ID: String = "post_id"
         const val POST_DATE_PATTERN: String = "d MMMM yyyy, HH:mm"
         const val POST_DATE_ABSOLUTE: String = "dd-MM-yyyy, HH:mm:ss"
@@ -58,5 +56,7 @@ data class Post(
                 )
             )
         }
+
+        fun mapEntitiesToPosts(entities: List<PostEntity>): List<Post> = entities.map { parser(it) }
     }
 }

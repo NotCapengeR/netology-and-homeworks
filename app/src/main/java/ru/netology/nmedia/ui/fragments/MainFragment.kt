@@ -106,10 +106,6 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 }
             }
 
-            override fun onPostMoved(id: Long, movedBy: Int): Boolean {
-                return viewModel.movePost(id, movedBy)
-            }
-
             override fun onLinkPressed(url: String) {
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
             }

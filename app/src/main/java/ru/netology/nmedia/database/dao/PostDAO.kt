@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 import ru.netology.nmedia.database.entities.PostEntity
 import ru.netology.nmedia.dto.Post
 import java.util.*
@@ -13,7 +14,7 @@ import java.util.*
 interface PostDAO {
 
     @Query("SELECT * FROM posts WHERE id > 0")
-    fun getAll(): List<PostEntity>
+    fun getAll(): Flow<List<PostEntity>>
 
     @Query("SELECT * FROM posts WHERE id = :id LIMIT 1")
     fun getPostById(id: Long): PostEntity

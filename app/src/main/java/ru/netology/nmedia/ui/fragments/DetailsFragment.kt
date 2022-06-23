@@ -20,7 +20,7 @@ import ru.netology.nmedia.databinding.DetailsFragmentBinding
 import ru.netology.nmedia.dto.Post.Companion.POST_DATE_PATTERN
 import ru.netology.nmedia.ui.adapter.PostAdapter
 import ru.netology.nmedia.ui.base.BaseFragment
-import ru.netology.nmedia.ui.viewmodel.PostViewModel
+import ru.netology.nmedia.ui.viewmodel.DetailsViewModel
 import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
 import ru.netology.nmedia.utils.getAppComponent
 import ru.netology.nmedia.utils.setDebouncedListener
@@ -32,7 +32,7 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
 
     @Inject lateinit var viewModelFactory: ViewModelFactory
     private val args: DetailsFragmentArgs by navArgs()
-    private val viewModel: PostViewModel by activityViewModels {
+    private val viewModel: DetailsViewModel by activityViewModels {
         viewModelFactory
     }
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> DetailsFragmentBinding
@@ -61,55 +61,55 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
         }
         (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
         val id = args.postId
-        val post = viewModel.getPostById(id)
-        if (post != null) {
-            tvDateTime.text = DateFormat.format(POST_DATE_PATTERN, post.date)
-            ivLikes.tag = post.id
-            ytCancel.tag = post.id
-            ivComments.tag = post.id
-            ivShare.tag = post.id
-            menuButton.tag = post.id
-            ivLikes.text = post.likes.toPostText()
-            ivComments.text = post.comments.toPostText()
-            ivPostAvatar.setImageResource(post.avatarId)
-            ivShare.text = post.shared.toPostText()
-            tvPostTitle.text = post.title
-            tvPostText.text = post.text
-            ivLikes.isChecked = post.isLiked
-            Linkify.addLinks(tvPostText, Linkify.WEB_URLS)
+        viewModel.loadPost(id)
+        viewModel.post.observe(viewLifecycleOwner) { post ->
+            if (post != null) {
+                tvDateTime.text = DateFormat.format(POST_DATE_PATTERN, post.date)
+                ivLikes.tag = post.id
+                ytCancel.tag = post.id
+                ivComments.tag = post.id
+                ivShare.tag = post.id
+                menuButton.tag = post.id
+                ivLikes.text = post.likes.toPostText()
+                ivComments.text = post.comments.toPostText()
+                ivPostAvatar.setImageResource(post.avatarId)
+                ivShare.text = post.shared.toPostText()
+                tvPostTitle.text = post.title
+                tvPostText.text = post.text
+                ivLikes.isChecked = post.isLiked
+                Linkify.addLinks(tvPostText, Linkify.WEB_URLS)
 
-            if (post.isLiked) {
-                ivLikes.setIconResource(R.drawable.heart)
-            } else {
-                ivLikes.setIconResource(R.drawable.heart_outline)
-            }
-            if (post.video != null) {
-                yTLayout.setVisibility(true)
-                ytVideoDuration.text = post.video.duration
-                ytAuthor.text = post.video.author
-                ytTitle.text = post.video.title
-                Glide.with(requireContext())
-                    .load(post.video.thumbnailUrl)
-                    .centerCrop()
-                    .into(ytThumbnail)
-                ytThumbnail.setDebouncedListener {
-                    startActivity(
-                        Intent(
-                            Intent.ACTION_VIEW, Uri.parse(
-                                "${PostAdapter.YOUTUBE_URL}${post.video.id}"
+                if (post.isLiked) {
+                    ivLikes.setIconResource(R.drawable.heart)
+                } else {
+                    ivLikes.setIconResource(R.drawable.heart_outline)
+                }
+                yTLayout.setVisibility(post.video != null)
+                if (post.video != null) {
+                    ytVideoDuration.text = post.video.duration
+                    ytAuthor.text = post.video.author
+                    ytTitle.text = post.video.title
+                    Glide.with(requireContext())
+                        .load(post.video.thumbnailUrl)
+                        .centerCrop()
+                        .into(ytThumbnail)
+                    ytThumbnail.setDebouncedListener {
+                        startActivity(
+                            Intent(
+                                Intent.ACTION_VIEW, Uri.parse(
+                                    "${PostAdapter.YOUTUBE_URL}${post.video.id}"
+                                )
                             )
                         )
-                    )
-                }
-                ytCancel.setDebouncedListener(50L) {
-                    lifecycleScope.launch {
-                        viewModel.removeLink(it.tag as Long)
-                        yTLayout.setVisibility(false)
                     }
-                }
+                    ytCancel.setDebouncedListener(50L) {
+                        lifecycleScope.launch {
+                            viewModel.removeLink(it.tag as Long)
+                            yTLayout.setVisibility(false)
+                        }
+                    }
 
-            } else {
-                yTLayout.setVisibility(false)
+                }
             }
         }
 
@@ -151,6 +151,11 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
         inflater.inflate(R.menu.empty, menu)
     }
 
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        viewModel.loadPost(args.postId)
+        super.onViewStateRestored(savedInstanceState)
+    }
+
     override fun showPopupMenu(key: String?) {
         val view = binding.menuButton
         val id: Long = view.tag as Long
@@ -175,8 +180,10 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
                 }
 
 
-                EDIT_ID -> mainNavController?.navigate(DetailsFragmentDirections
-                    .actionDetailsFragmentToEditFragment(currentText, currentTitle, id))
+                EDIT_ID -> mainNavController?.navigate(
+                    DetailsFragmentDirections
+                        .actionDetailsFragmentToEditFragment(currentText, currentTitle, id)
+                )
             }
             return@setOnMenuItemClickListener true
         }
