@@ -32,7 +32,7 @@ interface AppComponent {
     fun inject(fragment: EditFragment)
     fun inject(activity: MainActivity)
     fun inject(fragment: DetailsFragment)
-    fun inject(fcmService: FCMService)
+    fun inject(service: FCMService)
 }
 
 
