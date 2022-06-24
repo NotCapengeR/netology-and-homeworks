@@ -86,7 +86,7 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
         showToast(getString(msgResId), isLong)
     }
 
-    protected open fun showPopupMenu(key: String? = null) {
+    protected open fun showPopupMenu(view: View, key: String? = null) {
         popupMenu?.show()
     }
 }

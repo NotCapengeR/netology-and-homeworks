@@ -116,7 +116,7 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
             viewModel.commentPost(it.tag as Long)
         }
         menuButton.setDebouncedListener(50L) {
-            showPopupMenu()
+            showPopupMenu(it)
         }
     }
 
@@ -125,11 +125,8 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
         inflater.inflate(R.menu.empty, menu)
     }
 
-    override fun showPopupMenu(key: String?) {
-        val view = binding.menuButton
+    override fun showPopupMenu(view: View, key: String?) {
         val id: Long = view.tag as Long
-        val currentText = args.postText
-        val currentTitle = args.postTitle
         popupMenu = PopupMenu(view.context, view)
         popupMenu?.menu?.add(0, REMOVE_ID, Menu.NONE, getString(R.string.post_remove))
         popupMenu?.menu?.add(0, EDIT_ID, Menu.NONE, getString(R.string.edit))
@@ -137,20 +134,20 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
 
         popupMenu?.setOnMenuItemClickListener {
             when (it.itemId) {
+
                 REMOVE_ID -> viewModel.removePost(id)
 
-
                 EDIT_ID -> mainNavController?.navigate(
-                   DetailsFragmentDirections.actionDetailsFragmentToEditFragment(
-                        currentText,
-                        currentTitle,
+                    DetailsFragmentDirections.actionDetailsFragmentToEditFragment(
+                        args.postText,
+                        args.postTitle,
                         id
                     )
                 )
             }
             return@setOnMenuItemClickListener true
         }
-        super.showPopupMenu(key)
+        super.showPopupMenu(view, key)
     }
 
     private companion object {
