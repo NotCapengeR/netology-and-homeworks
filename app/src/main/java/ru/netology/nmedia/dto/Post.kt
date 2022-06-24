@@ -41,7 +41,8 @@ data class Post(
                 id = entity.id,
                 title = entity.title,
                 text = entity.text,
-                date = entity.date.toDateTime() ?: throw IllegalArgumentException("Invalid date pattern"),
+                date = entity.date.toDateTime()
+                    ?: throw IllegalArgumentException("Invalid date pattern"),
                 avatarId = entity.avatarId,
                 likes = entity.likes,
                 comments = entity.comments,
@@ -58,9 +59,7 @@ data class Post(
             )
         }
 
-        fun mapEntitiesToPosts(entities: List<PostEntity>): List<Post> = entities.map {
-            parser(it) ?: throw IllegalArgumentException("Invalid nullable entity")
-            // Лист NonNull элементов
-        }
+        fun mapEntitiesToPosts(entities: List<PostEntity>): List<Post> =
+            entities.mapNotNull { parser(it) }
     }
 }
