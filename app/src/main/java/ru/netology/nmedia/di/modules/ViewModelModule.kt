@@ -7,7 +7,8 @@ import dagger.MapKey
 import dagger.Module
 import dagger.multibindings.IntoMap
 import ru.netology.nmedia.ui.activity.MainViewModel
-import ru.netology.nmedia.ui.viewmodel.DetailsViewModel
+import ru.netology.nmedia.ui.fragments.details.DetailsViewModel
+import ru.netology.nmedia.ui.fragments.edit.EditViewModel
 import ru.netology.nmedia.ui.viewmodel.PostViewModel
 import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
 import kotlin.reflect.KClass
@@ -32,6 +33,12 @@ interface ViewModelModule {
     @IntoMap
     @ViewModelKey(DetailsViewModel::class)
     fun bindDetailsViewModel(viewModel: DetailsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(EditViewModel::class)
+    fun bindEditViewModel(viewModel: EditViewModel): ViewModel
+
 }
 
 @MustBeDocumented

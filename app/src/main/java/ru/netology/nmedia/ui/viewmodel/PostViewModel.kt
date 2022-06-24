@@ -4,6 +4,8 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.repository.PostRepository
@@ -13,18 +15,20 @@ import javax.inject.Inject
 
 class PostViewModel @Inject constructor(
     application: Application,
-    private val postRepository: PostRepository
+    private val repository: PostRepository
 ) : BaseViewModel(application) {
 
-    val postsList: LiveData<List<Post>> = postRepository.getAllPosts().asLiveData()
+    val postsList: LiveData<List<Post>> = repository.getAllPosts()
+        .catch { Timber.e("Exception occurred: ${it.message ?: it.toString()}") }
+        .asLiveData()
 
-    suspend fun addPost(
+    fun addPost(
         title: String,
         text: String,
         url: String? = null
-    ): Long {
-        return withContext(viewModelScope.coroutineContext) {
-            postRepository.addPost(title, text).also {
+    ) {
+        viewModelScope.launch {
+            repository.addPost(title, text).also {
                 if (it > 0L && url != null) {
                     addVideo(url, it)
                 }
@@ -33,56 +37,40 @@ class PostViewModel @Inject constructor(
     }
 
     private fun addVideo(url: String, id: Long) {
-        postRepository.addVideo(url, id)
+        repository.addVideo(url, id)
     }
 
-    suspend fun removeLink(id: Long): Boolean {
-        return withContext(viewModelScope.coroutineContext) {
-            postRepository.removeLink(id)
+    fun removeLink(id: Long) {
+        viewModelScope.launch {
+            repository.removeLink(id)
         }
     }
 
-    suspend fun removePost(id: Long): Boolean {
-        return withContext(viewModelScope.coroutineContext) {
-            postRepository.removePost(id)
+    fun removePost(id: Long) {
+        viewModelScope.launch {
+            repository.removePost(id)
         }
     }
 
-    suspend fun editPost(
-        id: Long,
-        newText: String,
-        newTitle: String,
-        url: String? = null
-    ): Boolean {
-        return withContext(viewModelScope.coroutineContext) {
-            Timber.d("Post was edited: $id")
-            postRepository.editPost(id, newText, newTitle).also {
-                if (it && url != null) {
-                    addVideo(url, id)
-                }
-            }
+    fun likePost(id: Long) {
+        viewModelScope.launch {
+            repository.likePost(id)
         }
     }
 
-    suspend fun likePost(id: Long): Boolean {
-        return withContext(viewModelScope.coroutineContext) {
-            postRepository.likePost(id)
+    fun sharePost(id: Long) {
+        viewModelScope.launch {
+            repository.sharePost(id)
         }
     }
 
-    suspend fun sharePost(id: Long): Int {
-        return withContext(viewModelScope.coroutineContext) {
-            postRepository.sharePost(id)
+    fun commentPost(id: Long) {
+        viewModelScope.launch {
+            repository.commentPost(id)
         }
     }
 
-    suspend fun commentPost(id: Long): Int {
-        return withContext(viewModelScope.coroutineContext) {
-            postRepository.commentPost(id)
-        }
-    }
-
-    fun getPostById(id: Long): Post? = postRepository.getPostById(id)
+    private suspend fun getPostById(id: Long): Post? = repository.getPostById(id)
 
 }
 

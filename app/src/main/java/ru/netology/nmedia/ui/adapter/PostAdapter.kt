@@ -10,10 +10,6 @@ import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.bumptech.glide.Glide
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.PostItemBinding
 import ru.netology.nmedia.dto.Post
@@ -27,19 +23,19 @@ import timber.log.Timber
 
 interface PostListener {
 
-    suspend fun onRemoved(id: Long): Boolean
+    fun onRemoved(id: Long)
 
     fun onEdit(id: Long, currentText: String, currentTitle: String): Boolean
 
-    suspend fun onLiked(id: Long): Boolean
+    fun onLiked(id: Long)
 
-    suspend fun onShared(id: Long): Int
+    fun onShared(id: Long)
 
-    suspend fun onCommented(id: Long): Int
+    fun onCommented(id: Long)
 
     fun onLinkPressed(url: String)
 
-    suspend fun onLinkRemoved(id: Long): Boolean
+    fun onLinkRemoved(id: Long)
 
     fun onItemPressed(id: Long, currentText: String, currentTitle: String)
 }
@@ -48,26 +44,22 @@ class PostAdapter(
     private val listener: PostListener
 ) : ListAdapter<Post, PostAdapter.PostViewHolder>(DiffUtilCallback), View.OnClickListener {
 
-    private val adapterScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
-
     override fun onClick(view: View) {
         val post = view.tag as Post
         when (view.id) {
             R.id.menuButton -> showPopupMenu(view)
 
-            R.id.ivLikes -> adapterScope.launch {
-                listener.onLiked(post.id)
-            }
-            R.id.ivComments -> adapterScope.launch {
-                listener.onCommented(post.id)
-            }
-            R.id.ivShare -> adapterScope.launch {
-                listener.onShared(post.id)
-            }
+            R.id.ivLikes -> listener.onLiked(post.id)
+
+            R.id.ivComments -> listener.onCommented(post.id)
+
+            R.id.ivShare -> listener.onShared(post.id)
+
 
             R.id.post_item -> listener.onItemPressed(post.id, post.text, post.title)
 
-            else -> {/* do nothing */}
+            else -> {/* do nothing */
+            }
         }
     }
 
@@ -82,9 +74,8 @@ class PostAdapter(
 
         popupMenu.setOnMenuItemClickListener {
             when (it.itemId) {
-                REMOVE_ID -> adapterScope.launch {
-                    listener.onRemoved(post.id)
-                }
+                REMOVE_ID -> listener.onRemoved(post.id)
+
 
                 EDIT_ID -> listener.onEdit(post.id, post.text, post.title)
 
@@ -126,9 +117,7 @@ class PostAdapter(
                     listener.onLinkPressed("$YOUTUBE_URL${post.video.id}")
                 }
                 ytCancel.setDebouncedListener {
-                    scope.launch {
-                        listener.onLinkRemoved(post.id)
-                    }
+                    listener.onLinkRemoved(post.id)
                 }
             }
             if (post.isLiked) {

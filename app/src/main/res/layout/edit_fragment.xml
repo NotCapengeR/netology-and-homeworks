@@ -8,7 +8,7 @@
     android:background="@color/white"
     android:clickable="true"
     android:focusable="true"
-    tools:context=".ui.fragments.EditFragment">
+    tools:context=".ui.fragments.edit.EditFragment">
 
 
     <androidx.appcompat.widget.Toolbar

@@ -10,12 +10,9 @@ import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentMainBinding
 import ru.netology.nmedia.ui.adapter.PostAdapter
@@ -69,10 +66,8 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
         (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
         val adapter = PostAdapter(object : PostListener {
 
-            override suspend fun onRemoved(id: Long): Boolean {
-                return withContext(lifecycleScope.coroutineContext + Dispatchers.Main) {
-                    viewModel.removePost(id)
-                }
+            override fun onRemoved(id: Long) {
+                viewModel.removePost(id)
             }
 
             override fun onEdit(
@@ -80,37 +75,31 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 currentText: String,
                 currentTitle: String
             ): Boolean = with(binding) {
-                mainNavController?.navigate(MainFragmentDirections
-                    .actionMainFragmentToEditFragment(currentText, currentTitle, id))
+                mainNavController?.navigate(
+                    MainFragmentDirections
+                        .actionMainFragmentToEditFragment(currentText, currentTitle, id)
+                )
                 return mainNavController?.currentDestination?.id == R.id.editFragment
             }
 
-            override suspend fun onLiked(id: Long): Boolean {
-                return withContext(lifecycleScope.coroutineContext + Dispatchers.Main) {
-                    viewModel.likePost(id)
-                }
+            override fun onLiked(id: Long) {
+                viewModel.likePost(id)
             }
 
-            override suspend fun onShared(id: Long): Int {
-                return withContext(lifecycleScope.coroutineContext + Dispatchers.Main) {
-                    viewModel.sharePost(id)
-                }
+            override fun onShared(id: Long) {
+                viewModel.sharePost(id)
             }
 
-            override suspend fun onCommented(id: Long): Int {
-                return withContext(lifecycleScope.coroutineContext + Dispatchers.Main) {
-                    viewModel.commentPost(id)
-                }
+            override fun onCommented(id: Long) {
+                viewModel.commentPost(id)
             }
 
             override fun onLinkPressed(url: String) {
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
             }
 
-            override suspend fun onLinkRemoved(id: Long): Boolean {
-                return withContext(lifecycleScope.coroutineContext + Dispatchers.Main) {
-                    viewModel.removeLink(id)
-                }
+            override fun onLinkRemoved(id: Long) {
+                viewModel.removeLink(id)
             }
 
             override fun onItemPressed(
@@ -118,8 +107,13 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 currentText: String,
                 currentTitle: String
             ) {
-                mainNavController?.navigate(MainFragmentDirections.
-                actionMainFragmentToDetailsFragment(currentText, currentTitle, id))
+                mainNavController?.navigate(
+                    MainFragmentDirections.actionMainFragmentToDetailsFragment(
+                        currentText,
+                        currentTitle,
+                        id
+                    )
+                )
             }
         })
         adapter.setHasStableIds(true)

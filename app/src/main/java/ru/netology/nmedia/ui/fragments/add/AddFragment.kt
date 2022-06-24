@@ -1,4 +1,4 @@
-package ru.netology.nmedia.ui.fragments
+package ru.netology.nmedia.ui.fragments.add
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -9,12 +9,9 @@ import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
-import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.AddFragmentBinding
 import ru.netology.nmedia.dto.Post.Companion.POST_DATE_PATTERN
@@ -76,13 +73,11 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
                         Linkify.addLinks(tvPostText, Linkify.WEB_URLS)
                         val url: String? =
                             if (tvPostText.urls.isNotEmpty()) tvPostText.urls.first().url else null
-                        lifecycleScope.launch {
-                            viewModel.addPost(
-                                tvPostTitle.text.toString().trim(),
-                                tvPostText.text.toString().trim(),
-                                url
-                            )
-                        }
+                        viewModel.addPost(
+                            tvPostTitle.text.toString().trim(),
+                            tvPostText.text.toString().trim(),
+                            url
+                        )
                         onBackPressed()
                         prefs.edit {
                             putString(ADD_FRAGMENT_TITLE, " ")
@@ -122,7 +117,7 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
     }
 
     private companion object {
-        private const val ADD_FRAGMENT_POST_ID: String ="add_fragment_post_id"
+        private const val ADD_FRAGMENT_POST_ID: String = "add_fragment_post_id"
         private const val ADD_FRAGMENT_TEXT: String = "add_fragment_text"
         private const val ADD_FRAGMENT_TITLE: String = "add_fragment_title"
     }

@@ -1,4 +1,4 @@
-package ru.netology.nmedia.ui.fragments
+package ru.netology.nmedia.ui.fragments.details
 
 import android.content.Context
 import android.content.Intent
@@ -10,18 +10,15 @@ import android.view.*
 import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
-import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.DetailsFragmentBinding
 import ru.netology.nmedia.dto.Post.Companion.POST_DATE_PATTERN
 import ru.netology.nmedia.ui.adapter.PostAdapter
 import ru.netology.nmedia.ui.base.BaseFragment
-import ru.netology.nmedia.ui.viewmodel.DetailsViewModel
 import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
 import ru.netology.nmedia.utils.getAppComponent
 import ru.netology.nmedia.utils.setDebouncedListener
@@ -31,7 +28,8 @@ import javax.inject.Inject
 
 class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
 
-    @Inject lateinit var viewModelFactory: ViewModelFactory
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
     private val args: DetailsFragmentArgs by navArgs()
     private val viewModel: DetailsViewModel by activityViewModels {
         viewModelFactory
@@ -100,10 +98,8 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
                         )
                     }
                     ytCancel.setDebouncedListener(50L) {
-                        lifecycleScope.launch {
-                            viewModel.removeLink(it.tag as Long)
-                            yTLayout.setVisibility(false)
-                        }
+                        viewModel.removeLink(it.tag as Long)
+                        yTLayout.setVisibility(false)
                     }
 
                 }
@@ -111,32 +107,13 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
         }
 
         ivLikes.setDebouncedListener(50L) {
-            lifecycleScope.launch {
-                viewModel.likePost(it.tag as Long)
-                val newPost = viewModel.getPostById(it.tag as Long)
-                ivLikes.text = newPost?.likes?.toPostText()
-                ivLikes.isChecked = newPost?.isLiked ?: false
-
-                if (newPost?.isLiked == true) {
-                    ivLikes.setIconResource(R.drawable.heart)
-                } else {
-                    ivLikes.setIconResource(R.drawable.heart_outline)
-                }
-            }
+            viewModel.likePost(it.tag as Long)
         }
         ivShare.setDebouncedListener(50L) {
-            lifecycleScope.launch {
-                viewModel.sharePost(it.tag as Long)
-                val newPost = viewModel.getPostById(it.tag as Long)
-                ivShare.text = newPost?.shared?.toPostText()
-            }
+            viewModel.sharePost(it.tag as Long)
         }
         ivComments.setDebouncedListener(50L) {
-            lifecycleScope.launch {
-                viewModel.commentPost(it.tag as Long)
-                val newPost = viewModel.getPostById(it.tag as Long)
-                ivComments.text = newPost?.comments?.toPostText()
-            }
+            viewModel.commentPost(it.tag as Long)
         }
         menuButton.setDebouncedListener(50L) {
             showPopupMenu()
@@ -146,11 +123,6 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
         inflater.inflate(R.menu.empty, menu)
-    }
-
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        viewModel.loadPost(args.postId)
-        super.onViewStateRestored(savedInstanceState)
     }
 
     override fun showPopupMenu(key: String?) {
@@ -165,21 +137,15 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
 
         popupMenu?.setOnMenuItemClickListener {
             when (it.itemId) {
-                REMOVE_ID -> {
-                    lifecycleScope.launch {
-                        viewModel.removePost(id).also { isDeleted ->
-                            if (isDeleted) {
-                                showToast(R.string.post_deleted)
-                                onBackPressed()
-                            }
-                        }
-                    }
-                }
+                REMOVE_ID -> viewModel.removePost(id)
 
 
                 EDIT_ID -> mainNavController?.navigate(
-                    DetailsFragmentDirections
-                        .actionDetailsFragmentToEditFragment(currentText, currentTitle, id)
+                   DetailsFragmentDirections.actionDetailsFragmentToEditFragment(
+                        currentText,
+                        currentTitle,
+                        id
+                    )
                 )
             }
             return@setOnMenuItemClickListener true

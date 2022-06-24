@@ -19,7 +19,7 @@ interface PostRepository {
 
     suspend fun editPost(id: Long, newText: String, newTitle: String): Boolean
 
-    fun getPostById(id: Long): Post?
+    suspend fun getPostById(id: Long): Post?
 
     suspend fun likePost(id: Long): Boolean
 

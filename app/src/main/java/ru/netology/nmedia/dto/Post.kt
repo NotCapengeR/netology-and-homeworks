@@ -35,7 +35,8 @@ data class Post(
             null
         )
 
-        fun parser(entity: PostEntity): Post {
+        fun parser(entity: PostEntity?): Post? {
+            if (entity == null) return null
             return Post(
                 id = entity.id,
                 title = entity.title,
@@ -57,6 +58,9 @@ data class Post(
             )
         }
 
-        fun mapEntitiesToPosts(entities: List<PostEntity>): List<Post> = entities.map { parser(it) }
+        fun mapEntitiesToPosts(entities: List<PostEntity>): List<Post> = entities.map {
+            parser(it) ?: throw IllegalArgumentException("Invalid nullable entity")
+            // Лист NonNull элементов
+        }
     }
 }

@@ -8,9 +8,9 @@ import ru.netology.nmedia.di.modules.MemoryModule
 import ru.netology.nmedia.di.modules.ViewModelModule
 import ru.netology.nmedia.service.FCMService
 import ru.netology.nmedia.ui.activity.MainActivity
-import ru.netology.nmedia.ui.fragments.AddFragment
-import ru.netology.nmedia.ui.fragments.DetailsFragment
-import ru.netology.nmedia.ui.fragments.EditFragment
+import ru.netology.nmedia.ui.fragments.add.AddFragment
+import ru.netology.nmedia.ui.fragments.details.DetailsFragment
+import ru.netology.nmedia.ui.fragments.edit.EditFragment
 import ru.netology.nmedia.ui.fragments.MainFragment
 import javax.inject.Singleton
 

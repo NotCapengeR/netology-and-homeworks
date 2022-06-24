@@ -22,17 +22,12 @@ class PostRepositoryImpl @Inject constructor(
 ) : PostRepository {
 
     private val posts: Map<Long, Post>
-    get() = runBlocking(Dispatchers.IO) {
-        getAllPosts().first().associateBy {
-            it.id
+        get() = runBlocking(Dispatchers.IO) {
+            getAllPosts().first().associateBy {
+                it.id
+            }
         }
-    }
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
-
-    private fun findPostById(id: Long): PostSearchResult {
-        val post = posts[id] ?: return PostSearchResult.NotFound
-        return PostSearchResult.Success(post)
-    }
 
     private fun getIdFromYouTubeLink(link: String?): String? {
         if (link == null) return null
@@ -51,18 +46,15 @@ class PostRepositoryImpl @Inject constructor(
         .map { entities -> Post.mapEntitiesToPosts(entities) }
         .flowOn(Dispatchers.IO)
 
-    override fun getPostById(id: Long): Post? = findPostById(id).post
+    override suspend fun getPostById(id: Long): Post? = Post.parser(dao.getPostById(id))
 
     override suspend fun addPost(title: String, text: String): Long {
-        return withContext(scope.coroutineContext + Dispatchers.IO) {
-            dao.addPost(title, text)
-        }
+        return dao.addPost(title, text)
     }
 
 
     override fun addVideo(url: String, postId: Long) {
         val id = getIdFromYouTubeLink(url) ?: return
-        val post = getPostById(postId) ?: return
         service.getVideoData(id).enqueue(object : Callback<YouTubeVideo> {
             override fun onResponse(
                 call: Call<YouTubeVideo>,
@@ -74,6 +66,7 @@ class PostRepositoryImpl @Inject constructor(
                 )
                 if (response.code() == 200) {
                     scope.launch(Dispatchers.IO) {
+                        val post = getPostById(postId) ?: return@launch
                         val video = YouTubeVideoData.parser(response.body())
                         dao.addVideo(
                             post.id,
@@ -88,57 +81,41 @@ class PostRepositoryImpl @Inject constructor(
             }
 
             override fun onFailure(call: Call<YouTubeVideo>, t: Throwable) {
-                Timber.e("Something went wrong: $t")
+                Timber.e("Exception occurred: ${t.message ?: t.toString()}")
             }
         })
     }
 
     override suspend fun removeLink(id: Long): Boolean {
-        return withContext(scope.coroutineContext + Dispatchers.IO) {
-            dao.removeVideo(id)
-        } > 0
+        return dao.removeVideo(id) > 0
     }
 
     override suspend fun removePost(id: Long): Boolean {
-        return withContext(scope.coroutineContext + Dispatchers.IO) {
-            dao.deletePostById(id)
-        } > 0
+        return dao.deletePostById(id) > 0
     }
 
     override suspend fun editPost(id: Long, newText: String, newTitle: String): Boolean {
-        return withContext(scope.coroutineContext + Dispatchers.IO) {
-            dao.editPost(
-                id,
-                newTitle,
-                newText
-            )
-        } > 0
+        return dao.editPost(id, newTitle, newText) > 0
     }
 
     override suspend fun likePost(id: Long): Boolean {
-        val post = findPostById(id).post ?: return false
-        return withContext(scope.coroutineContext + Dispatchers.IO) {
-            val changed = !post.isLiked
-            val nextValue = if (post.isLiked) post.likes - 1 else post.likes + 1
-            dao.likePostById(post.id, nextValue, changed)
-        } > 0
+        val post = getPostById(id) ?: return false
+        val changed = !post.isLiked
+        val nextValue = if (post.isLiked) post.likes - 1 else post.likes + 1
+        return dao.likePostById(post.id, nextValue, changed) > 0
     }
 
     override suspend fun sharePost(id: Long): Int {
-        val post = findPostById(id).post ?: return -1
+        val post = getPostById(id) ?: return -1
         val nextValue = post.shared + 1
-        withContext(scope.coroutineContext + Dispatchers.IO) {
-            dao.sharePostById(post.id, nextValue)
-        }
+        dao.sharePostById(post.id, nextValue)
         return nextValue
     }
 
     override suspend fun commentPost(id: Long): Int {
-        val post = findPostById(id).post ?: return -1
+        val post = getPostById(id) ?: return -1
         val nextValue = post.comments + 1
-        withContext(scope.coroutineContext + Dispatchers.IO) {
-            dao.commentPostById(post.id, nextValue)
-        }
+        dao.commentPostById(post.id, nextValue)
         return nextValue
     }
 

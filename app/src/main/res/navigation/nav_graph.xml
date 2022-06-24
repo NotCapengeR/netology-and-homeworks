@@ -24,7 +24,7 @@
 
     <fragment
         android:id="@+id/addFragment"
-        android:name="ru.netology.nmedia.ui.fragments.AddFragment"
+        android:name="ru.netology.nmedia.ui.fragments.add.AddFragment"
         android:label="add_fragment"
         tools:layout="@layout/add_fragment">
         <argument
@@ -34,7 +34,7 @@
     </fragment>
     <fragment
         android:id="@+id/editFragment"
-        android:name="ru.netology.nmedia.ui.fragments.EditFragment"
+        android:name="ru.netology.nmedia.ui.fragments.edit.EditFragment"
         tools:layout="@layout/edit_fragment"
         android:label="EditFragment" >
         <argument
@@ -49,7 +49,7 @@
     </fragment>
     <fragment
         android:id="@+id/detailsFragment"
-        android:name="ru.netology.nmedia.ui.fragments.DetailsFragment"
+        android:name="ru.netology.nmedia.ui.fragments.details.DetailsFragment"
         android:label="details_fragment"
         tools:layout="@layout/details_fragment" >
         <action
