@@ -21,12 +21,6 @@ class PostRepositoryImpl @Inject constructor(
     private val dao: PostDAO
 ) : PostRepository {
 
-    private val posts: Map<Long, Post>
-        get() = runBlocking(Dispatchers.IO) {
-            getAllPosts().first().associateBy {
-                it.id
-            }
-        }
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     private fun getIdFromYouTubeLink(link: String?): String? {
@@ -37,16 +31,16 @@ class PostRepositoryImpl @Inject constructor(
         } else null
     }
 
-    override suspend fun getPosts(): MutableList<Post> =
-        withContext(scope.coroutineContext + Dispatchers.IO) {
-            posts.values.toMutableList()
-        }
 
     override fun getAllPosts(): Flow<List<Post>> = dao.getAll()
         .map { entities -> Post.mapEntitiesToPosts(entities) }
         .flowOn(Dispatchers.IO)
 
-    override suspend fun getPostById(id: Long): Post? = Post.parser(dao.getPostById(id))
+    override suspend fun getPostById(id: Long): Post? {
+        return withContext(scope.coroutineContext + Dispatchers.IO) {
+            Post.parser(dao.getPostById(id))
+        }
+    }
 
     override suspend fun addPost(title: String, text: String): Long {
         return dao.addPost(title, text)

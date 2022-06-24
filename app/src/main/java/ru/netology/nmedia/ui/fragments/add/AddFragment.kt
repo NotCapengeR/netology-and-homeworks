@@ -49,7 +49,7 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
         setHasOptionsMenu(true)
         tvPostText.setText(prefs.getString(ADD_FRAGMENT_TEXT, ""))
-        tvPostTitle.setText(prefs.getString(ADD_FRAGMENT_TEXT, ""))
+        tvPostTitle.setText(prefs.getString(ADD_FRAGMENT_TITLE, ""))
         prefs.edit {
             putInt(ADD_FRAGMENT_POST_ID, 1)
         }

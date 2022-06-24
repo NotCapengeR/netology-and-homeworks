@@ -1,18 +1,26 @@
 package ru.netology.nmedia.network.results
 
 import retrofit2.Response
+import timber.log.Timber
 
 sealed class NetworkResult<T>(
     open val data: T? = null,
+    open val code: Int? = null,
     open val message: String? = null,
     val status: NetworkStatus
 ) {
 
-    data class Success<T>(override val data: T) : NetworkResult<T>(status = NetworkStatus.SUCCESS)
+    data class Success<T>(
+        override val data: T,
+        override val code: Int
+    ) : NetworkResult<T>(status = NetworkStatus.SUCCESS)
 
-    data class Error<T>(override val message: String) : NetworkResult<T>(status = NetworkStatus.ERROR)
+    data class Error<T>(
+        override val message: String,
+        override val code: Int? = null
+    ) : NetworkResult<T>(status = NetworkStatus.ERROR)
 
-    object Loading : NetworkResult<Any?>(status = NetworkStatus.LOADING)
+    class Loading<T> : NetworkResult<T>(status = NetworkStatus.LOADING)
 }
 
 enum class NetworkStatus {
@@ -22,16 +30,17 @@ enum class NetworkStatus {
 }
 
 suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): NetworkResult<T> {
-    return try {
+    try {
         val response = apiCall()
         if (response.isSuccessful) {
+            Timber.d("Response with code ${response.code()} has been received!")
             val body = response.body()
             if (body != null) {
-                NetworkResult.Success(body)
+                return NetworkResult.Success(body, response.code())
             }
         }
-        NetworkResult.Error("${response.code()} ${response.message()}")
+        return NetworkResult.Error(response.message(), response.code())
     } catch (e: Exception) {
-        NetworkResult.Error(e.message ?: e.toString())
+        return NetworkResult.Error(e.message ?: e.toString())
     }
 }
