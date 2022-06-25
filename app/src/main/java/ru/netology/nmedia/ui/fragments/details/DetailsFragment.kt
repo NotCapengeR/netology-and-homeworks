@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.text.format.DateFormat
 import android.text.util.Linkify
 import android.view.*
 import android.widget.PopupMenu
@@ -17,7 +16,6 @@ import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
 import ru.netology.nmedia.database.dto.Post
 import ru.netology.nmedia.databinding.DetailsFragmentBinding
-import ru.netology.nmedia.database.dto.Post.Companion.POST_DATE_PATTERN
 import ru.netology.nmedia.ui.adapter.PostAdapter
 import ru.netology.nmedia.ui.base.BaseFragment
 import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
@@ -25,7 +23,6 @@ import ru.netology.nmedia.utils.getAppComponent
 import ru.netology.nmedia.utils.setDebouncedListener
 import ru.netology.nmedia.utils.setVisibility
 import ru.netology.nmedia.utils.toPostText
-import timber.log.Timber
 import javax.inject.Inject
 
 class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
@@ -69,11 +66,7 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
                 menuButton.tag = post.id
                 ivLikes.text = post.likes.toPostText()
                 ivComments.text = post.comments.toPostText()
-                Glide.with(requireContext())
-                    .load(post.avatarId)
-                    .centerCrop()
-                    .into(ivPostAvatar)
-                Timber.d("Post avatar: ${post.avatarId}")
+                ivPostAvatar.setImageResource(post.avatarId)
                 ivShare.text = post.shared.toPostText()
                 tvPostTitle.text = post.title
                 tvPostText.text = post.text

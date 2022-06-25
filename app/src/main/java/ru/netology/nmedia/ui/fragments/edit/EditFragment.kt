@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.text.format.DateFormat
 import android.text.util.Linkify
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
@@ -15,13 +14,11 @@ import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
 import ru.netology.nmedia.database.dto.Post
-import ru.netology.nmedia.database.dto.Post.Companion.POST_DATE_PATTERN
+import ru.netology.nmedia.databinding.EditFragmentBinding
 import ru.netology.nmedia.ui.adapter.PostAdapter.Companion.YOUTUBE_URL
 import ru.netology.nmedia.ui.base.BaseFragment
 import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
-import ru.netology.nmedia.databinding.EditFragmentBinding
 import ru.netology.nmedia.utils.*
-import timber.log.Timber
 import javax.inject.Inject
 
 class EditFragment : BaseFragment<EditFragmentBinding>() {
@@ -71,11 +68,7 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
                 ivShare.tag = post.id
                 ivLikes.text = post.likes.toPostText()
                 ivComments.text = post.comments.toPostText()
-                Glide.with(requireContext())
-                    .load(post.avatarId)
-                    .centerCrop()
-                    .into(ivPostAvatar)
-                Timber.d("Post avatar: ${post.avatarId}")
+                ivPostAvatar.setImageResource(post.avatarId)
                 ivShare.text = post.shared.toPostText()
                 ivLikes.isChecked = post.isLiked
 

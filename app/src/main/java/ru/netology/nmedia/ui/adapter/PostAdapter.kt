@@ -1,6 +1,5 @@
 package ru.netology.nmedia.ui.adapter
 
-import android.text.format.DateFormat
 import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.Menu
@@ -11,16 +10,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
-import ru.netology.nmedia.databinding.PostItemBinding
 import ru.netology.nmedia.database.dto.Post
-import ru.netology.nmedia.database.dto.Post.Companion.POST_DATE_PATTERN
 import ru.netology.nmedia.database.dto.Post.Companion.parseEpochSeconds
+import ru.netology.nmedia.databinding.PostItemBinding
 import ru.netology.nmedia.ui.base.BaseViewHolder
 import ru.netology.nmedia.utils.setDebouncedListener
 import ru.netology.nmedia.utils.setVisibility
 import ru.netology.nmedia.utils.toPostText
 import timber.log.Timber
-import java.time.OffsetDateTime
 
 
 interface PostListener {
@@ -102,11 +99,7 @@ class PostAdapter(
             tvPostText.text = post.text
             tvPostTitle.text = post.title
             tvDateTime.text = parseEpochSeconds(post.date)
-            Glide.with(root.context)
-                .load(post.avatarId)
-                .centerCrop()
-                .into(ivPostAvatar)
-            Timber.d("Post avatar: ${post.avatarId}")
+            ivPostAvatar.setImageResource(post.avatarId)
             yTLayout.setVisibility(post.video != null)
             Linkify.addLinks(tvPostText, Linkify.WEB_URLS)
             if (post.video != null) {
