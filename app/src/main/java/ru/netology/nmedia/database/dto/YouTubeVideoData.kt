@@ -1,14 +1,17 @@
-package ru.netology.nmedia.dto
+package ru.netology.nmedia.database.dto
 
-import ru.netology.nmedia.network.YouTubeVideo
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+import ru.netology.nmedia.network.youtube.YouTubeVideo
 
+@Parcelize
 data class YouTubeVideoData(
     val id: String,
     val author: String,
     val title: String,
     val duration: String,
     val thumbnailUrl: String
-) {
+) : Parcelable {
 
     companion object {
 

@@ -10,11 +10,14 @@ import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import ru.netology.nmedia.R
+import ru.netology.nmedia.database.dto.Post
 import ru.netology.nmedia.databinding.FragmentMainBinding
+import ru.netology.nmedia.network.results.NetworkResult
 import ru.netology.nmedia.ui.adapter.PostAdapter
 import ru.netology.nmedia.ui.adapter.PostListener
 import ru.netology.nmedia.ui.adapter.decorators.LinearVerticalSpacingDecoration
@@ -29,13 +32,14 @@ import javax.inject.Inject
 
 class MainFragment : BaseFragment<FragmentMainBinding>() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentMainBinding
+        get() = FragmentMainBinding::inflate
+
+    @Inject lateinit var viewModelFactory: ViewModelFactory
+    private val args: MainFragmentArgs by navArgs()
     private val viewModel: PostViewModel by activityViewModels {
         viewModelFactory
     }
-    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentMainBinding
-        get() = FragmentMainBinding::inflate
 
 
     override fun onAttach(context: Context) {
@@ -46,13 +50,6 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-    }
-
-
-    override fun clearKeyboard(editText: EditText?): Unit = with(binding) {
-        super.clearKeyboard(editText)
-        cardViewEditMessage.setVisibility(false)
-        editableMessageContainer.setVisibility(false)
     }
 
 
@@ -127,15 +124,35 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 )
             )
             cardViewAddPost.setDebouncedListener(500L) {
-                clearKeyboard(etPostEdit)
                 mainNavController?.navigate(R.id.action_mainFragment_to_addFragment)
             }
-            ivEditCancel.setDebouncedListener(50L) {
-                clearKeyboard(etPostEdit)
+            refreshPostLayout.setOnRefreshListener {
+                viewModel.updateLiveData()
+                showToast("Refresh listener")
+                refreshPostLayout.isRefreshing = false
             }
         }
-        viewModel.postsList.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
+        viewModel.updateLiveData()
+        viewModel.postsList.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is NetworkResult.Success -> {
+                    binding.postProgress.setVisibility(false)
+                    binding.refreshPostLayout.isRefreshing = false
+                    adapter.submitList(result.data
+                        .map { Post.parser(it) }
+                        .reversed()
+                    )
+                }
+                is NetworkResult.Loading -> {
+                    binding.postProgress.setVisibility(true)
+                    binding.refreshPostLayout.isRefreshing = true
+                }
+                is NetworkResult.Error -> {
+                    binding.refreshPostLayout.isRefreshing = false
+                    binding.postProgress.setVisibility(false)
+                    showToast(result.message)
+                }
+            }
         }
     }
 }

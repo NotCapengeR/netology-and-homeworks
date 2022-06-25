@@ -6,7 +6,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import ru.netology.nmedia.App
 import ru.netology.nmedia.di.AppComponent
-import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.database.dto.Post
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 

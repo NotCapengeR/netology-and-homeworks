@@ -17,7 +17,8 @@ sealed class NetworkResult<T>(
 
     data class Error<T>(
         override val message: String,
-        override val code: Int? = null
+        override val code: Int? = null,
+        override val data: T? = null
     ) : NetworkResult<T>(status = NetworkStatus.ERROR)
 
     class Loading<T> : NetworkResult<T>(status = NetworkStatus.LOADING)
@@ -42,5 +43,15 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): NetworkResult<T
         return NetworkResult.Error(response.message(), response.code())
     } catch (e: Exception) {
         return NetworkResult.Error(e.message ?: e.toString())
+    }
+}
+
+suspend fun saveCall(call: suspend () -> Unit): Boolean {
+    return try {
+        call()
+        true
+    } catch (e: Throwable) {
+        Timber.e("Error occurred: ${e.message ?: e.toString()}")
+        false
     }
 }

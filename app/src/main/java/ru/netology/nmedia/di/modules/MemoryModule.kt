@@ -12,7 +12,7 @@ import ru.netology.nmedia.App
 import ru.netology.nmedia.database.PostDB
 import ru.netology.nmedia.database.PostDB.Companion.DB_NAME
 import ru.netology.nmedia.database.dao.PostDAO
-import ru.netology.nmedia.dto.Post.Companion.POST_ID
+import ru.netology.nmedia.database.dto.Post.Companion.POST_ID
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
 import javax.inject.Singleton

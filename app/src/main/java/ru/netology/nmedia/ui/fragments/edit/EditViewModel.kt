@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.database.dto.Post
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.ui.base.BaseViewModel
 import timber.log.Timber
@@ -38,15 +38,15 @@ class EditViewModel @Inject constructor(
     fun editPost(
         id: Long,
         newText: String,
-        newTitle: String,
         url: String? = null
     ) {
         viewModelScope.launch {
             Timber.d("Post was edited: $id")
-            repository.editPost(id, newText, newTitle).also {
-                if (it && url != null) {
-                    addVideo(url, id)
-                }
+            repository.editPost(id, newText).also {
+                if (it) loadAllPosts()
+//                if (it && url != null) {
+//                    addVideo(url, id)
+//                }
             }
         }
     }
@@ -96,5 +96,9 @@ class EditViewModel @Inject constructor(
             val newPost = getPostById(postId) ?: return@launch
             post.value = newPost
         }
+    }
+
+    fun loadAllPosts() {
+        repository.getAllPosts()
     }
 }

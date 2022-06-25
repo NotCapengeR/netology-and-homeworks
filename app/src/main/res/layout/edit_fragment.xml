@@ -53,14 +53,14 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:src="@drawable/ic_baseline_account_circle_24" />
 
-            <EditText
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvPostTitle"
                 android:layout_width="270dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="4dp"
                 android:ellipsize="end"
-                android:hint="@string/post_title"
+                android:text="@string/post_title"
                 android:maxLength="40"
                 android:maxLines="1"
                 android:textColorHint="@color/white_gray"

@@ -31,7 +31,7 @@
         app:cardBackgroundColor="@color/purple_200"
         app:cardCornerRadius="50dp"
         app:cardElevation="8dp"
-        app:layout_constraintBottom_toTopOf="@id/editableMessageContainer"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -40,130 +40,37 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/plus" />
+
     </androidx.cardview.widget.CardView>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rcViewPost"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:id="@+id/refresh_post_layout"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
-        tools:listitem="@layout/post_item" />
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/editableMessageContainer"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginBottom="0.05dp"
-        android:background="@color/white"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/cardViewEditMessage"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
 
-        <ImageView
-            android:id="@+id/ivEditIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="7dp"
-            android:src="@drawable/pencil"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/tvEditNotify"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:text="@string/edit_message"
-            android:textColor="@color/purple_200"
-            app:layout_constraintStart_toEndOf="@id/ivEditIcon"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/tvPreviousText"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginBottom="2dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:textColor="@color/gray"
-            app:layout_constraintEnd_toStartOf="@+id/ivEditCancel"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@id/ivEditIcon"
-            app:layout_constraintTop_toBottomOf="@id/tvEditNotify"
-            tools:text="ПРЕДЫДУЩНИЙ ТЕКСТ ПОСТА" />
-
-        <ImageView
-            android:id="@+id/ivEditCancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="7dp"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:src="@drawable/close"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rcViewPost"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            tools:listitem="@layout/post_item" />
 
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardViewEditMessage"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@color/gray"
-        android:elevation="2dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <ImageView
-            android:id="@+id/ivEditPostSmile"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:background="?android:attr/selectableItemBackground"
-            android:paddingStart="5dp"
-            android:src="@drawable/emoticon_happy_outline" />
-
-        <EditText
-            android:id="@+id/etPostEdit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="40dp"
-            android:layout_marginEnd="40dp"
-            android:inputType="text"
-            android:labelFor="@id/etPostEdit"
-            android:textAlignment="viewStart" />
-
-        <ImageView
-            android:id="@+id/ivEditPostSend"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:paddingEnd="5dp"
-            android:src="@drawable/send_circle" />
-
-    </androidx.cardview.widget.CardView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <ProgressBar
-        android:id="@+id/progress_empty"
+        android:id="@+id/post_progress"
         style="?android:attr/progressBarStyle"
-        android:visibility="gone"
         android:layout_width="200dp"
         android:layout_height="200dp"
+        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@id/cardViewAddPost"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

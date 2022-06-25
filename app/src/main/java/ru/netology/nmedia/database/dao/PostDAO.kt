@@ -7,7 +7,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import ru.netology.nmedia.database.entities.PostEntity
-import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.database.dto.Post
 import java.util.*
 
 @Dao

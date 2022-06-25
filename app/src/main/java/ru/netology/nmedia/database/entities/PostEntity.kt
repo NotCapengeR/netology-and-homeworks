@@ -5,7 +5,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import ru.netology.nmedia.R
-import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.database.dto.Post
 import java.util.*
 
 @Entity(tableName = "posts")

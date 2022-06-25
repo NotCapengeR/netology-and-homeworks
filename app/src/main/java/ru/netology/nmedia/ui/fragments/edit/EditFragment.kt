@@ -14,12 +14,14 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
-import ru.netology.nmedia.dto.Post.Companion.POST_DATE_PATTERN
+import ru.netology.nmedia.database.dto.Post
+import ru.netology.nmedia.database.dto.Post.Companion.POST_DATE_PATTERN
 import ru.netology.nmedia.ui.adapter.PostAdapter.Companion.YOUTUBE_URL
 import ru.netology.nmedia.ui.base.BaseFragment
 import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
 import ru.netology.nmedia.databinding.EditFragmentBinding
 import ru.netology.nmedia.utils.*
+import timber.log.Timber
 import javax.inject.Inject
 
 class EditFragment : BaseFragment<EditFragmentBinding>() {
@@ -61,17 +63,19 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
                 if (post.text != tvPostText.text.toString()) {
                     tvPostText.setText(post.text)
                 }
-                if (post.title != tvPostTitle.text.toString()) {
-                    tvPostTitle.setText(post.title)
-                }
-                tvDateTime.text = DateFormat.format(POST_DATE_PATTERN, post.date)
+                tvPostTitle.text = post.title
+                tvDateTime.text = Post.parseEpochSeconds(post.date)
                 ivLikes.tag = post.id
                 ytCancel.tag = post.id
                 ivComments.tag = post.id
                 ivShare.tag = post.id
                 ivLikes.text = post.likes.toPostText()
                 ivComments.text = post.comments.toPostText()
-                ivPostAvatar.setImageResource(post.avatarId)
+                Glide.with(requireContext())
+                    .load(post.avatarId)
+                    .centerCrop()
+                    .into(ivPostAvatar)
+                Timber.d("Post avatar: ${post.avatarId}")
                 ivShare.text = post.shared.toPostText()
                 ivLikes.isChecked = post.isLiked
 
@@ -136,7 +140,6 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
                     viewModel.editPost(
                         id,
                         tvPostText.text.toString().trim(),
-                        tvPostTitle.text.toString().trim(),
                         url
                     )
                     clearKeyboard()

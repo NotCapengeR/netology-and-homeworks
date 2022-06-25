@@ -1,4 +1,4 @@
-package ru.netology.nmedia.network
+package ru.netology.nmedia.network.youtube
 
 import ru.netology.nmedia.network.pojo.Items
 import android.os.Parcelable

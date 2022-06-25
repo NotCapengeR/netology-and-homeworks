@@ -6,7 +6,10 @@ import dagger.Provides
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import ru.netology.nmedia.network.ApiService
+import retrofit2.create
+import ru.netology.nmedia.network.post_api.dto.PostRequest
+import ru.netology.nmedia.network.post_api.service.PostService
+import ru.netology.nmedia.network.youtube.ApiService
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -28,6 +31,18 @@ class ApiModule {
         .client(client)
         .build()
         .create(ApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun providePostService(
+        gson: GsonConverterFactory,
+        client: OkHttpClient
+    ): PostService = Retrofit.Builder()
+        .baseUrl(PostService.BASE_URL)
+        .addConverterFactory(gson)
+        .client(client)
+        .build()
+        .create(PostService::class.java)
 
 }
 

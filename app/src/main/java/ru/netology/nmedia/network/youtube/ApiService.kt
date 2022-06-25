@@ -1,4 +1,4 @@
-package ru.netology.nmedia.network
+package ru.netology.nmedia.network.youtube
 
 import retrofit2.Call
 import retrofit2.http.GET

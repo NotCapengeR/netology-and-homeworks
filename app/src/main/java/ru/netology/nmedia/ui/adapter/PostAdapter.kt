@@ -12,13 +12,15 @@ import androidx.recyclerview.widget.ListAdapter
 import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.PostItemBinding
-import ru.netology.nmedia.dto.Post
-import ru.netology.nmedia.dto.Post.Companion.POST_DATE_PATTERN
+import ru.netology.nmedia.database.dto.Post
+import ru.netology.nmedia.database.dto.Post.Companion.POST_DATE_PATTERN
+import ru.netology.nmedia.database.dto.Post.Companion.parseEpochSeconds
 import ru.netology.nmedia.ui.base.BaseViewHolder
 import ru.netology.nmedia.utils.setDebouncedListener
 import ru.netology.nmedia.utils.setVisibility
 import ru.netology.nmedia.utils.toPostText
 import timber.log.Timber
+import java.time.OffsetDateTime
 
 
 interface PostListener {
@@ -58,8 +60,7 @@ class PostAdapter(
 
             R.id.post_item -> listener.onItemPressed(post.id, post.text, post.title)
 
-            else -> {/* do nothing */
-            }
+            else -> {/* do nothing */}
         }
     }
 
@@ -100,8 +101,12 @@ class PostAdapter(
             tvViewsCount.text = post.views.toPostText()
             tvPostText.text = post.text
             tvPostTitle.text = post.title
-            tvDateTime.text = DateFormat.format(POST_DATE_PATTERN, post.date)
-            ivPostAvatar.setImageResource(post.avatarId)
+            tvDateTime.text = parseEpochSeconds(post.date)
+            Glide.with(root.context)
+                .load(post.avatarId)
+                .centerCrop()
+                .into(ivPostAvatar)
+            Timber.d("Post avatar: ${post.avatarId}")
             yTLayout.setVisibility(post.video != null)
             Linkify.addLinks(tvPostText, Linkify.WEB_URLS)
             if (post.video != null) {

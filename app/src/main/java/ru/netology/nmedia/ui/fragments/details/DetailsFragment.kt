@@ -15,8 +15,9 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
+import ru.netology.nmedia.database.dto.Post
 import ru.netology.nmedia.databinding.DetailsFragmentBinding
-import ru.netology.nmedia.dto.Post.Companion.POST_DATE_PATTERN
+import ru.netology.nmedia.database.dto.Post.Companion.POST_DATE_PATTERN
 import ru.netology.nmedia.ui.adapter.PostAdapter
 import ru.netology.nmedia.ui.base.BaseFragment
 import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
@@ -24,6 +25,7 @@ import ru.netology.nmedia.utils.getAppComponent
 import ru.netology.nmedia.utils.setDebouncedListener
 import ru.netology.nmedia.utils.setVisibility
 import ru.netology.nmedia.utils.toPostText
+import timber.log.Timber
 import javax.inject.Inject
 
 class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
@@ -59,7 +61,7 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
         viewModel.loadPost(id)
         viewModel.post.observe(viewLifecycleOwner) { post ->
             if (post != null) {
-                tvDateTime.text = DateFormat.format(POST_DATE_PATTERN, post.date)
+                tvDateTime.text = Post.parseEpochSeconds(post.date)
                 ivLikes.tag = post.id
                 ytCancel.tag = post.id
                 ivComments.tag = post.id
@@ -67,7 +69,11 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
                 menuButton.tag = post.id
                 ivLikes.text = post.likes.toPostText()
                 ivComments.text = post.comments.toPostText()
-                ivPostAvatar.setImageResource(post.avatarId)
+                Glide.with(requireContext())
+                    .load(post.avatarId)
+                    .centerCrop()
+                    .into(ivPostAvatar)
+                Timber.d("Post avatar: ${post.avatarId}")
                 ivShare.text = post.shared.toPostText()
                 tvPostTitle.text = post.title
                 tvPostText.text = post.text
@@ -135,7 +141,10 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
         popupMenu?.setOnMenuItemClickListener {
             when (it.itemId) {
 
-                REMOVE_ID -> viewModel.removePost(id)
+                REMOVE_ID -> {
+                    viewModel.removePost(id)
+                    onBackPressed()
+                }
 
                 EDIT_ID -> mainNavController?.navigate(
                     DetailsFragmentDirections.actionDetailsFragmentToEditFragment(
