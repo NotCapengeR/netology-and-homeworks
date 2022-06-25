@@ -8,7 +8,6 @@ import ru.netology.nmedia.database.entities.PostEntity
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.utils.toDateTime
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 @Parcelize
@@ -26,12 +25,10 @@ data class Post(
     val video: YouTubeVideoData? = null
 ) : Parcelable {
     companion object {
+        private val SIMPLE_POST_FORMAT = SimpleDateFormat("d MMMM yyyy, HH:mm")
         const val POST_ID: String = "post_id"
         const val POST_DATE_PATTERN: String = "d MMMM yyyy, HH:mm"
         const val POST_DATE_ABSOLUTE: String = "dd-MM-yyyy, HH:mm:ss"
-        val DATE_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern(POST_DATE_PATTERN)
-        val ABSOLUTE_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern(POST_DATE_ABSOLUTE)
-        private val SIMPLE_POST_FORMAT = SimpleDateFormat("d MMMM yyyy, HH:mm")
         val EMPTY_POST: Post = Post(
             0L,
             "",
