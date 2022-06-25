@@ -10,10 +10,13 @@ import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.database.dto.Post
 import ru.netology.nmedia.databinding.FragmentMainBinding
@@ -35,7 +38,8 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentMainBinding
         get() = FragmentMainBinding::inflate
 
-    @Inject lateinit var viewModelFactory: ViewModelFactory
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
     private val args: MainFragmentArgs by navArgs()
     private val viewModel: PostViewModel by activityViewModels {
         viewModelFactory
@@ -127,9 +131,12 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 mainNavController?.navigate(R.id.action_mainFragment_to_addFragment)
             }
             refreshPostLayout.setOnRefreshListener {
+                refreshPostLayout.isRefreshing = true
                 viewModel.updateLiveData()
-                showToast("Refresh listener")
-                refreshPostLayout.isRefreshing = false
+                lifecycleScope.launch {
+                    delay(1000L)
+                    refreshPostLayout.isRefreshing = false
+                }
             }
         }
         viewModel.updateLiveData()
@@ -137,7 +144,6 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
             when (result) {
                 is NetworkResult.Success -> {
                     binding.postProgress.setVisibility(false)
-                    binding.refreshPostLayout.isRefreshing = false
                     adapter.submitList(result.data
                         .map { Post.parser(it) }
                         .reversed()
@@ -145,10 +151,8 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 }
                 is NetworkResult.Loading -> {
                     binding.postProgress.setVisibility(true)
-                    binding.refreshPostLayout.isRefreshing = true
                 }
                 is NetworkResult.Error -> {
-                    binding.refreshPostLayout.isRefreshing = false
                     binding.postProgress.setVisibility(false)
                     showToast(result.message)
                 }
