@@ -34,6 +34,7 @@ class PostRepositoryImpl @Inject constructor(
 
 
     override fun getAllPosts(): Flow<NetworkResult<List<PostResponse>>> = flow {
+        emit(NetworkResult.Loading())
         emit(source.getAll())
     }.flowOn(Dispatchers.IO)
 

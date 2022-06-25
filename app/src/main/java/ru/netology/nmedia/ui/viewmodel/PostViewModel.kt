@@ -96,7 +96,6 @@ class PostViewModel @Inject constructor(
 
     private fun loadData() {
         viewModelScope.launch {
-            _postsList.value = NetworkResult.Loading()
             repository.getAllPosts()
                 .catch { Timber.e("Exception occurred: ${it.message ?: it.toString()}") }
                 .flowOn(Dispatchers.IO)
