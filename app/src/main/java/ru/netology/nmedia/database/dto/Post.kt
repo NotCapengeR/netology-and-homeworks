@@ -16,7 +16,7 @@ data class Post(
     val title: String,
     val text: String,
     val date: Long,
-    @StringRes val avatarId: Int = R.mipmap.ic_launcher,
+    val avatarId: Int = R.mipmap.ic_launcher,
     val likes: Int = 0,
     val comments: Int = 0,
     val shared: Int = 0,
