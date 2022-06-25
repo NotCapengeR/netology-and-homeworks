@@ -66,7 +66,10 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
                 menuButton.tag = post.id
                 ivLikes.text = post.likes.toPostText()
                 ivComments.text = post.comments.toPostText()
-                ivPostAvatar.setImageResource(post.avatarId)
+                Glide.with(requireContext())
+                    .load(post.avatarId)
+                    .centerCrop()
+                    .into(ivPostAvatar)
                 ivShare.text = post.shared.toPostText()
                 tvPostTitle.text = post.title
                 tvPostText.text = post.text

@@ -99,7 +99,10 @@ class PostAdapter(
             tvPostText.text = post.text
             tvPostTitle.text = post.title
             tvDateTime.text = parseEpochSeconds(post.date)
-            ivPostAvatar.setImageResource(post.avatarId)
+            Glide.with(root.context)
+                .load(post.avatarId)
+                .centerCrop()
+                .into(ivPostAvatar)
             yTLayout.setVisibility(post.video != null)
             Linkify.addLinks(tvPostText, Linkify.WEB_URLS)
             if (post.video != null) {

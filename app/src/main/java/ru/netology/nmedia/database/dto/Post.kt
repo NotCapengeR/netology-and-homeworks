@@ -1,7 +1,7 @@
 package ru.netology.nmedia.database.dto
 
 import android.os.Parcelable
-import androidx.annotation.StringRes
+import androidx.annotation.DrawableRes
 import kotlinx.parcelize.Parcelize
 import ru.netology.nmedia.R
 import ru.netology.nmedia.database.entities.PostEntity
@@ -16,7 +16,7 @@ data class Post(
     val title: String,
     val text: String,
     val date: Long,
-    @StringRes val avatarId: Int = R.mipmap.ic_launcher,
+    @DrawableRes val avatarId: Int = R.mipmap.ic_launcher,
     val likes: Int = 0,
     val comments: Int = 0,
     val shared: Int = 0,

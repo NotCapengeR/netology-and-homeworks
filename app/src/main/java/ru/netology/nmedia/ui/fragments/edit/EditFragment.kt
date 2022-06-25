@@ -68,7 +68,10 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
                 ivShare.tag = post.id
                 ivLikes.text = post.likes.toPostText()
                 ivComments.text = post.comments.toPostText()
-                ivPostAvatar.setImageResource(post.avatarId)
+                Glide.with(requireContext())
+                    .load(post.avatarId)
+                    .centerCrop()
+                    .into(ivPostAvatar)
                 ivShare.text = post.shared.toPostText()
                 ivLikes.isChecked = post.isLiked
 
