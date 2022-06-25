@@ -41,8 +41,8 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): NetworkResult<T
             }
         }
         return NetworkResult.Error(response.message(), response.code())
-    } catch (e: Exception) {
-        return NetworkResult.Error(e.message ?: e.toString())
+    } catch (t: Throwable) {
+        return NetworkResult.Error(t.message ?: t.toString())
     }
 }
 
@@ -50,8 +50,8 @@ suspend fun saveCall(call: suspend () -> Unit): Boolean {
     return try {
         call()
         true
-    } catch (e: Throwable) {
-        Timber.e("Error occurred: ${e.message ?: e.toString()}")
+    } catch (t: Throwable) {
+        Timber.e("Error occurred: ${t.message ?: t.toString()}")
         false
     }
 }
