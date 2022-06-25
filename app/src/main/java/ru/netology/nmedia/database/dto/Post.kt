@@ -31,6 +31,7 @@ data class Post(
         const val POST_DATE_ABSOLUTE: String = "dd-MM-yyyy, HH:mm:ss"
         val DATE_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern(POST_DATE_PATTERN)
         val ABSOLUTE_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern(POST_DATE_ABSOLUTE)
+        private val SIMPLE_POST_FORMAT = SimpleDateFormat("d MMMM yyyy, HH:mm")
         val EMPTY_POST: Post = Post(
             0L,
             "",
@@ -47,9 +48,7 @@ data class Post(
 
         fun parseEpochSeconds(epoch: Long): String {
             val date = Date(epoch * 1000L)
-            val sdf = SimpleDateFormat("d MMMM yyyy, HH:mm")
-            return sdf.format(date)
-
+            return SIMPLE_POST_FORMAT.format(date)
         }
 
         fun parser(entity: PostEntity?): Post? {
