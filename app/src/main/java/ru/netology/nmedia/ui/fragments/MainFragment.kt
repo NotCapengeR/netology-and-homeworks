@@ -24,8 +24,7 @@ import ru.netology.nmedia.ui.adapter.PostAdapter
 import ru.netology.nmedia.ui.adapter.PostListener
 import ru.netology.nmedia.ui.adapter.decorators.LinearVerticalSpacingDecoration
 import ru.netology.nmedia.ui.base.BaseFragment
-import ru.netology.nmedia.ui.viewmodel.PostViewModel
-import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
+import ru.netology.nmedia.ui.viewmodels.ViewModelFactory
 import ru.netology.nmedia.utils.AndroidUtils
 import ru.netology.nmedia.utils.getAppComponent
 import ru.netology.nmedia.utils.setDebouncedListener

@@ -12,7 +12,7 @@ sealed class NetworkResult<T>(
 
     data class Success<T>(
         override val data: T,
-        override val code: Int
+        override val code: Int? = null
     ) : NetworkResult<T>(status = NetworkStatus.SUCCESS)
 
     data class Error<T>(

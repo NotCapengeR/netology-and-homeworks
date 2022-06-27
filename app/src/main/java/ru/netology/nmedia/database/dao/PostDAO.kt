@@ -1,14 +1,13 @@
 package ru.netology.nmedia.database.dao
 
-import android.text.format.DateFormat
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import ru.netology.nmedia.database.entities.PostEntity
-import ru.netology.nmedia.database.dto.Post
-import java.util.*
+import ru.netology.nmedia.utils.Mapper
+import java.time.OffsetDateTime
 
 @Dao
 interface PostDAO {
@@ -22,15 +21,16 @@ interface PostDAO {
     @Query("DELETE FROM posts WHERE id = :id")
     suspend fun deletePostById(id: Long): Int
 
-    @Query("INSERT INTO posts (title, text, date) VALUES(:title, :text, :date)")
+    @Query("INSERT INTO posts (id, title, text, date) VALUES(:id, :title, :text, :date)")
     suspend fun addPost(
+        id: Long,
         title: String,
         text: String,
-        date: String = DateFormat.format(Post.POST_DATE_ABSOLUTE, Date().time).toString()
+        date: String = Mapper.parseEpochToAbsolute(OffsetDateTime.now().toEpochSecond())
     ): Long
 
-    @Query("UPDATE posts SET title = :newTitle, text = :newText WHERE id = :id")
-    suspend fun editPost(id: Long, newTitle: String, newText: String): Int
+    @Query("UPDATE posts SET text = :newText WHERE id = :id")
+    suspend fun editPost(id: Long, newText: String): Int
 
     @Query("UPDATE posts SET yt_id = :ytId, yt_author = :ytAuthor, yt_title = :ytTitle," +
             " yt_duration = :ytDuration, yt_thumbnail_url = :ytThumbnail WHERE id = :id"

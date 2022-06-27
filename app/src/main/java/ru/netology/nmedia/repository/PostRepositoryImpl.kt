@@ -3,14 +3,14 @@ package ru.netology.nmedia.repository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.*
 import ru.netology.nmedia.database.dao.PostDAO
 import ru.netology.nmedia.database.dto.Post
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.network.results.NetworkResult
 import ru.netology.nmedia.network.youtube.ApiService
+import ru.netology.nmedia.utils.Mapper
+import timber.log.Timber
 import java.util.regex.Pattern
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -38,16 +38,25 @@ class PostRepositoryImpl @Inject constructor(
         emit(source.getAll())
     }.flowOn(Dispatchers.IO)
 
+    override fun getPostsFromDB(): Flow<List<Post>> = dao.getAll()
+        .map { Mapper.mapEntitiesToPosts(it) }
+        .catch { Timber.e("Error occurredL ${it.message ?: it.toString()}") }
+        .flowOn(Dispatchers.IO)
+
     override suspend fun getPostById(id: Long): Post? =
         when (val response = source.getPostById(id)) {
             is NetworkResult.Success -> Post.parser(response.data)
             is NetworkResult.Loading -> null
-            is NetworkResult.Error -> null
+            is NetworkResult.Error -> Post.parser(dao.getPostById(id))
         }
 
 
     override suspend fun addPost(title: String, text: String): Long {
-        return source.addPost(title, text).data?.id ?: 0L
+        source.addPost(title, text).data?.id?.let {
+            dao.addPost(it, title, text)
+            return it
+        }
+        return 0L
     }
 
 
@@ -90,19 +99,26 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     override suspend fun removePost(id: Long): Boolean {
-        return source.deletePostById(id)
+        return source.deletePostById(id).also {
+            if (it) {
+                dao.deletePostById(id)
+            }
+        }
     }
 
     override suspend fun editPost(id: Long, newText: String): Boolean {
-        return source.editPost(id, newText) is NetworkResult.Success
+        return (source.editPost(id, newText) is NetworkResult.Success).also {
+            if (it) {
+                dao.editPost(id, newText)
+            }
+        }
     }
 
     override suspend fun likePost(id: Long): Boolean {
-        return source.likeById(id) is NetworkResult.Success
-//        val post = getPostById(id) ?: return false
-//        val changed = !post.isLiked
-//        val nextValue = if (post.isLiked) post.likes - 1 else post.likes + 1
-//        return dao.likePostById(post.id, nextValue, changed) > 0
+        return source.likeById(id).also {
+            val post = it.data ?: return@also
+            dao.likePostById(post.id, post.likes, post.isLiked)
+        } is NetworkResult.Success
     }
 
     override suspend fun sharePost(id: Long): Int {

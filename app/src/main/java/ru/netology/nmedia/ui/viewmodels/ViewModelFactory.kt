@@ -1,4 +1,4 @@
-package ru.netology.nmedia.ui.viewmodel
+package ru.netology.nmedia.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

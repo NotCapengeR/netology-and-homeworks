@@ -43,7 +43,11 @@ class EditViewModel @Inject constructor(
         viewModelScope.launch {
             Timber.d("Post was edited: $id")
             repository.editPost(id, newText).also {
-                if (it) loadAllPosts()
+                if (it) {
+                    loadAllPosts()
+                } else {
+                    showToast("Something went wrong")
+                }
 //                if (it && url != null) {
 //                    addVideo(url, id)
 //                }
@@ -58,6 +62,8 @@ class EditViewModel @Inject constructor(
                 if (it)  {
                     val newPost = getPostById(id) ?: return@also
                     post.value = post.value?.copy(likes = newPost.likes, isLiked = newPost.isLiked)
+                } else {
+                    showToast("Something went wrong!")
                 }
             }
         }
@@ -98,7 +104,7 @@ class EditViewModel @Inject constructor(
         }
     }
 
-    fun loadAllPosts() {
+    private fun loadAllPosts() {
         repository.getAllPosts()
     }
 }

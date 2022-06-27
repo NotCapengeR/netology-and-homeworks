@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import androidx.activity.viewModels
 import ru.netology.nmedia.databinding.ActivityMainBinding
 import ru.netology.nmedia.ui.base.BaseActivity
-import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
+import ru.netology.nmedia.ui.viewmodels.ViewModelFactory
 import ru.netology.nmedia.utils.getAppComponent
 import javax.inject.Inject
 

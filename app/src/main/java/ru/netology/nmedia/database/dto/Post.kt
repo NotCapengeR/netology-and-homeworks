@@ -6,9 +6,7 @@ import kotlinx.parcelize.Parcelize
 import ru.netology.nmedia.R
 import ru.netology.nmedia.database.entities.PostEntity
 import ru.netology.nmedia.network.post_api.dto.PostResponse
-import ru.netology.nmedia.utils.toDateTime
-import java.text.SimpleDateFormat
-import java.util.*
+import ru.netology.nmedia.utils.Mapper
 
 @Parcelize
 data class Post(
@@ -25,7 +23,6 @@ data class Post(
     val video: YouTubeVideoData? = null
 ) : Parcelable {
     companion object {
-        private val SIMPLE_POST_FORMAT = SimpleDateFormat("d MMMM yyyy, HH:mm")
         const val POST_ID: String = "post_id"
         const val POST_DATE_PATTERN: String = "d MMMM yyyy, HH:mm"
         const val POST_DATE_ABSOLUTE: String = "dd-MM-yyyy, HH:mm:ss"
@@ -43,19 +40,13 @@ data class Post(
             null
         )
 
-        fun parseEpochSeconds(epoch: Long): String {
-            val date = Date(epoch * 1000L)
-            return SIMPLE_POST_FORMAT.format(date)
-        }
-
         fun parser(entity: PostEntity?): Post? {
             if (entity == null) return null
             return Post(
                 id = entity.id,
                 title = entity.title,
                 text = entity.text,
-                date = entity.date.toDateTime()
-                    ?: throw IllegalArgumentException("Invalid date pattern"),
+                date = Mapper.parseStringToEpoch(entity.date),
                 avatarId = entity.avatarId,
                 likes = entity.likes,
                 comments = entity.comments,
@@ -72,7 +63,8 @@ data class Post(
             )
         }
 
-        fun parser(response: PostResponse): Post {
+        fun parser(response: PostResponse?): Post? {
+            if (response == null) return null
             return Post(
                 id = response.id,
                 title = response.title,
@@ -83,8 +75,5 @@ data class Post(
                 isLiked = response.isLiked,
             )
         }
-
-        fun mapEntitiesToPosts(entities: List<PostEntity>): List<Post> =
-            entities.mapNotNull { parser(it) }
     }
 }

@@ -13,11 +13,10 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
-import ru.netology.nmedia.database.dto.Post
 import ru.netology.nmedia.databinding.EditFragmentBinding
 import ru.netology.nmedia.ui.adapter.PostAdapter.Companion.YOUTUBE_URL
 import ru.netology.nmedia.ui.base.BaseFragment
-import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
+import ru.netology.nmedia.ui.viewmodels.ViewModelFactory
 import ru.netology.nmedia.utils.*
 import javax.inject.Inject
 
@@ -61,7 +60,7 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
                     tvPostText.setText(post.text)
                 }
                 tvPostTitle.text = post.title
-                tvDateTime.text = Post.parseEpochSeconds(post.date)
+                tvDateTime.text = Mapper.parseEpochSeconds(post.date)
                 ivLikes.tag = post.id
                 ytCancel.tag = post.id
                 ivComments.tag = post.id

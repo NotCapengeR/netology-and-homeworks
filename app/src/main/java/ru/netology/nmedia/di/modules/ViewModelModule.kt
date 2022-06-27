@@ -9,8 +9,8 @@ import dagger.multibindings.IntoMap
 import ru.netology.nmedia.ui.activity.MainViewModel
 import ru.netology.nmedia.ui.fragments.details.DetailsViewModel
 import ru.netology.nmedia.ui.fragments.edit.EditViewModel
-import ru.netology.nmedia.ui.viewmodel.PostViewModel
-import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
+import ru.netology.nmedia.ui.fragments.PostViewModel
+import ru.netology.nmedia.ui.viewmodels.ViewModelFactory
 import kotlin.reflect.KClass
 
 @Module

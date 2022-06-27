@@ -9,6 +9,8 @@ interface PostRepository {
 
     fun getAllPosts(): Flow<NetworkResult<List<PostResponse>>>
 
+    fun getPostsFromDB(): Flow<List<Post>>
+
     suspend fun addPost(title: String, text: String): Long
 
     fun addVideo(url: String, postId: Long)

@@ -1,4 +1,4 @@
-package ru.netology.nmedia.ui.viewmodel
+package ru.netology.nmedia.ui.fragments
 
 import android.app.Application
 import androidx.lifecycle.LiveData
@@ -9,12 +9,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.netology.nmedia.database.dto.Post
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.network.results.NetworkResult
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.ui.base.BaseViewModel
+import ru.netology.nmedia.utils.Mapper
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -33,7 +36,13 @@ class PostViewModel @Inject constructor(
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.addPost(title, text).also {
-                if (it > 0L) loadData()
+                if (it > 0L) {
+                    loadData()
+                } else {
+                    withContext(Dispatchers.Main) {
+                        showToast("Something went wrong!!!")
+                    }
+                }
 //                if (it > 0L && url != null) {
 //                    addVideo(url, it)
 //                }
@@ -66,7 +75,11 @@ class PostViewModel @Inject constructor(
     fun likePost(id: Long) {
         viewModelScope.launch {
             repository.likePost(id).also {
-                if (it) loadData()
+                if (it) {
+                    loadData()
+                } else {
+                    showToast("Something went wrong!")
+                }
             }
         }
     }
@@ -97,6 +110,16 @@ class PostViewModel @Inject constructor(
                 .catch { Timber.e("Exception occurred: ${it.message ?: it.toString()}") }
                 .flowOn(Dispatchers.IO)
                 .collect { _postsList.value = it }
+            if (postsList.value is NetworkResult.Error) {
+                // типа оффлайн-режим, в котором ничего не работает :)
+                repository.getPostsFromDB()
+                    .map { Mapper.mapPostsToResponse(it) }
+                    .catch { Timber.e("Exception occurred: ${it.message ?: it.toString()}") }
+                    .flowOn(Dispatchers.IO)
+                    .collect { _postsList.value = it }
+            }
+
+
         }
     }
 

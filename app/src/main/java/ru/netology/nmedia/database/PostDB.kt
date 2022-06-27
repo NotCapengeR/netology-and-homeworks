@@ -12,7 +12,7 @@ abstract class PostDB : RoomDatabase() {
     abstract fun getDao(): PostDAO
 
     companion object {
-        const val DB_VERSION: Int = 1
+        const val DB_VERSION: Int = 2
         const val DB_NAME: String = "posts-database"
     }
 

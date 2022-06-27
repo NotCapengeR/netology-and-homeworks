@@ -14,15 +14,11 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
-import ru.netology.nmedia.database.dto.Post
 import ru.netology.nmedia.databinding.DetailsFragmentBinding
 import ru.netology.nmedia.ui.adapter.PostAdapter
 import ru.netology.nmedia.ui.base.BaseFragment
-import ru.netology.nmedia.ui.viewmodel.ViewModelFactory
-import ru.netology.nmedia.utils.getAppComponent
-import ru.netology.nmedia.utils.setDebouncedListener
-import ru.netology.nmedia.utils.setVisibility
-import ru.netology.nmedia.utils.toPostText
+import ru.netology.nmedia.ui.viewmodels.ViewModelFactory
+import ru.netology.nmedia.utils.*
 import javax.inject.Inject
 
 class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
@@ -58,7 +54,7 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
         viewModel.loadPost(id)
         viewModel.post.observe(viewLifecycleOwner) { post ->
             if (post != null) {
-                tvDateTime.text = Post.parseEpochSeconds(post.date)
+                tvDateTime.text = Mapper.parseEpochSeconds(post.date)
                 ivLikes.tag = post.id
                 ytCancel.tag = post.id
                 ivComments.tag = post.id
