@@ -1,5 +1,6 @@
 package ru.netology.nmedia.repository
 
+import android.database.sqlite.SQLiteConstraintException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -7,6 +8,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.database.dao.PostDAO
 import ru.netology.nmedia.database.dto.Post
+import ru.netology.nmedia.database.entities.PostEntity
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.network.results.NetworkResult
 import ru.netology.nmedia.network.youtube.ApiService
@@ -50,7 +52,7 @@ class PostRepositoryImpl @Inject constructor(
             dao.deletePostById(it)
         }
         postsToAdd.forEach {
-            dao.addPost(it.id, it.title, it.text, Mapper.parseEpochToAbsolute(it.date))
+            dao.insertPost(PostEntity.parser(it))
         }
     }
 
@@ -64,7 +66,14 @@ class PostRepositoryImpl @Inject constructor(
 
     override fun getAllPosts(): Flow<NetworkResult<List<PostResponse>>> = flow {
         emit(NetworkResult.Loading())
-        emit(source.getAll())
+        emit(source.getAll().also {
+            if (it is NetworkResult.Success && it.code == 200) {
+                syncDB(
+                    postsToDelete = dao.getAll().first().map { entity -> entity.id },
+                    postsToAdd = it.data
+                )
+            }
+        })
     }.flowOn(Dispatchers.IO)
 
     override fun getPostsFromDB(): Flow<List<Post>> = dao.getAll()
@@ -82,7 +91,17 @@ class PostRepositoryImpl @Inject constructor(
 
     override suspend fun addPost(title: String, text: String): Long {
         source.addPost(title, text).data?.id?.let {
-            dao.addPost(it, title, text)
+            try {
+                dao.addPost(it, title, text)
+            } catch (ex: SQLiteConstraintException) {
+                dao.insertPost(
+                    PostEntity(
+                        id = it,
+                        title = title,
+                        text = text,
+                    )
+                )
+            }
             return it
         }
         return 0L

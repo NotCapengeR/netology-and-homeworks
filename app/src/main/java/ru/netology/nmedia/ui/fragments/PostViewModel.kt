@@ -95,19 +95,9 @@ class PostViewModel @Inject constructor(
 
     fun updateLiveData() {
         viewModelScope.launch(Dispatchers.IO) {
-            if (_postsList != repository.getAllPosts().asLiveData() || !checkDB()) {
+            if (_postsList != repository.getAllPosts().asLiveData()) {
                 loadData()
             }
-        }
-    }
-
-    private suspend fun checkDB(): Boolean {
-        return withContext(viewModelScope.coroutineContext + Dispatchers.IO) {
-            postsList == repository.getPostsFromDB()
-                .map { Mapper.mapPostsToResponse(it) }
-                .catch { Timber.e("Error in checking DB: ${it.message ?: it.toString()}") }
-                .flowOn(Dispatchers.IO)
-                .asLiveData()
         }
     }
 
@@ -125,8 +115,6 @@ class PostViewModel @Inject constructor(
                     .flowOn(Dispatchers.IO)
                     .collect { _postsList.value = it }
             }
-
-
         }
     }
 

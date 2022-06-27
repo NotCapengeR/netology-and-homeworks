@@ -3,6 +3,7 @@ package ru.netology.nmedia.database.dao
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import ru.netology.nmedia.database.entities.PostEntity
@@ -58,10 +59,10 @@ interface PostDAO {
     @Query("UPDATE posts SET share_count = :newSharedCount WHERE id = :id")
     suspend fun sharePostById(id: Long, newSharedCount: Int)
 
-    @Insert
+    @Insert(onConflict = REPLACE)
     suspend fun insertAll(vararg posts: PostEntity)
 
-    @Insert
+    @Insert(onConflict = REPLACE)
     suspend fun insertPost(post: PostEntity)
 
     @Delete

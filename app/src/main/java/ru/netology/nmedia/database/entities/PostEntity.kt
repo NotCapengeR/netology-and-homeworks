@@ -6,6 +6,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import ru.netology.nmedia.R
 import ru.netology.nmedia.database.dto.Post
+import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.utils.Mapper
 import java.time.OffsetDateTime
 
@@ -29,7 +30,7 @@ data class PostEntity(
     val shares: Int = 0,
     @ColumnInfo(name = "views_count", defaultValue = "0")
     val views: Int = 0,
-    @ColumnInfo(name = "is_liked", defaultValue = "0")
+    @ColumnInfo(name = "is_liked")
     val isLiked: Boolean = false,
     @ColumnInfo(name = "yt_id")
     val ytId: String? = null,
@@ -60,6 +61,17 @@ data class PostEntity(
                 ytAuthor = post.video?.author,
                 ytDuration = post.video?.duration,
                 ytThumbnailUrl = post.video?.thumbnailUrl
+            )
+        }
+
+        fun parser(response: PostResponse): PostEntity {
+            return PostEntity(
+                id = response.id,
+                title = response.title,
+                text = response.text,
+                date = Mapper.parseEpochToAbsolute(response.date),
+                likes = response.likes,
+                isLiked = response.isLiked
             )
         }
     }
