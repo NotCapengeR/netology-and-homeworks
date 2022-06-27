@@ -34,10 +34,16 @@ object Mapper {
     }
 
     fun mapPostsToResponse(posts: List<Post>): NetworkResult<List<PostResponse>> {
-        return NetworkResult.Success(data = posts
-            .map { PostResponse.parser(it) }
+        return NetworkResult.Success(data = mapPostsToResponseList(posts))
+    }
+
+    fun mapPostsToResponseList(posts: List<Post>): List<PostResponse> {
+        return posts.map { PostResponse.parser(it) }
             .reversed()
-        )
+    }
+
+    fun mapNetworkResultToPostsResponseList(result: NetworkResult<List<PostResponse>>): List<PostResponse> {
+        return result.data ?: emptyList()
     }
 
     fun mapEntitiesToPosts(entities: List<PostEntity>): List<Post> =

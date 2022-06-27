@@ -6,10 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.netology.nmedia.database.dto.Post
@@ -98,16 +95,26 @@ class PostViewModel @Inject constructor(
 
     fun updateLiveData() {
         viewModelScope.launch(Dispatchers.IO) {
-            if (_postsList != repository.getAllPosts().asLiveData()) {
+            if (_postsList != repository.getAllPosts().asLiveData() || !checkDB()) {
                 loadData()
             }
+        }
+    }
+
+    private suspend fun checkDB(): Boolean {
+        return withContext(viewModelScope.coroutineContext + Dispatchers.IO) {
+            postsList == repository.getPostsFromDB()
+                .map { Mapper.mapPostsToResponse(it) }
+                .catch { Timber.e("Error in checking DB: ${it.message ?: it.toString()}") }
+                .flowOn(Dispatchers.IO)
+                .asLiveData()
         }
     }
 
     private fun loadData() {
         viewModelScope.launch(Dispatchers.Main) {
             repository.getAllPosts()
-                .catch { Timber.e("Exception occurred: ${it.message ?: it.toString()}") }
+                .catch { Timber.e("Error while loading data in ViewModel: ${it.message ?: it.toString()}") }
                 .flowOn(Dispatchers.IO)
                 .collect { _postsList.value = it }
             if (postsList.value is NetworkResult.Error) {

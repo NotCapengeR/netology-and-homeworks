@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import ru.netology.nmedia.database.dao.PostDAO
 import ru.netology.nmedia.database.dto.Post
 import ru.netology.nmedia.network.post_api.dto.PostResponse
@@ -24,6 +25,35 @@ class PostRepositoryImpl @Inject constructor(
 
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
+    init {
+        scope.launch(Dispatchers.IO) {
+            val postsInDB = getPostsFromDB().first()
+                .map { PostResponse.parser(it) }
+                .reversed()
+            val postsInServer = source.getAll().data
+            if (postsInServer != null && postsInServer != postsInDB) {
+                syncDB(
+                    postsToAdd = postsInServer.filterNot { postsInDB.contains(it) },
+                    postsToDelete = postsInDB
+                        .filterNot { postsInServer.contains(it) }
+                        .map { it.id }
+                )
+            }
+        }
+    }
+
+    private suspend fun syncDB(
+        postsToAdd: List<PostResponse>,
+        postsToDelete: List<Long>
+    ) {
+        postsToDelete.forEach {
+            dao.deletePostById(it)
+        }
+        postsToAdd.forEach {
+            dao.addPost(it.id, it.title, it.text, Mapper.parseEpochToAbsolute(it.date))
+        }
+    }
+
     private fun getIdFromYouTubeLink(link: String?): String? {
         if (link == null) return null
         val matcher = COMPILED_PATTERN.matcher(link)
@@ -31,7 +61,6 @@ class PostRepositoryImpl @Inject constructor(
             matcher.group(1)
         } else null
     }
-
 
     override fun getAllPosts(): Flow<NetworkResult<List<PostResponse>>> = flow {
         emit(NetworkResult.Loading())
