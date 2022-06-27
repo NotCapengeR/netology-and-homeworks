@@ -87,15 +87,13 @@ class PostViewModel @Inject constructor(
     fun updateLiveData() {
         viewModelScope.launch(Dispatchers.IO) {
             if (_postsList != repository.getAllPosts().asLiveData()) {
-                withContext(Dispatchers.Main) {
-                    loadData()
-                }
+                loadData()
             }
         }
     }
 
     private fun loadData() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Main) {
             repository.getAllPosts()
                 .catch { Timber.e("Exception occurred: ${it.message ?: it.toString()}") }
                 .flowOn(Dispatchers.IO)
