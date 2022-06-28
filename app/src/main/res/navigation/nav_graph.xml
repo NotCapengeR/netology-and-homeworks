@@ -24,6 +24,10 @@
             android:name="needLoading"
             app:argType="boolean"
             android:defaultValue="false" />
+        <argument
+            android:name="updateDebounce"
+            app:argType="long"
+            android:defaultValue="200L" />
     </fragment>
 
     <fragment

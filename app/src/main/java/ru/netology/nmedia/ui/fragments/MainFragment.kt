@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.SystemClock
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,6 +41,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+    private var lastUpdateTime: Long = 0L
     private val args: MainFragmentArgs by navArgs()
     private val viewModel: PostViewModel by activityViewModels {
         viewModelFactory
@@ -85,6 +87,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
 
             override fun onLiked(id: Long) {
                 viewModel.likePost(id)
+                lastUpdateTime = SystemClock.elapsedRealtime()
             }
 
             override fun onShared(id: Long) {
@@ -150,7 +153,11 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                     )
                 }
                 is NetworkResult.Loading -> {
-                    binding.postProgress.setVisibility(true)
+                    if (SystemClock.elapsedRealtime() - lastUpdateTime < args.updateDebounce) {
+                        return@observe
+                    } else {
+                        binding.postProgress.setVisibility(true)
+                    }
                 }
                 is NetworkResult.Error -> {
                     binding.postProgress.setVisibility(false)
