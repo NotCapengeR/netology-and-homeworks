@@ -4,9 +4,10 @@ import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import ru.netology.nmedia.database.dto.Post
+import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.ui.base.BaseViewModel
+import ru.netology.nmedia.utils.getErrorMessage
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -46,7 +47,7 @@ class EditViewModel @Inject constructor(
                 if (it) {
                     loadAllPosts()
                 } else {
-                    showToast("Something went wrong")
+                    showToast("Something went wrong: ${repository.getException(id)?.getErrorMessage()}!")
                 }
 //                if (it && url != null) {
 //                    addVideo(url, id)
@@ -63,7 +64,7 @@ class EditViewModel @Inject constructor(
                     val newPost = getPostById(id) ?: return@also
                     post.value = post.value?.copy(likes = newPost.likes, isLiked = newPost.isLiked)
                 } else {
-                    showToast("Something went wrong!")
+                    showToast("Something went wrong: ${repository.getException(id)?.getErrorMessage()}!")
                 }
             }
         }

@@ -1,6 +1,6 @@
 package ru.netology.nmedia.utils
 
-import ru.netology.nmedia.database.dto.Post
+import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.database.entities.PostEntity
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.network.results.NetworkResult

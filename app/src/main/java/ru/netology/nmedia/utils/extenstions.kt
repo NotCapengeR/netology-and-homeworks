@@ -4,8 +4,12 @@ import android.content.Context
 import android.os.SystemClock
 import android.view.View
 import androidx.fragment.app.Fragment
+import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import ru.netology.nmedia.App
 import ru.netology.nmedia.di.AppComponent
+import timber.log.Timber
+import java.lang.reflect.Type
 import java.text.DecimalFormat
 
 private val DECIMAL_FORMAT = DecimalFormat("###.#")
@@ -57,3 +61,23 @@ fun Context.getAppComponent(): AppComponent = when (this) {
 }
 
 fun String.checkIfNotEmpty(): Boolean = this.trim().isNotEmpty()
+
+fun Throwable.getErrorMessage(): String = this.message ?: this.toString()
+
+fun <T> Gson.saveFromJson(json: String?, classOfT: Class<T>): T? {
+    return try {
+        fromJson(json, classOfT)
+    } catch (ex: JsonSyntaxException) {
+        Timber.e("Error occurred while parsing JSON: ${ex.getErrorMessage()}")
+        null
+    }
+}
+
+fun <T> Gson.saveFromJson(json: String?, typeOf: Type): T? {
+    return try {
+        fromJson(json, typeOf)
+    } catch (ex: JsonSyntaxException) {
+        Timber.e("Error occurred while parsing JSON: ${ex.getErrorMessage()}")
+        null
+    }
+}

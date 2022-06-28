@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
-import ru.netology.nmedia.database.dto.Post
+import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.databinding.PostItemBinding
 import ru.netology.nmedia.ui.base.BaseViewHolder
 import ru.netology.nmedia.utils.Mapper

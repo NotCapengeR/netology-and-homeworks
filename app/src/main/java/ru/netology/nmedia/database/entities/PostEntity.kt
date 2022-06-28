@@ -5,7 +5,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import ru.netology.nmedia.R
-import ru.netology.nmedia.database.dto.Post
+import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.utils.Mapper
 import java.time.OffsetDateTime

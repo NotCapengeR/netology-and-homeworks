@@ -9,12 +9,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import ru.netology.nmedia.database.dto.Post
+import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.network.results.NetworkResult
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.ui.base.BaseViewModel
 import ru.netology.nmedia.utils.Mapper
+import ru.netology.nmedia.utils.getErrorMessage
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -37,7 +38,7 @@ class PostViewModel @Inject constructor(
                     loadData()
                 } else {
                     withContext(Dispatchers.Main) {
-                        showToast("Something went wrong!!!")
+                        showToast("Something went wrong: ${repository.getException(it)?.getErrorMessage()}!")
                     }
                 }
 //                if (it > 0L && url != null) {
@@ -75,7 +76,7 @@ class PostViewModel @Inject constructor(
                 if (it) {
                     loadData()
                 } else {
-                    showToast("Something went wrong!")
+                    showToast("Something went wrong: ${repository.getException(id)?.getErrorMessage()}!")
                 }
             }
         }
@@ -104,14 +105,14 @@ class PostViewModel @Inject constructor(
     private fun loadData() {
         viewModelScope.launch(Dispatchers.Main) {
             repository.getAllPosts()
-                .catch { Timber.e("Error while loading data in ViewModel: ${it.message ?: it.toString()}") }
+                .catch { Timber.e("Error while loading data in ViewModel: ${it.getErrorMessage()}") }
                 .flowOn(Dispatchers.IO)
                 .collect { _postsList.value = it }
             if (postsList.value is NetworkResult.Error) {
                 // типа оффлайн-режим, в котором ничего не работает :)
                 repository.getPostsFromDB()
                     .map { Mapper.mapPostsToResponse(it) }
-                    .catch { Timber.e("Exception occurred: ${it.message ?: it.toString()}") }
+                    .catch { Timber.e("Exception occurred while loading data from DB: ${it.getErrorMessage()}") }
                     .flowOn(Dispatchers.IO)
                     .collect { _postsList.value = it }
             }

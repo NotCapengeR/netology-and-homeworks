@@ -1,12 +1,14 @@
 package ru.netology.nmedia.network.results
 
 import retrofit2.Response
+import ru.netology.nmedia.network.exceptions.FailedHttpRequestException
+import ru.netology.nmedia.utils.getErrorMessage
 import timber.log.Timber
 
 sealed class NetworkResult<T>(
     open val data: T? = null,
     open val code: Int? = null,
-    open val message: String? = null,
+    open val error: Throwable? = null,
     val status: NetworkStatus
 ) {
 
@@ -16,9 +18,8 @@ sealed class NetworkResult<T>(
     ) : NetworkResult<T>(status = NetworkStatus.SUCCESS)
 
     data class Error<T>(
-        override val message: String,
+        override val error: Throwable,
         override val code: Int? = null,
-        override val data: T? = null
     ) : NetworkResult<T>(status = NetworkStatus.ERROR)
 
     class Loading<T> : NetworkResult<T>(status = NetworkStatus.LOADING)
@@ -40,9 +41,9 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): NetworkResult<T
                 return NetworkResult.Success(body, response.code())
             }
         }
-        return NetworkResult.Error(response.message(), response.code())
+        return NetworkResult.Error(FailedHttpRequestException(response), response.code())
     } catch (t: Throwable) {
-        return NetworkResult.Error(t.message ?: t.toString())
+        return NetworkResult.Error(t)
     }
 }
 
@@ -51,7 +52,7 @@ suspend fun saveCall(call: suspend () -> Unit): Boolean {
         call()
         true
     } catch (t: Throwable) {
-        Timber.e("Error occurred: ${t.message ?: t.toString()}")
+        Timber.e("Error occurred: ${t.getErrorMessage()}")
         false
     }
 }

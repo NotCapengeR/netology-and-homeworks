@@ -1,7 +1,7 @@
 package ru.netology.nmedia.repository
 
 import kotlinx.coroutines.flow.Flow
-import ru.netology.nmedia.database.dto.Post
+import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.network.results.NetworkResult
 
@@ -22,6 +22,8 @@ interface PostRepository {
     suspend fun editPost(id: Long, newText: String): Boolean
 
     suspend fun getPostById(id: Long): Post?
+
+    suspend fun getException(id: Long): Throwable?
 
     suspend fun likePost(id: Long): Boolean
 

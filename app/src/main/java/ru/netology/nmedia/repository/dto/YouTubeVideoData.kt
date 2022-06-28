@@ -1,4 +1,4 @@
-package ru.netology.nmedia.database.dto
+package ru.netology.nmedia.repository.dto
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

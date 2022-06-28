@@ -14,6 +14,7 @@ import com.google.gson.Gson
 import ru.netology.nmedia.R
 import ru.netology.nmedia.ui.activity.MainActivity
 import ru.netology.nmedia.utils.getAppComponent
+import ru.netology.nmedia.utils.saveFromJson
 import timber.log.Timber
 import javax.inject.Inject
 import kotlin.random.Random
@@ -56,11 +57,11 @@ class FCMService : FirebaseMessagingService() {
             when (it) {
 
                 ActionType.LIKE.toString() -> {
-                    handleLike(gson.fromJson(message.data[CONTENT], Like::class.java))
+                    handleLike(gson.saveFromJson(message.data[CONTENT], Like::class.java))
                 }
 
                 ActionType.NEW_POST.toString() -> {
-                    handleNewPost(gson.fromJson(message.data[CONTENT], NewPost::class.java))
+                    handleNewPost(gson.saveFromJson(message.data[CONTENT], NewPost::class.java))
                 }
 
                 else -> Timber.e("Unknown action type: $it")
@@ -72,7 +73,8 @@ class FCMService : FirebaseMessagingService() {
         Timber.d("New tokes has been received: $token")
     }
 
-    private fun handleLike(like: Like) {
+    private fun handleLike(like: Like?) {
+        if (like == null) return
         val intent = NavDeepLinkBuilder(this)
             .setComponentName(MainActivity::class.java)
             .setGraph(R.navigation.nav_graph)
@@ -95,7 +97,8 @@ class FCMService : FirebaseMessagingService() {
 
     }
 
-    private fun handleNewPost(post: NewPost) {
+    private fun handleNewPost(post: NewPost?) {
+        if (post == null) return
         val intent = NavDeepLinkBuilder(this)
             .setComponentName(MainActivity::class.java)
             .setGraph(R.navigation.nav_graph)

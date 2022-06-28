@@ -7,12 +7,13 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.database.dao.PostDAO
-import ru.netology.nmedia.database.dto.Post
+import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.database.entities.PostEntity
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.network.results.NetworkResult
 import ru.netology.nmedia.network.youtube.ApiService
 import ru.netology.nmedia.utils.Mapper
+import ru.netology.nmedia.utils.getErrorMessage
 import timber.log.Timber
 import java.util.regex.Pattern
 import javax.inject.Inject
@@ -78,7 +79,7 @@ class PostRepositoryImpl @Inject constructor(
 
     override fun getPostsFromDB(): Flow<List<Post>> = dao.getAll()
         .map { Mapper.mapEntitiesToPosts(it) }
-        .catch { Timber.e("Error occurredL ${it.message ?: it.toString()}") }
+        .catch { Timber.e("Error occurredL ${it.getErrorMessage()}") }
         .flowOn(Dispatchers.IO)
 
     override suspend fun getPostById(id: Long): Post? =
@@ -87,6 +88,14 @@ class PostRepositoryImpl @Inject constructor(
             is NetworkResult.Loading -> null
             is NetworkResult.Error -> Post.parser(dao.getPostById(id))
         }
+
+    override suspend fun getException(id: Long): Throwable? {
+        return when (val response = source.getPostById(id)) {
+            is NetworkResult.Success -> response.error
+            is NetworkResult.Loading -> response.error
+            is NetworkResult.Error -> response.error
+        }
+    }
 
 
     override suspend fun addPost(title: String, text: String): Long {

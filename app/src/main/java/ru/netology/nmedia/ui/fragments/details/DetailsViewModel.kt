@@ -4,9 +4,10 @@ import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import ru.netology.nmedia.database.dto.Post
+import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.ui.base.BaseViewModel
+import ru.netology.nmedia.utils.getErrorMessage
 import javax.inject.Inject
 
 class DetailsViewModel @Inject constructor(
@@ -38,7 +39,7 @@ class DetailsViewModel @Inject constructor(
                 if (it)  {
                     loadPost(id)
                 } else {
-                    showToast("Something went wrong!")
+                    showToast("Something went wrong: ${repository.getException(id)?.getErrorMessage()}!")
                 }
             }
         }

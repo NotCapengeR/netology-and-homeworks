@@ -1,5 +1,6 @@
 package ru.netology.nmedia.repository
 
+import ru.netology.nmedia.network.exceptions.ResultNotFoundException
 import ru.netology.nmedia.network.post_api.dto.PostRequest
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.network.post_api.service.PostService
@@ -46,7 +47,8 @@ class RemotePostSource @Inject constructor(private val service: PostService) {
     }
 
     suspend fun likeById(id: Long): NetworkResult<PostResponse> {
-        val post = getPostById(id).data ?: return NetworkResult.Error(message = "Post not found!")
+        val post = getPostById(id).data
+            ?: return NetworkResult.Error(error = ResultNotFoundException("Post not found!"))
         return if (post.isLiked) {
             safeApiCall { service.dislikePostById(id) }
         } else safeApiCall { service.likePostById(id) }

@@ -16,8 +16,9 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import ru.netology.nmedia.R
-import ru.netology.nmedia.database.dto.Post
+import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.databinding.FragmentMainBinding
 import ru.netology.nmedia.network.results.NetworkResult
 import ru.netology.nmedia.ui.adapter.PostAdapter
@@ -25,10 +26,11 @@ import ru.netology.nmedia.ui.adapter.PostListener
 import ru.netology.nmedia.ui.adapter.decorators.LinearVerticalSpacingDecoration
 import ru.netology.nmedia.ui.base.BaseFragment
 import ru.netology.nmedia.ui.viewmodels.ViewModelFactory
-import ru.netology.nmedia.utils.AndroidUtils
-import ru.netology.nmedia.utils.getAppComponent
-import ru.netology.nmedia.utils.setDebouncedListener
-import ru.netology.nmedia.utils.setVisibility
+import ru.netology.nmedia.utils.*
+import timber.log.Timber
+import java.io.IOException
+import java.net.ConnectException
+import java.net.SocketTimeoutException
 import javax.inject.Inject
 
 class MainFragment : BaseFragment<FragmentMainBinding>() {
@@ -152,7 +154,14 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 }
                 is NetworkResult.Error -> {
                     binding.postProgress.setVisibility(false)
-                    showToast(result.message)
+                    Timber.e("Error: ${result.error}")
+                    when (val it = result.error) {
+                        is SocketTimeoutException -> showToast("Timed out waiting for a response from the server")
+                        is ConnectException -> showToast("Error: No Internet connection!")
+                        is IOException -> showToast("Error: Problem with Internet connection!")
+                        is HttpException -> showToast("Error (${it.code()}): ${it.message()}")
+                        else -> showToast("Error: ${it.getErrorMessage()}")
+                    }
                 }
             }
         }
