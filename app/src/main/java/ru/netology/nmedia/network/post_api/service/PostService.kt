@@ -31,6 +31,4 @@ interface PostService {
 
     @DELETE("posts/{post_id}/likes")
     suspend fun dislikePostById(@Path("post_id") id: Long): Response<PostResponse>
-
-
 }
