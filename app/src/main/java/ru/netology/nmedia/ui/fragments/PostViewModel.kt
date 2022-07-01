@@ -71,7 +71,14 @@ class PostViewModel @Inject constructor(
     fun removePost(id: Long) {
         viewModelScope.launch {
             repository.removePost(id).also {
-                if (it) loadData()
+                if (it)  {
+                    loadData()
+                } else {
+                    showToast(
+                        "Something went wrong." +
+                                " Check your Internet connection and try again later"
+                    )
+                }
             }
         }
     }
