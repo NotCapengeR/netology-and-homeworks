@@ -13,4 +13,16 @@ data class PostRequest(
     @SerializedName("published") val date: Long = OffsetDateTime.now().toEpochSecond(),
     @SerializedName("likedByMe") val isLiked: Boolean = false,
     @SerializedName("likes") val likes: Int = 0
-) : Parcelable
+) : Parcelable {
+
+    companion object {
+        val EMPTY_POST_REQUEST = PostRequest(
+            id = 0L,
+            title = "",
+            text = "",
+            date = 0L,
+            isLiked = false,
+            likes = 0
+        )
+    }
+}

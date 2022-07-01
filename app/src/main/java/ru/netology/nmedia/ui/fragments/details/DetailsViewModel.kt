@@ -4,10 +4,9 @@ import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.repository.PostRepository
+import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.ui.base.BaseViewModel
-import ru.netology.nmedia.utils.getErrorMessage
 import javax.inject.Inject
 
 class DetailsViewModel @Inject constructor(
@@ -36,10 +35,13 @@ class DetailsViewModel @Inject constructor(
     fun likePost(id: Long) {
         viewModelScope.launch {
             repository.likePost(id).also {
-                if (it)  {
+                if (it) {
                     loadPost(id)
                 } else {
-                    showToast("Something went wrong: ${repository.getException(id)?.getErrorMessage()}!")
+                    showToast(
+                        "Something went wrong." +
+                                " Check your Internet connection and try again later"
+                    )
                 }
             }
         }
@@ -48,7 +50,7 @@ class DetailsViewModel @Inject constructor(
     fun sharePost(id: Long) {
         viewModelScope.launch {
             repository.sharePost(id).also {
-                if (it > 0)  {
+                if (it > 0) {
                     loadPost(id)
                 }
             }
@@ -58,14 +60,17 @@ class DetailsViewModel @Inject constructor(
     fun commentPost(id: Long) {
         viewModelScope.launch {
             repository.commentPost(id).also {
-                if (it > 0)  {
+                if (it > 0) {
                     loadPost(id)
                 }
             }
         }
     }
 
-    private suspend fun getPostById(id: Long): Post? = repository.getPostById(id)
+    private suspend fun getPostById(id: Long): Post? {
+        post.value = repository.getPostFromDBById(id)
+        return repository.getPostById(id)
+    }
 
     fun loadPost(postId: Long) {
         viewModelScope.launch {

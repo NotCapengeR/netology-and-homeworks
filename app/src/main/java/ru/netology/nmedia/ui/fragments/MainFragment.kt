@@ -147,10 +147,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
             when (result) {
                 is NetworkResult.Success -> {
                     binding.postProgress.setVisibility(false)
-                    adapter.submitList(result.data
-                        .map { Post.parser(it) }
-                        .reversed()
-                    )
+                    adapter.submitList(result.data.map { Post.parser(it) })
                 }
                 is NetworkResult.Loading -> {
                     if (SystemClock.elapsedRealtime() - lastUpdateTime < args.updateDebounce) {

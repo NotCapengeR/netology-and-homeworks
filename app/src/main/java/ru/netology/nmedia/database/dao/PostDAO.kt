@@ -13,8 +13,11 @@ import java.time.OffsetDateTime
 @Dao
 interface PostDAO {
 
-    @Query("SELECT * FROM posts WHERE id > 0")
+    @Query("SELECT * FROM posts WHERE id > 0 ORDER BY id ASC")
     fun getAll(): Flow<List<PostEntity>>
+
+    @Query("SELECT * FROM posts WHERE id > 0 ORDER BY id ASC")
+    suspend fun getAllAsList(): List<PostEntity>
 
     @Query("SELECT * FROM posts WHERE id = :id LIMIT 1")
     suspend fun getPostById(id: Long): PostEntity?
@@ -33,8 +36,9 @@ interface PostDAO {
     @Query("UPDATE posts SET text = :newText WHERE id = :id")
     suspend fun editPost(id: Long, newText: String): Int
 
-    @Query("UPDATE posts SET yt_id = :ytId, yt_author = :ytAuthor, yt_title = :ytTitle," +
-            " yt_duration = :ytDuration, yt_thumbnail_url = :ytThumbnail WHERE id = :id"
+    @Query(
+        "UPDATE posts SET yt_id = :ytId, yt_author = :ytAuthor, yt_title = :ytTitle," +
+                " yt_duration = :ytDuration, yt_thumbnail_url = :ytThumbnail WHERE id = :id"
     )
     suspend fun addVideo(
         id: Long,
@@ -45,8 +49,9 @@ interface PostDAO {
         ytThumbnail: String?
     )
 
-    @Query("UPDATE posts SET yt_id = NULL, yt_author = NULL, yt_title = NULL," +
-            " yt_duration = NULL, yt_thumbnail_url = NULL WHERE id = :id"
+    @Query(
+        "UPDATE posts SET yt_id = NULL, yt_author = NULL, yt_title = NULL," +
+                " yt_duration = NULL, yt_thumbnail_url = NULL WHERE id = :id"
     )
     suspend fun removeVideo(id: Long): Int
 

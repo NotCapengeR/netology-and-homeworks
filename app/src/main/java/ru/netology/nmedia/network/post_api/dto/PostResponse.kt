@@ -19,6 +19,14 @@ data class PostResponse(
 ) : Parcelable {
 
     companion object {
+        val EMPTY_POST_RESPONSE = PostResponse(
+            id = 0L,
+            title = "",
+            text = "",
+            date = 0L,
+            isLiked = false,
+            likes = 0
+        )
 
         fun parser(entity: PostEntity): PostResponse {
             return PostResponse(

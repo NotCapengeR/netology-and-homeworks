@@ -26,6 +26,9 @@ class PostViewModel @Inject constructor(
 
     private val _postsList: MutableLiveData<NetworkResult<List<PostResponse>>> = MutableLiveData()
     val postsList: LiveData<NetworkResult<List<PostResponse>>> = _postsList
+    private val needLoading: MutableLiveData<Boolean> by lazy {
+        MutableLiveData(false) // заготовка для следующих дз
+    }
 
     fun addPost(
         title: String,
@@ -38,7 +41,10 @@ class PostViewModel @Inject constructor(
                     loadData()
                 } else {
                     withContext(Dispatchers.Main) {
-                        showToast("Something went wrong: ${repository.getException(it)?.getErrorMessage()}!")
+                        showToast(
+                            "Something went wrong." +
+                                    " Check your Internet connection and try again later"
+                        )
                     }
                 }
 //                if (it > 0L && url != null) {
@@ -76,7 +82,10 @@ class PostViewModel @Inject constructor(
                 if (it) {
                     loadData()
                 } else {
-                    showToast("Something went wrong: ${repository.getException(id)?.getErrorMessage()}!")
+                    showToast(
+                        "Something went wrong." +
+                                " Check your Internet connection and try again later"
+                    )
                 }
             }
         }
@@ -102,20 +111,41 @@ class PostViewModel @Inject constructor(
         }
     }
 
+    fun updateCurrentPosts() {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (_postsList != repository.getAllPosts().asLiveData()) {
+                loadToCurrentData()
+            }
+        }
+    }
+
     private fun loadData() {
         viewModelScope.launch(Dispatchers.Main) {
+            _postsList.value = NetworkResult.Success(
+                Mapper.mapPostsToResponseList(repository.getPostsFromDBAsList())
+            )
             repository.getAllPosts()
                 .catch { Timber.e("Error while loading data in ViewModel: ${it.getErrorMessage()}") }
                 .flowOn(Dispatchers.IO)
                 .collect { _postsList.value = it }
-            if (postsList.value is NetworkResult.Error) {
-                // типа оффлайн-режим, в котором ничего не работает :)
-                repository.getPostsFromDB()
-                    .map { Mapper.mapPostsToResponse(it) }
-                    .catch { Timber.e("Exception occurred while loading data from DB: ${it.getErrorMessage()}") }
-                    .flowOn(Dispatchers.IO)
-                    .collect { _postsList.value = it }
-            }
+
+            needLoading.value = false
+        }
+    }
+
+    private fun loadToCurrentData() {
+        viewModelScope.launch(Dispatchers.Main) {
+            repository.getPostsFromDB()
+                .map { posts ->
+                    posts.filter { post ->
+                        val data = (postsList.value as NetworkResult.Success).data.map { it.id }
+                        data.contains(post.id)
+                    }
+                }
+                .map { Mapper.mapPostsToResponse(it) }
+                .catch { Timber.e("Exception occurred while loading data from DB: ${it.getErrorMessage()}") }
+                .flowOn(Dispatchers.IO)
+                .collect { _postsList.value = it }
         }
     }
 

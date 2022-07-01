@@ -5,13 +5,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.netology.nmedia.database.dao.PostDAO
-import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.database.entities.PostEntity
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.network.results.NetworkResult
-import ru.netology.nmedia.network.youtube.ApiService
+import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.utils.Mapper
 import ru.netology.nmedia.utils.getErrorMessage
 import timber.log.Timber
@@ -21,39 +20,21 @@ import javax.inject.Singleton
 
 @Singleton
 class PostRepositoryImpl @Inject constructor(
-    private val service: ApiService,
     private val dao: PostDAO,
     private val source: RemotePostSource
 ) : PostRepository {
 
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
-    init {
-        scope.launch(Dispatchers.IO) {
-            val postsInDB = getPostsFromDB().first()
-                .map { PostResponse.parser(it) }
-                .reversed()
-            val postsInServer = source.getAll().data
-            if (postsInServer != null && postsInServer != postsInDB) {
-                syncDB(
-                    postsToAdd = postsInServer.filterNot { postsInDB.contains(it) },
-                    postsToDelete = postsInDB
-                        .filterNot { postsInServer.contains(it) }
-                        .map { it.id }
-                )
-            }
-        }
-    }
-
     private suspend fun syncDB(
-        postsToAdd: List<PostResponse>,
+        postsToAdd: List<PostEntity>,
         postsToDelete: List<Long>
     ) {
         postsToDelete.forEach {
             dao.deletePostById(it)
         }
         postsToAdd.forEach {
-            dao.insertPost(PostEntity.parser(it))
+            dao.insertPost(it)
         }
     }
 
@@ -69,9 +50,16 @@ class PostRepositoryImpl @Inject constructor(
         emit(NetworkResult.Loading())
         emit(source.getAll().also {
             if (it is NetworkResult.Success && it.code == 200) {
+                val dbList = dao.getAllAsList()
                 syncDB(
-                    postsToDelete = dao.getAll().first().map { entity -> entity.id },
+                    postsToDelete = dbList
+                        .filterNot { entity ->
+                            it.data.map { response -> response.id }.contains(entity.id)
+                        }
+                        .map { entity -> entity.id },
                     postsToAdd = it.data
+                        .map { response -> PostEntity.parser(response) }
+                        .filterNot { entity -> dbList.contains(entity) }
                 )
             }
         })
@@ -79,16 +67,27 @@ class PostRepositoryImpl @Inject constructor(
 
     override fun getPostsFromDB(): Flow<List<Post>> = dao.getAll()
         .map { Mapper.mapEntitiesToPosts(it) }
-        .catch { Timber.e("Error occurredL ${it.getErrorMessage()}") }
+        .catch { Timber.e("Error occurred while getting posts from DB: ${it.getErrorMessage()}") }
         .flowOn(Dispatchers.IO)
 
     override suspend fun getPostById(id: Long): Post? =
         when (val response = source.getPostById(id)) {
             is NetworkResult.Success -> Post.parser(response.data)
-            is NetworkResult.Loading -> null
-            is NetworkResult.Error -> Post.parser(dao.getPostById(id))
+            is NetworkResult.Loading -> getPostFromDBById(id)
+            is NetworkResult.Error -> getPostFromDBById(id)
         }
 
+    override suspend fun getPostFromDBById(id: Long): Post? {
+        return withContext(scope.coroutineContext + Dispatchers.IO) {
+            Post.parser(dao.getPostById(id))
+        }
+    }
+
+    override suspend fun getPostsFromDBAsList(): List<Post> {
+        return withContext(scope.coroutineContext + Dispatchers.IO) {
+            Mapper.mapEntitiesToPosts(dao.getAllAsList())
+        }
+    }
     override suspend fun getException(id: Long): Throwable? {
         return when (val response = source.getPostById(id)) {
             is NetworkResult.Success -> response.error

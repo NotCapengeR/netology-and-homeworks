@@ -11,6 +11,8 @@ interface PostRepository {
 
     fun getPostsFromDB(): Flow<List<Post>>
 
+    suspend fun getPostsFromDBAsList(): List<Post>
+
     suspend fun addPost(title: String, text: String): Long
 
     fun addVideo(url: String, postId: Long)
@@ -22,6 +24,8 @@ interface PostRepository {
     suspend fun editPost(id: Long, newText: String): Boolean
 
     suspend fun getPostById(id: Long): Post?
+
+    suspend fun getPostFromDBById(id: Long): Post?
 
     suspend fun getException(id: Long): Throwable?
 

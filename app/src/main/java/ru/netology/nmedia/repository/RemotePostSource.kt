@@ -23,6 +23,7 @@ class RemotePostSource @Inject constructor(private val service: PostService) {
         safeApiCall {
             service.createPost(
                 PostRequest(
+                    id = 0L,
                     title = title,
                     text = text,
                     date = OffsetDateTime.now().toEpochSecond(),
