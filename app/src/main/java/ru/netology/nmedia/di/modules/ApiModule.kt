@@ -4,12 +4,12 @@ import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
-import ru.netology.nmedia.network.post_api.dto.PostRequest
 import ru.netology.nmedia.network.post_api.service.PostService
 import ru.netology.nmedia.network.youtube.ApiService
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -36,7 +36,7 @@ class ApiModule {
     @Singleton
     fun providePostService(
         gson: GsonConverterFactory,
-        client: OkHttpClient
+        client: OkHttpClient,
     ): PostService = Retrofit.Builder()
         .baseUrl(PostService.BASE_URL)
         .addConverterFactory(gson)
@@ -56,9 +56,20 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideHttpClient(): OkHttpClient = OkHttpClient.Builder()
-        .readTimeout(30, TimeUnit.SECONDS)
+    fun provideHttpClient(
+        loggingInterceptor: HttpLoggingInterceptor
+    ): OkHttpClient = OkHttpClient.Builder()
         .connectTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(30, TimeUnit.SECONDS)
+        .addInterceptor(loggingInterceptor)
         .build()
+
+
+    @Provides
+    @Singleton
+    fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor = HttpLoggingInterceptor { message ->
+        Timber.tag("Retrofit").d(message)
+    }.setLevel(HttpLoggingInterceptor.Level.BODY)
 
 }
