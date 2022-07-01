@@ -127,7 +127,7 @@ class PostAdapter(
                 ivLikes.setIconResource(R.drawable.heart_outline)
             }
             ivLikes.isChecked = post.isLiked
-            postItem.setDebouncedListener(onClickListener = this@PostAdapter)
+            postItem.setDebouncedListener(50L, this@PostAdapter)
             ivLikes.setDebouncedListener(50L, this@PostAdapter)
             menuButton.setDebouncedListener(200L, this@PostAdapter)
             ivShare.setDebouncedListener(50L, this@PostAdapter)

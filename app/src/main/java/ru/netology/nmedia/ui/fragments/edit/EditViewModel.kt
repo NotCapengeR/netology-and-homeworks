@@ -3,7 +3,9 @@ package ru.netology.nmedia.ui.fragments.edit
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.ui.base.BaseViewModel
@@ -102,8 +104,10 @@ class EditViewModel @Inject constructor(
     }
 
     private suspend fun getPostById(id: Long): Post? {
-        post.value = repository.getPostFromDBById(id)
-        return repository.getPostById(id)
+        return withContext(viewModelScope.coroutineContext + Dispatchers.Main) {
+            post.value = repository.getPostFromDBById(id)
+            repository.getPostById(id)
+        }
     }
 
     fun loadPost(postId: Long) {

@@ -25,6 +25,7 @@ class PostViewModel @Inject constructor(
 ) : BaseViewModel(application) {
 
     private val _postsList: MutableLiveData<NetworkResult<List<PostResponse>>> = MutableLiveData()
+    private var cachedIds: MutableList<Long> = mutableListOf()
     val postsList: LiveData<NetworkResult<List<PostResponse>>> = _postsList
     private val needLoading: MutableLiveData<Boolean> by lazy {
         MutableLiveData(false) // заготовка для следующих дз
@@ -71,7 +72,7 @@ class PostViewModel @Inject constructor(
     fun removePost(id: Long) {
         viewModelScope.launch {
             repository.removePost(id).also {
-                if (it)  {
+                if (it) {
                     loadData()
                 } else {
                     showToast(
@@ -112,29 +113,31 @@ class PostViewModel @Inject constructor(
 
     fun updateLiveData() {
         viewModelScope.launch(Dispatchers.IO) {
-            if (_postsList != repository.getAllPosts().asLiveData()) {
-                loadData()
-            }
-        }
-    }
-
-    fun updateCurrentPosts() {
-        viewModelScope.launch(Dispatchers.IO) {
-            if (_postsList != repository.getAllPosts().asLiveData()) {
-                loadToCurrentData()
+            repository.getAllPosts().collect {
+                if (postsList.value != it && it.data != null) {
+                    loadData()
+                } else {
+                    loadToCurrentData()
+                }
             }
         }
     }
 
     private fun loadData() {
         viewModelScope.launch(Dispatchers.Main) {
-            _postsList.value = NetworkResult.Success(
-                Mapper.mapPostsToResponseList(repository.getPostsFromDBAsList())
-            )
+            val dbList = Mapper.mapPostsToResponseList(repository.getPostsFromDBAsList())
+            if (postsList.value?.data != dbList) {
+                _postsList.value = NetworkResult.Success(dbList)
+                cachedIds = dbList.map { it.id }.toMutableList()
+            }
             repository.getAllPosts()
                 .catch { Timber.e("Error while loading data in ViewModel: ${it.getErrorMessage()}") }
                 .flowOn(Dispatchers.IO)
-                .collect { _postsList.value = it }
+                .collect {
+                    _postsList.value = it
+                    cachedIds =
+                        it.data?.map { response -> response.id }?.toMutableList() ?: cachedIds
+                }
 
             needLoading.value = false
         }
@@ -145,19 +148,27 @@ class PostViewModel @Inject constructor(
             repository.getPostsFromDB()
                 .map { posts ->
                     posts.filter { post ->
-                        val data = (postsList.value as NetworkResult.Success).data.map { it.id }
-                        data.contains(post.id)
+                        if (cachedIds.isNotEmpty()) {
+                            cachedIds.contains(post.id)
+                        } else true
                     }
                 }
                 .map { Mapper.mapPostsToResponse(it) }
                 .catch { Timber.e("Exception occurred while loading data from DB: ${it.getErrorMessage()}") }
                 .flowOn(Dispatchers.IO)
-                .collect { _postsList.value = it }
+                .collect {
+                    _postsList.value = it
+                    cachedIds =
+                        it.data?.map { response -> response.id }?.toMutableList() ?: cachedIds
+                }
         }
     }
 
-    private suspend fun getPostById(id: Long): Post? = repository.getPostById(id)
-
+    private suspend fun getPostById(id: Long): Post? {
+        return withContext(viewModelScope.coroutineContext + Dispatchers.Main) {
+            repository.getPostById(id)
+        }
+    }
 }
 
 
