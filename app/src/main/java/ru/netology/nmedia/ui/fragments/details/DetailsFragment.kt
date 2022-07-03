@@ -50,6 +50,7 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
             toolbar.setupWithNavController(this, appBarConfiguration)
         }
         (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
+
         val id = args.postId
         viewModel.loadPost(id)
         viewModel.post.observe(viewLifecycleOwner) { post ->
@@ -118,6 +119,7 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
         inflater.inflate(R.menu.empty, menu)

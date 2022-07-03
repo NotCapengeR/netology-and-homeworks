@@ -10,14 +10,14 @@ import android.util.TypedValue
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import androidx.core.content.getSystemService
 import java.util.regex.Pattern
 import kotlin.math.roundToInt
 
 
 object AndroidUtils {
     private val EMAIL_ADDRESS_PATTERN: Pattern = Pattern
-        .compile("[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" + "\\@"
+        .compile(
+            "[a-zA-Z0-9+._%\\-]{1,256}" + "@"
                 + "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" + "(" + "\\."
                 + "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" + ")+")
 
@@ -64,6 +64,4 @@ object AndroidUtils {
     fun validEmail(email: String): Boolean {
         return EMAIL_ADDRESS_PATTERN.matcher(email).matches()
     }
-
-    private const val REQUEST_CODE = 200
 }

@@ -111,6 +111,7 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
         inflater.inflate(R.menu.empty, menu)

@@ -19,9 +19,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import ru.netology.nmedia.R
-import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.databinding.FragmentMainBinding
 import ru.netology.nmedia.network.results.NetworkResult
+import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.ui.adapter.PostAdapter
 import ru.netology.nmedia.ui.adapter.PostListener
 import ru.netology.nmedia.ui.adapter.decorators.LinearVerticalSpacingDecoration

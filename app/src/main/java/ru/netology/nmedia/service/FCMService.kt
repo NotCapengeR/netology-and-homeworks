@@ -14,15 +14,15 @@ import com.google.gson.Gson
 import ru.netology.nmedia.R
 import ru.netology.nmedia.ui.activity.MainActivity
 import ru.netology.nmedia.utils.getAppComponent
-import ru.netology.nmedia.utils.saveFromJson
+import ru.netology.nmedia.utils.fromJsonOrNull
 import timber.log.Timber
+import java.lang.IllegalArgumentException
 import javax.inject.Inject
 import kotlin.random.Random
 
 class FCMService : FirebaseMessagingService() {
 
-    @Inject
-    lateinit var gson: Gson
+    @Inject lateinit var gson: Gson
 
     override fun onCreate() {
         super.onCreate()
@@ -54,17 +54,18 @@ class FCMService : FirebaseMessagingService() {
         super.onMessageReceived(message)
         Timber.d("New message has been received: ${message.messageId}, ${message.data}")
         message.data[ACTION]?.let {
-            when (it) {
 
-                ActionType.LIKE.toString() -> {
-                    handleLike(gson.saveFromJson(message.data[CONTENT], Like::class.java))
+            when (ActionType.valueOfOrNull(it)) {
+
+                ActionType.LIKE -> {
+                    handleLike(gson.fromJsonOrNull(message.data[CONTENT], Like::class.java))
                 }
 
-                ActionType.NEW_POST.toString() -> {
-                    handleNewPost(gson.saveFromJson(message.data[CONTENT], NewPost::class.java))
+                ActionType.NEW_POST -> {
+                    handleNewPost(gson.fromJsonOrNull(message.data[CONTENT], NewPost::class.java))
                 }
 
-                else -> Timber.e("Unknown action type: $it")
+                null -> Timber.e("Received unknown action type from the server: $it")
             }
         }
     }
@@ -119,16 +120,24 @@ class FCMService : FirebaseMessagingService() {
         NotificationManagerCompat.from(this).notify(Random.nextInt(100_000), notification)
     }
 
+    private enum class ActionType {
+        LIKE, NEW_POST;
+
+        companion object {
+            fun valueOfOrNull(value: String): ActionType? {
+                return try {
+                    valueOf(value)
+                } catch (ex: IllegalArgumentException) {
+                    null
+                }
+            }
+        }
+    }
+
     private companion object {
         private const val LIKE_CHANNEL_ID: String = "like_channel_id"
         private const val NEW_POSTS_CHANNEL_ID = "new_posts_channel_id"
         private const val ACTION: String = "action"
         private const val CONTENT: String = "content"
     }
-
-    private enum class ActionType {
-        LIKE,
-        NEW_POST
-    }
-
 }

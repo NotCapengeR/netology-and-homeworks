@@ -11,6 +11,8 @@ import ru.netology.nmedia.di.AppComponent
 import timber.log.Timber
 import java.lang.reflect.Type
 import java.text.DecimalFormat
+import kotlin.reflect.KClass
+import kotlin.reflect.full.isSubclassOf
 
 private val DECIMAL_FORMAT = DecimalFormat("###.#")
 
@@ -64,7 +66,32 @@ fun String.checkIfNotEmpty(): Boolean = this.trim().isNotEmpty()
 
 fun Throwable.getErrorMessage(): String = this.message ?: this.toString()
 
-fun <T> Gson.saveFromJson(json: String?, classOfT: Class<T>): T? {
+fun Throwable.multiCatch(
+    vararg exceptions: KClass<out Throwable> = emptyArray(),
+    catchBlock: (Throwable) -> Unit,
+) {
+    if (exceptions.isEmpty()) throw this
+    return when {
+        this::class in exceptions -> catchBlock.invoke(this)
+        exceptions.any { error -> this::class.isSubclassOf(error) } -> catchBlock.invoke(this)
+        else -> throw this
+    }
+
+}
+
+fun <T> Throwable.multiCatch(
+    vararg exceptions: KClass<out Throwable> = emptyArray(),
+    catchBlock: (Throwable) -> T,
+): T {
+    if (exceptions.isEmpty()) throw this
+    return when {
+        this::class in exceptions -> catchBlock.invoke(this)
+        exceptions.any { error -> this::class.isSubclassOf(error) } -> catchBlock.invoke(this)
+        else -> throw this
+    }
+}
+
+fun <T> Gson.fromJsonOrNull(json: String?, classOfT: Class<T>): T? {
     return try {
         fromJson(json, classOfT)
     } catch (ex: JsonSyntaxException) {
@@ -73,7 +100,7 @@ fun <T> Gson.saveFromJson(json: String?, classOfT: Class<T>): T? {
     }
 }
 
-fun <T> Gson.saveFromJson(json: String?, typeOf: Type): T? {
+fun <T> Gson.fromJsonOrNull(json: String?, typeOf: Type): T? {
     return try {
         fromJson(json, typeOf)
     } catch (ex: JsonSyntaxException) {

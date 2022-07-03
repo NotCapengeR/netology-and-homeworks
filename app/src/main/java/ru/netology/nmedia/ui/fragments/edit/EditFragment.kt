@@ -22,8 +22,7 @@ import javax.inject.Inject
 
 class EditFragment : BaseFragment<EditFragmentBinding>() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    @Inject lateinit var viewModelFactory: ViewModelFactory
     private val args: EditFragmentArgs by navArgs()
     private val viewModel: EditViewModel by activityViewModels {
         viewModelFactory
@@ -155,6 +154,7 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
     }
 
 
+    @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
         inflater.inflate(R.menu.empty, menu)

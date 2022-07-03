@@ -1,6 +1,6 @@
 package ru.netology.nmedia.repository
 
-import android.database.sqlite.SQLiteConstraintException
+import  android.database.sqlite.SQLiteConstraintException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -10,6 +10,7 @@ import ru.netology.nmedia.database.dao.PostDAO
 import ru.netology.nmedia.database.entities.PostEntity
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.network.results.NetworkResult
+import ru.netology.nmedia.network.results.NetworkResult.Companion.RESPONSE_CODE_OK
 import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.utils.Mapper
 import ru.netology.nmedia.utils.getErrorMessage
@@ -49,19 +50,20 @@ class PostRepositoryImpl @Inject constructor(
     override fun getAllPosts(): Flow<NetworkResult<List<PostResponse>>> = flow {
         emit(NetworkResult.Loading())
         emit(source.getAll().also {
-            if (it is NetworkResult.Success && it.code == 200) {
+            if (it is NetworkResult.Success && it.code == RESPONSE_CODE_OK) {
                 val dbList = dao.getAllAsList()
                 syncDB(
+                    postsToAdd = it.data
+                        .map { response -> PostEntity.parser(response) }
+                        .filterNot { entity -> dbList.contains(entity) },
                     postsToDelete = dbList
                         .filterNot { entity ->
                             it.data.map { response -> response.id }.contains(entity.id)
                         }
-                        .map { entity -> entity.id },
-                    postsToAdd = it.data
-                        .map { response -> PostEntity.parser(response) }
-                        .filterNot { entity -> dbList.contains(entity) }
+                        .map { entity -> entity.id }
                 )
             }
+
         })
     }.flowOn(Dispatchers.IO)
 
