@@ -12,6 +12,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import ru.netology.nmedia.R
+import ru.netology.nmedia.di.modules.FirebaseModule.Companion.FIREBASE_TAG
 import ru.netology.nmedia.ui.activity.MainActivity
 import ru.netology.nmedia.utils.getAppComponent
 import ru.netology.nmedia.utils.fromJsonOrNull
@@ -52,7 +53,7 @@ class FCMService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        Timber.d("New message has been received: ${message.messageId}, ${message.data}")
+        firebaseLoggerDebug("New message (${message.messageId}) has been received: \n${message.data}")
         message.data[ACTION]?.let {
 
             when (ActionType.valueOfOrNull(it)) {
@@ -65,13 +66,12 @@ class FCMService : FirebaseMessagingService() {
                     handleNewPost(gson.fromJsonOrNull(message.data[CONTENT], NewPost::class.java))
                 }
 
-                null -> Timber.e("Received unknown action type from the server: $it")
+                null -> firebaseLoggerError("Received unknown action type from the server: $it")
             }
         }
     }
-
     override fun onNewToken(token: String) {
-        Timber.d("New tokes has been received: $token")
+        firebaseLoggerDebug("New tokes has been received: $token")
     }
 
     private fun handleLike(like: Like?) {
@@ -133,6 +133,10 @@ class FCMService : FirebaseMessagingService() {
             }
         }
     }
+
+    private fun firebaseLoggerDebug(message: String) = Timber.tag(FIREBASE_TAG).d(message)
+
+    private fun firebaseLoggerError(message: String) = Timber.tag(FIREBASE_TAG).e(message)
 
     private companion object {
         private const val LIKE_CHANNEL_ID: String = "like_channel_id"

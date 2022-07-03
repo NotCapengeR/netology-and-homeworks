@@ -1,5 +1,7 @@
 package ru.netology.nmedia.di.modules
 
+import com.google.firebase.FirebaseApp
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
@@ -46,7 +48,7 @@ class ApiModule {
 
 }
 
-@Module
+@Module(includes = [FirebaseModule::class])
 class NetworkModule {
 
     @Provides
@@ -69,5 +71,20 @@ class NetworkModule {
     fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor = HttpLoggingInterceptor { message ->
         Timber.tag("Retrofit").d(message)
     }.setLevel(HttpLoggingInterceptor.Level.BODY)
+}
 
+@Module
+class FirebaseModule {
+
+    companion object {
+        const val FIREBASE_TAG: String = "firebase"
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseMessaging(): FirebaseMessaging = FirebaseMessaging.getInstance()
+
+    @Provides
+    @Singleton
+    fun provideFirebaseApp(): FirebaseApp = FirebaseApp.getInstance()
 }
