@@ -10,7 +10,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.netology.nmedia.network.post_api.service.PostService
-import ru.netology.nmedia.network.youtube.ApiService
+import ru.netology.nmedia.network.youtube.YouTubeService
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
@@ -20,21 +20,21 @@ class ApiModule {
 
     @Provides
     @Singleton
-    fun provideApiService(
+    fun provideYouTubeService(
         gson: GsonConverterFactory,
         client: OkHttpClient
-    ): ApiService = Retrofit.Builder()
-        .baseUrl(ApiService.BASE_URL)
+    ): YouTubeService = Retrofit.Builder()
+        .baseUrl(YouTubeService.BASE_URL)
         .addConverterFactory(gson)
         .client(client)
         .build()
-        .create(ApiService::class.java)
+        .create(YouTubeService::class.java)
 
     @Provides
     @Singleton
     fun providePostService(
         gson: GsonConverterFactory,
-        client: OkHttpClient,
+        client: OkHttpClient
     ): PostService = Retrofit.Builder()
         .baseUrl(PostService.BASE_URL)
         .addConverterFactory(gson)

@@ -1,10 +1,10 @@
 package ru.netology.nmedia.network.youtube
 
-import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface ApiService {
+interface YouTubeService {
 
     companion object {
         const val BASE_URL: String = "https://www.googleapis.com/youtube/v3/"
@@ -12,7 +12,7 @@ interface ApiService {
     }
 
     @GET("videos")
-    fun getVideoData(
+    suspend fun getVideoData(
         @Query("id")
         id: String,
         @Query("key")
@@ -21,5 +21,5 @@ interface ApiService {
         parts: String = "snippet, contentDetails",
         @Query("field")
         fields: String = "items(id, etag, snippet, contentDetails)"
-    ) : Call<YouTubeVideo>
+    ): Response<YouTubeVideo>
 }
