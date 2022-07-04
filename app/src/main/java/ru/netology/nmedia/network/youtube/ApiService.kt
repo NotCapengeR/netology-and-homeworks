@@ -6,7 +6,8 @@ import retrofit2.http.Query
 
 interface ApiService {
 
-    private companion object {
+    companion object {
+        const val BASE_URL: String = "https://www.googleapis.com/youtube/v3/"
         private const val API_KEY: String = "AIzaSyDnRiiqBRnJedogYjvxmBzqKQbYPBFz9l0"
     }
 

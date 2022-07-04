@@ -18,17 +18,13 @@ import javax.inject.Singleton
 @Module(includes = [NetworkModule::class])
 class ApiModule {
 
-    private companion object {
-        private const val BASE_URL: String = "https://www.googleapis.com/youtube/v3/"
-    }
-
     @Provides
     @Singleton
     fun provideApiService(
         gson: GsonConverterFactory,
         client: OkHttpClient
     ): ApiService = Retrofit.Builder()
-        .baseUrl(BASE_URL)
+        .baseUrl(ApiService.BASE_URL)
         .addConverterFactory(gson)
         .client(client)
         .build()
