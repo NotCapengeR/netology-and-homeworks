@@ -66,21 +66,8 @@ fun String.checkIfNotEmpty(): Boolean = this.trim().isNotEmpty()
 
 fun Throwable.getErrorMessage(): String = this.message ?: this.toString()
 
-fun Throwable.multiCatch(
-    vararg exceptions: KClass<out Throwable> = emptyArray(),
-    catchBlock: (Throwable) -> Unit,
-) {
-    if (exceptions.isEmpty()) throw this
-    return when {
-        this::class in exceptions -> catchBlock.invoke(this)
-        exceptions.any { error -> this::class.isSubclassOf(error) } -> catchBlock.invoke(this)
-        else -> throw this
-    }
-
-}
-
 fun <T> Throwable.multiCatch(
-    vararg exceptions: KClass<out Throwable> = emptyArray(),
+    vararg exceptions: KClass<out Throwable>,
     catchBlock: (Throwable) -> T,
 ): T {
     if (exceptions.isEmpty()) throw this
