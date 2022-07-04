@@ -4,11 +4,11 @@ import android.content.Context
 import android.os.SystemClock
 import android.view.View
 import androidx.fragment.app.Fragment
-import com.google.gson.Gson
-import com.google.gson.JsonSyntaxException
+import com.google.gson.*
 import ru.netology.nmedia.App
 import ru.netology.nmedia.di.AppComponent
 import timber.log.Timber
+import java.io.Reader
 import java.lang.reflect.Type
 import java.text.DecimalFormat
 import kotlin.reflect.KClass
@@ -88,6 +88,35 @@ fun <T> Gson.fromJsonOrNull(json: String?, classOfT: Class<T>): T? {
 }
 
 fun <T> Gson.fromJsonOrNull(json: String?, typeOf: Type): T? {
+    return try {
+        fromJson(json, typeOf)
+    } catch (ex: JsonSyntaxException) {
+        Timber.e("Error occurred while parsing JSON: ${ex.getErrorMessage()}")
+        null
+    }
+}
+
+fun <T> Gson.fromJsonOrNull(json: Reader, classOfT: Class<T>): T? {
+    return try {
+        fromJson(json, classOfT)
+    } catch (ex: JsonParseException) {
+        return ex.multiCatch(JsonIOException::class, JsonSyntaxException::class) {
+            Timber.e("Error occurred while parsing JSON: ${it.getErrorMessage()}")
+            null
+        }
+    }
+}
+
+fun <T> Gson.fromJsonOrNull(json: JsonElement, classOfT: Class<T>): T? {
+    return try {
+        fromJson(json, classOfT)
+    } catch (ex: JsonSyntaxException) {
+        Timber.e("Error occurred while parsing JSON: ${ex.getErrorMessage()}")
+        null
+    }
+}
+
+fun <T> Gson.fromJsonOrNull(json: JsonElement, typeOf: Type): T? {
     return try {
         fromJson(json, typeOf)
     } catch (ex: JsonSyntaxException) {
