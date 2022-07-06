@@ -1,10 +1,8 @@
 package ru.netology.nmedia.ui.fragments.edit
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.net.Uri
 import android.os.Bundle
 import android.text.util.Linkify
 import android.view.*
@@ -19,7 +17,6 @@ import ru.netology.nmedia.databinding.EditFragmentBinding
 import ru.netology.nmedia.repository.dto.Attachment
 import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.repository.dto.Post.Companion.ATTACHMENTS_BASE_URL
-import ru.netology.nmedia.repository.dto.YouTubeVideoData.Companion.YOUTUBE_URL
 import ru.netology.nmedia.ui.base.BaseFragment
 import ru.netology.nmedia.ui.viewmodels.ViewModelFactory
 import ru.netology.nmedia.utils.*
