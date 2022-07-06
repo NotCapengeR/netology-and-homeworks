@@ -33,16 +33,14 @@ import javax.inject.Inject
 
 class MainFragment : BaseFragment<FragmentMainBinding>() {
 
-    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentMainBinding
-        get() = FragmentMainBinding::inflate
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    @Inject lateinit var viewModelFactory: ViewModelFactory
     private var lastUpdateTime: Long = 0L
     private val args: MainFragmentArgs by navArgs()
     private val viewModel: PostViewModel by activityViewModels {
         viewModelFactory
     }
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentMainBinding
+        get() = FragmentMainBinding::inflate
 
 
     override fun onAttach(context: Context) {

@@ -25,8 +25,7 @@ import javax.inject.Inject
 
 class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    @Inject lateinit var viewModelFactory: ViewModelFactory
     private val args: DetailsFragmentArgs by navArgs()
     private val viewModel: DetailsViewModel by activityViewModels {
         viewModelFactory
