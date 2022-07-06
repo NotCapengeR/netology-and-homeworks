@@ -34,7 +34,7 @@ object Mapper {
     }
 
     fun mapPostsToResponse(posts: List<Post>): NetworkResult<List<PostResponse>> {
-        return NetworkResult.Success(data = mapPostsToResponseList(posts))
+        return NetworkResult.Success(data = mapPostsToResponseList(posts), code = 200)
     }
 
     fun mapPostsToResponseList(posts: List<Post>): List<PostResponse> {

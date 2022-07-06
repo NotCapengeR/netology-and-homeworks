@@ -1,5 +1,7 @@
 package ru.netology.nmedia.ui.adapter
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.Menu
@@ -12,6 +14,10 @@ import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
 import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.databinding.PostItemBinding
+import ru.netology.nmedia.repository.dto.Attachment
+import ru.netology.nmedia.repository.dto.Post.Companion.ATTACHMENTS_BASE_URL
+import ru.netology.nmedia.repository.dto.Post.Companion.AVATARS_BASE_URL
+import ru.netology.nmedia.repository.dto.YouTubeVideoData.Companion.YOUTUBE_URL
 import ru.netology.nmedia.ui.base.BaseViewHolder
 import ru.netology.nmedia.utils.Mapper
 import ru.netology.nmedia.utils.setDebouncedListener
@@ -99,27 +105,24 @@ class PostAdapter(
             tvPostText.text = post.text
             tvPostTitle.text = post.title
             tvDateTime.text = Mapper.parseEpochSeconds(post.date)
-            Glide.with(root.context)
-                .load(post.avatarId)
-                .centerCrop()
-                .into(ivPostAvatar)
-            yTLayout.setVisibility(post.video != null)
-            Linkify.addLinks(tvPostText, Linkify.WEB_URLS)
-            if (post.video != null) {
-                Timber.d("YT video id: ${post.video.id}")
-                ytVideoDuration.text = post.video.duration
-                ytAuthor.text = post.video.author
-                ytTitle.text = post.video.title
+            if (post.avatar.isNotBlank() && post.avatar.isNotEmpty()) {
                 Glide.with(root.context)
-                    .load(post.video.thumbnailUrl)
+                    .load("$AVATARS_BASE_URL${post.avatar}")
+                    .placeholder(R.drawable.ic_baseline_account_circle_24)
+                    .error(R.drawable.alert_circle)
+                    .circleCrop()
+                    .timeout(10_000)
+                    .into(ivPostAvatar)
+            }
+            ivAttachment.setVisibility(post.attachment != null)
+            if (post.attachment != null && post.attachment.type == Attachment.AttachmentType.IMAGE) {
+                Glide.with(root.context)
+                    .load("$ATTACHMENTS_BASE_URL${post.attachment.name}")
+                    .placeholder(R.drawable.play)
+                    .error(ColorDrawable(Color.RED))
                     .centerCrop()
-                    .into(ytThumbnail)
-                ytThumbnail.setDebouncedListener {
-                    listener.onLinkPressed("$YOUTUBE_URL${post.video.id}")
-                }
-                ytCancel.setDebouncedListener {
-                    listener.onLinkRemoved(post.id)
-                }
+                    .timeout(10_000)
+                    .into(ivAttachment)
             }
             if (post.isLiked) {
                 ivLikes.setIconResource(R.drawable.heart)
@@ -148,7 +151,7 @@ class PostAdapter(
 
     override fun getItemId(position: Int): Long = getItem(position).id
 
-    object DiffUtilCallback : DiffUtil.ItemCallback<Post>() {
+    private object DiffUtilCallback : DiffUtil.ItemCallback<Post>() {
         override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean =
             oldItem == newItem
 
@@ -156,8 +159,7 @@ class PostAdapter(
             oldItem == newItem
     }
 
-    companion object {
-        const val YOUTUBE_URL: String = "https://www.youtube.com/watch?v="
+    private companion object {
         private const val REMOVE_ID: Int = 1
         private const val EDIT_ID: Int = 2
     }

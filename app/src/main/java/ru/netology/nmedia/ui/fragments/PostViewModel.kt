@@ -26,34 +26,10 @@ class PostViewModel @Inject constructor(
 ) : BaseViewModel(application) {
 
     private val _postsList: MutableLiveData<NetworkResult<List<PostResponse>>> = MutableLiveData()
-    private var cachedIds: MutableList<Long> = mutableListOf()
+    private var cachedIds: List<Long> = emptyList()
     val postsList: LiveData<NetworkResult<List<PostResponse>>> = _postsList
     private val needLoading: MutableLiveData<Boolean> by lazy {
         MutableLiveData(false) // заготовка для следующих дз
-    }
-
-    fun addPost(
-        title: String,
-        text: String,
-        url: String? = null
-    ) {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.addPost(title, text).also {
-                if (it > 0L) {
-                    loadData()
-                } else {
-                    withContext(Dispatchers.Main) {
-                        showToast(
-                            "Something went wrong." +
-                                    " Check your Internet connection and try again later"
-                        )
-                    }
-                }
-//                if (it > 0L && url != null) {
-//                    addVideo(url, it)
-//                }
-            }
-        }
     }
 
     init {
@@ -129,7 +105,7 @@ class PostViewModel @Inject constructor(
             val dbList = Mapper.mapPostsToResponseList(repository.getPostsFromDBAsList())
             if (postsList.value?.data != dbList) {
                 _postsList.value = NetworkResult.Success(dbList)
-                cachedIds = dbList.map { it.id }.toMutableList()
+                cachedIds = dbList.map { it.id }
             }
             repository.getAllPosts()
                 .catch { Timber.e("Error while loading data in ViewModel: ${it.getErrorMessage()}") }
@@ -137,7 +113,7 @@ class PostViewModel @Inject constructor(
                 .collect {
                     _postsList.value = it
                     cachedIds =
-                        it.data?.map { response -> response.id }?.toMutableList() ?: cachedIds
+                        it.data?.map { response -> response.id } ?: cachedIds
                 }
 
             needLoading.value = false
@@ -160,7 +136,7 @@ class PostViewModel @Inject constructor(
                 .collect {
                     _postsList.value = it
                     cachedIds =
-                        it.data?.map { response -> response.id }?.toMutableList() ?: cachedIds
+                        it.data?.map { response -> response.id } ?: cachedIds
                 }
         }
     }

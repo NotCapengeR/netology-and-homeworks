@@ -1,9 +1,11 @@
 package ru.netology.nmedia.network.post_api.service
 
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.*
 import ru.netology.nmedia.network.post_api.dto.PostRequest
 import ru.netology.nmedia.network.post_api.dto.PostResponse
+import ru.netology.nmedia.repository.dto.Attachment
 
 interface PostService {
 

@@ -48,7 +48,7 @@
                 android:layout_height="70dp"
                 android:layout_marginStart="5dp"
                 android:contentDescription="@string/group_avatar"
-                android:src="@mipmap/ic_launcher"
+                android:src="@drawable/ic_baseline_account_circle_24"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:src="@drawable/ic_baseline_account_circle_24" />
@@ -60,9 +60,9 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="4dp"
                 android:ellipsize="end"
-                android:text="@string/post_title"
                 android:maxLength="40"
                 android:maxLines="1"
+                android:text="@string/post_title"
                 android:textColorHint="@color/white_gray"
                 android:textSize="20sp"
                 android:textStyle="bold"
@@ -125,7 +125,7 @@
                 android:textSize="20sp"
                 app:icon="@drawable/heart_outline"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/yTLayout"
+                app:layout_constraintTop_toBottomOf="@+id/ivAttachment"
                 tools:ignore="ContentDescription"
                 tools:srcCompat="@drawable/heart_outline" />
 
@@ -143,7 +143,7 @@
                 android:textSize="20sp"
                 app:icon="@drawable/comment_outline"
                 app:layout_constraintStart_toEndOf="@id/ivLikes"
-                app:layout_constraintTop_toBottomOf="@+id/yTLayout"
+                app:layout_constraintTop_toBottomOf="@+id/ivAttachment"
                 tools:ignore="ContentDescription" />
 
             <com.google.android.material.button.MaterialButton
@@ -159,7 +159,7 @@
                 android:textSize="20sp"
                 app:icon="@drawable/share_outline"
                 app:layout_constraintStart_toEndOf="@id/ivComments"
-                app:layout_constraintTop_toBottomOf="@+id/yTLayout"
+                app:layout_constraintTop_toBottomOf="@+id/ivAttachment"
                 tools:ignore="ContentDescription" />
 
             <ImageView
@@ -170,7 +170,7 @@
                 android:layout_marginEnd="6dp"
                 android:clickable="false"
                 app:layout_constraintEnd_toStartOf="@id/tvViewsCount"
-                app:layout_constraintTop_toBottomOf="@+id/tvPostText"
+                app:layout_constraintTop_toBottomOf="@+id/ivAttachment"
                 app:srcCompat="@drawable/eye"
                 tools:ignore="ContentDescription" />
 
@@ -184,7 +184,7 @@
                 android:text=" "
                 android:textSize="15sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvPostText"
+                app:layout_constraintTop_toBottomOf="@id/ivAttachment"
                 tools:text="11" />
 
             <TextView
@@ -201,144 +201,20 @@
                 app:layout_constraintTop_toBottomOf="@id/ivComments"
                 tools:text="@string/notifyAddPost" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/yTLayout"
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivAttachment"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_marginTop="10dp"
-                android:background="@color/white_gray"
+                android:src="@drawable/play"
+                android:background="@color/gray"
                 android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvPostText">
 
-                <ImageView
-                    android:id="@+id/ytThumbnail"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cvPlay"
-                    android:layout_width="100dp"
-                    android:layout_height="50dp"
-                    app:cardBackgroundColor="@color/gray"
-                    app:cardCornerRadius="15dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <ImageView
-                        android:id="@+id/ivPlay"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/play" />
-
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cvAuthor"
-                    android:layout_width="200dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="5dp"
-                    app:cardBackgroundColor="@color/black_overlay"
-                    app:cardCornerRadius="8dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/ytAuthor"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:ellipsize="end"
-                        android:maxLines="1"
-                        android:paddingStart="5dp"
-                        android:paddingEnd="5dp"
-                        android:text="Автор видео здесь"
-                        android:textAlignment="center"
-                        android:textColor="@color/white"
-                        android:textSize="20sp" />
-
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cvTitle"
-                    android:layout_width="250dp"
-                    android:layout_height="30dp"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginBottom="5dp"
-                    app:cardBackgroundColor="@color/black_overlay"
-                    app:cardCornerRadius="8dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent">
-
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/ytTitle"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:ellipsize="end"
-                        android:maxLines="1"
-                        android:paddingStart="5dp"
-                        android:paddingEnd="5dp"
-                        android:text="Лучшее в мире название"
-                        android:textAlignment="center"
-                        android:textColor="@color/white"
-                        android:textSize="20sp" />
-
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cvCancel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="5dp"
-                    app:cardBackgroundColor="@color/black_overlay"
-                    app:cardCornerRadius="200dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/ytCancel"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:src="@drawable/close_white" />
-
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cvDuration"
-                    android:layout_width="60dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginBottom="5dp"
-                    app:cardBackgroundColor="@color/black_overlay"
-                    app:cardCornerRadius="8dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent">
-
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/ytVideoDuration"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:paddingTop="5dp"
-                        android:text="22:00:01"
-                        android:textAlignment="center"
-                        android:textColor="@color/white"
-                        android:textSize="14sp" />
-                </androidx.cardview.widget.CardView>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.appcompat.widget.AppCompatImageView>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardViewSendPost"

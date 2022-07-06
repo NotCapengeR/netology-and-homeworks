@@ -14,7 +14,7 @@ data class YouTubeVideoData(
 ) : Parcelable {
 
     companion object {
-
+        const val YOUTUBE_URL: String = "https://www.youtube.com/watch?v="
         fun parser(data: YouTubeVideo?): YouTubeVideoData? {
             return if (data == null) {
                 null
@@ -29,18 +29,6 @@ data class YouTubeVideoData(
                     .replace('M', ':'),
                 thumbnailUrl = data.items.first().snippet.thumbnails.thumbnail.url
             )
-        }
-
-        fun buildVideoData(
-            id: String?,
-            author: String?,
-            title: String?,
-            duration: String?,
-            url: String?
-        ): YouTubeVideoData? {
-            return if (id != null && author != null && title != null && duration != null && url != null) {
-                YouTubeVideoData(id, author, title, duration, url)
-            } else null
         }
     }
 }

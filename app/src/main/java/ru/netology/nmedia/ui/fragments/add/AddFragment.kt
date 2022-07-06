@@ -16,11 +16,11 @@ import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.AddFragmentBinding
 import ru.netology.nmedia.repository.dto.Post.Companion.POST_DATE_PATTERN
 import ru.netology.nmedia.ui.base.BaseFragment
-import ru.netology.nmedia.ui.fragments.PostViewModel
 import ru.netology.nmedia.ui.viewmodels.ViewModelFactory
 import ru.netology.nmedia.utils.checkIfNotEmpty
 import ru.netology.nmedia.utils.getAppComponent
 import ru.netology.nmedia.utils.setDebouncedListener
+import ru.netology.nmedia.utils.setVisibility
 import java.util.*
 import javax.inject.Inject
 
@@ -29,7 +29,7 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
     @Inject lateinit var viewModelFactory: ViewModelFactory
     @Inject lateinit var prefs: SharedPreferences
     private val args: AddFragmentArgs by navArgs()
-    private val viewModel: PostViewModel by activityViewModels {
+    private val viewModel: AddViewModel by activityViewModels {
         viewModelFactory
     }
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> AddFragmentBinding
@@ -43,6 +43,7 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
+        initViewModel()
     }
 
     private fun initView() = with(binding) {
@@ -63,6 +64,22 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
         cancelButton.setDebouncedListener(50L, this@AddFragment)
     }
 
+    private fun initViewModel() {
+        viewModel.isLoaded.observe(viewLifecycleOwner) { isLoaded ->
+            if (isLoaded) {
+                onBackPressed()
+                prefs.edit {
+                    putString(ADD_FRAGMENT_TITLE, " ")
+                    putString(ADD_FRAGMENT_TEXT, " ")
+                    putInt(ADD_FRAGMENT_POST_ID, 0)
+                }
+            }
+        }
+        viewModel.isUpdating.observe(viewLifecycleOwner) {
+            binding.postProgress.setVisibility(it)
+        }
+    }
+
     override fun onClick(view: View) {
         when (view.id) {
             R.id.cardViewSendPost -> {
@@ -78,12 +95,6 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
                             tvPostText.text.toString().trim(),
                             url
                         )
-                        onBackPressed()
-                        prefs.edit {
-                            putString(ADD_FRAGMENT_TITLE, " ")
-                            putString(ADD_FRAGMENT_TEXT, " ")
-                            putInt(ADD_FRAGMENT_POST_ID, 0)
-                        }
                     } else {
                         showToast(R.string.text_is_unfilled)
                     }
