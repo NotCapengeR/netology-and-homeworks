@@ -26,8 +26,10 @@ import javax.inject.Inject
 
 class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
 
-    @Inject lateinit var viewModelFactory: ViewModelFactory
-    @Inject lateinit var prefs: SharedPreferences
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+    @Inject
+    lateinit var prefs: SharedPreferences
     private val args: AddFragmentArgs by navArgs()
     private val viewModel: AddViewModel by activityViewModels {
         viewModelFactory
@@ -67,11 +69,12 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
     private fun initViewModel() {
         viewModel.isLoaded.observe(viewLifecycleOwner) { isLoaded ->
             if (isLoaded) {
-                onBackPressed()
-                prefs.edit {
-                    putString(ADD_FRAGMENT_TITLE, " ")
-                    putString(ADD_FRAGMENT_TEXT, " ")
-                    putInt(ADD_FRAGMENT_POST_ID, 0)
+                onBackPressed {
+                    prefs.edit {
+                        putString(ADD_FRAGMENT_TITLE, " ")
+                        putString(ADD_FRAGMENT_TEXT, " ")
+                        putInt(ADD_FRAGMENT_POST_ID, 0)
+                    }
                 }
             }
         }

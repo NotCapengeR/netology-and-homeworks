@@ -22,5 +22,5 @@
     <string name="channel_remote_name_new_posts_descriptions">Receive notifications of new posts</string>
     <string name="notification_user_liked">User %1$s liked a post %2$s</string>
     <string name="notification_new_post">User %1$s has published a new post:</string>
-    <string name="error_open_url">Couldn\'t open this url: %1$s</string>
+    <string name="error_open_url">Couldn\'t open this URL: %1$s</string>
 </resources>
