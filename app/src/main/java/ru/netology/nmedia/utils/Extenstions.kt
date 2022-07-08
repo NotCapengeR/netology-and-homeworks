@@ -23,13 +23,27 @@ fun Int.toPostText(): String = when (this) {
     else -> "${DECIMAL_FORMAT.format(this.toDouble() / 1_000_000)}M"
 }
 
+fun Boolean.toByte(): Byte = if (this) 1 else 0
+
+fun Boolean.toShort(): Short = if (this) 1 else 0
+
+fun Boolean.toInt(): Int = if (this) 1 else 0
+
+fun Boolean.toLong(): Long = if (this) 1L else 0L
+
+fun Boolean.toFloat(): Float = if (this) 1.0F else 0.0F
+
+fun Boolean.toDouble(): Double = if (this) 1.0 else 0.0
+
+fun Boolean.toChar(): Char = if (this) '1' else '0'
+
 fun View.clickWithDebounce(debounceTime: Long = 600L, action: () -> Unit) {
     this.setOnClickListener(object : View.OnClickListener {
         private var lastClickTime: Long = 0
 
         override fun onClick(v: View) {
             if (SystemClock.elapsedRealtime() - lastClickTime < debounceTime) return
-            else action()
+            else action.invoke()
 
             lastClickTime = SystemClock.elapsedRealtime()
         }
@@ -54,12 +68,11 @@ fun View.setVisibility(visible: Boolean?) = when (visible) {
 }
 
 
-fun Fragment.getAppComponent(): AppComponent =
-    (this.requireContext().applicationContext as App).appComponent
+fun Fragment.getAppComponent(): AppComponent = (requireContext().applicationContext as App).appComponent
 
 fun Context.getAppComponent(): AppComponent = when (this) {
     is App -> appComponent
-    else -> (this.applicationContext as App).appComponent
+    else -> (applicationContext as App).appComponent
 }
 
 fun String.checkIfNotEmpty(): Boolean = this.trim().isNotEmpty()

@@ -1,8 +1,6 @@
 package ru.netology.nmedia.ui.fragments
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.os.SystemClock
 import android.view.LayoutInflater
@@ -94,7 +92,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
             }
 
             override fun onLinkPressed(url: String) {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                openUrl(url)
             }
 
             override fun onLinkRemoved(id: Long) {

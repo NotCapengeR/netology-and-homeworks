@@ -2,10 +2,11 @@ package ru.netology.nmedia.ui.base
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.widget.Toast
+import android.widget.EditText
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewbinding.ViewBinding
+import ru.netology.nmedia.utils.AndroidUtils
 
 abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
 
@@ -25,16 +26,25 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
         _binding = null
     }
 
-    fun showToast(message: String?, isLong: Boolean = false) {
-        if (message == null) return
-        if (isLong) {
-            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-        } else {
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-        }
+    protected fun showToast(message: String?, isLong: Boolean = false) {
+        AndroidUtils.showToast(this, message, isLong)
     }
 
-    fun showToast(@StringRes msgResId: Int, isLong: Boolean = false) {
+    protected fun showToast(@StringRes msgResId: Int, isLong: Boolean = false) {
         showToast(getString(msgResId), isLong)
+    }
+
+    protected fun openUrl(url: String?) {
+        AndroidUtils.openUrl(this, url)
+    }
+
+
+    protected fun clearKeyboard(editText: EditText? = null) {
+        AndroidUtils.hideKeyboard(this)
+        AndroidUtils.clearEditText(editText)
+    }
+
+    protected fun showKeyboard(mEtSearch: EditText) {
+        AndroidUtils.showKeyboard(mEtSearch, this)
     }
 }

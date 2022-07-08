@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.*
 import android.widget.EditText
 import android.widget.PopupMenu
-import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -66,13 +65,12 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
         _binding = null
     }
 
-    protected open fun clearKeyboard(editText: EditText? = null) {
+    protected fun clearKeyboard(editText: EditText? = null) {
         AndroidUtils.hideKeyboard(activity as AppCompatActivity)
-        editText?.text?.clear()
-        editText?.clearFocus()
+        AndroidUtils.clearEditText(editText)
     }
 
-    protected open fun showKeyboard(mEtSearch: EditText) {
+    protected fun showKeyboard(mEtSearch: EditText) {
         AndroidUtils.showKeyboard(mEtSearch, requireContext())
     }
 
@@ -81,12 +79,7 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
     }
 
     protected fun showToast(message: String?, isLong: Boolean = false) {
-        if (message == null) return
-        if (isLong) {
-            Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
-        } else {
-            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-        }
+        AndroidUtils.showToast(requireContext(), message, isLong)
     }
 
     protected fun showToast(@StringRes msgResId: Int, isLong: Boolean = false) {
@@ -95,5 +88,9 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
     protected open fun showPopupMenu(view: View, key: String? = null) {
         popupMenu?.show()
+    }
+
+    protected fun openUrl(url: String?) {
+        AndroidUtils.openUrl(requireContext(), url)
     }
 }
