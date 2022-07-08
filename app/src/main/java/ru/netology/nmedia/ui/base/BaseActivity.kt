@@ -2,7 +2,9 @@ package ru.netology.nmedia.ui.base
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.EditText
+import android.widget.PopupMenu
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewbinding.ViewBinding
@@ -12,6 +14,7 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
 
     private var _binding: ViewBinding? = null
     abstract val bindingInflater: (LayoutInflater) -> VB
+    private var popupMenu: PopupMenu? = null
     @Suppress("UNCHECKED_CAST")
     protected val binding: VB
         get() = requireNotNull(_binding) as VB
@@ -46,5 +49,10 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
 
     protected fun showKeyboard(mEtSearch: EditText) {
         AndroidUtils.showKeyboard(mEtSearch, this)
+    }
+
+    protected fun showPopupMenu(view: View, inflater: (View) -> PopupMenu) {
+        popupMenu = inflater.invoke(view)
+        popupMenu?.show()
     }
 }

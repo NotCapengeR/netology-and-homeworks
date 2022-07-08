@@ -25,7 +25,8 @@ import javax.inject.Inject
 
 class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
 
-    @Inject lateinit var viewModelFactory: ViewModelFactory
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
     private val args: DetailsFragmentArgs by navArgs()
     private val viewModel: DetailsViewModel by activityViewModels {
         viewModelFactory
@@ -106,7 +107,31 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
             viewModel.commentPost(it.tag as Long)
         }
         menuButton.setDebouncedListener(50L) {
-            showPopupMenu(it)
+            showPopupMenu(it) { view ->
+                val postId: Long = view.tag as Long
+                PopupMenu(view.context, view).apply {
+                    menu?.add(0, REMOVE_ID, Menu.NONE, getString(R.string.post_remove))
+                    menu?.add(0, EDIT_ID, Menu.NONE, getString(R.string.edit))
+                    setOnMenuItemClickListener { item ->
+                        when (item.itemId) {
+
+                            REMOVE_ID -> {
+                                viewModel.removePost(postId)
+                                onBackPressed()
+                            }
+
+                            EDIT_ID -> mainNavController?.navigate(
+                                DetailsFragmentDirections.actionDetailsFragmentToEditFragment(
+                                    args.postText,
+                                    args.postTitle,
+                                    postId
+                                )
+                            )
+                        }
+                        return@setOnMenuItemClickListener true
+                    }
+                }
+            }
         }
     }
 
@@ -114,34 +139,6 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
         inflater.inflate(R.menu.empty, menu)
-    }
-
-    override fun showPopupMenu(view: View, key: String?) {
-        val id: Long = view.tag as Long
-        popupMenu = PopupMenu(view.context, view)
-        popupMenu?.menu?.add(0, REMOVE_ID, Menu.NONE, getString(R.string.post_remove))
-        popupMenu?.menu?.add(0, EDIT_ID, Menu.NONE, getString(R.string.edit))
-
-
-        popupMenu?.setOnMenuItemClickListener {
-            when (it.itemId) {
-
-                REMOVE_ID -> {
-                    viewModel.removePost(id)
-                    onBackPressed()
-                }
-
-                EDIT_ID -> mainNavController?.navigate(
-                    DetailsFragmentDirections.actionDetailsFragmentToEditFragment(
-                        args.postText,
-                        args.postTitle,
-                        id
-                    )
-                )
-            }
-            return@setOnMenuItemClickListener true
-        }
-        super.showPopupMenu(view, key)
     }
 
     private companion object {

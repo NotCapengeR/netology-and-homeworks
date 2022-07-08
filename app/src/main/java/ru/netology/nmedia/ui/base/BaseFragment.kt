@@ -17,7 +17,7 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
     private var _binding: ViewBinding? = null
     abstract val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> VB
-    protected var popupMenu: PopupMenu? = null
+    private var popupMenu: PopupMenu? = null
     protected val mainNavController: NavController? by lazy { activity?.findNavController(R.id.nav_host_fragment) }
 
     @Suppress("UNCHECKED_CAST")
@@ -86,7 +86,8 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
         showToast(getString(msgResId), isLong)
     }
 
-    protected open fun showPopupMenu(view: View, key: String? = null) {
+    protected fun showPopupMenu(view: View, inflater: (View) -> PopupMenu) {
+        popupMenu = inflater.invoke(view)
         popupMenu?.show()
     }
 
