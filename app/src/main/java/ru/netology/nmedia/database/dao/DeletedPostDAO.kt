@@ -2,6 +2,7 @@ package ru.netology.nmedia.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
 import ru.netology.nmedia.database.entities.DeletedPostEntity
 
@@ -20,6 +21,6 @@ interface DeletedPostDAO {
     @Query("DELETE FROM deleted_posts WHERE post_id = :id")
     suspend fun removeFromDeleted(id: Long): Int
 
-    @Insert
+    @Insert(onConflict = REPLACE)
     suspend fun insert(post: DeletedPostEntity): Long
 }

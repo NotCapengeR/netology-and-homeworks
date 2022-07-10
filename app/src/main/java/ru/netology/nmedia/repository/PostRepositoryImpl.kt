@@ -206,13 +206,10 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     override suspend fun removePost(id: Long): Boolean {
+        val post = dao.getPostById(id) ?: return false
         return (dao.deletePostById(id) > 0).also {
             if (it) {
-                try {
-                    deletedDAO.addNew(id)
-                } catch (ex: SQLiteConstraintException) {
-                    deletedDAO.insert(DeletedPostEntity(id = id))
-                }
+                deletedDAO.insert(DeletedPostEntity.parser(post))
                 source.deletePostById(id).also { isSuccess ->
                     if (isSuccess) {
                         deletedDAO.removeFromDeleted(id)
