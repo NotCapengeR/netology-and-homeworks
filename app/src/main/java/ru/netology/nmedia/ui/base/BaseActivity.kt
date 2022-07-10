@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
 import android.widget.PopupMenu
+import androidx.annotation.CallSuper
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewbinding.ViewBinding
@@ -19,11 +20,13 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
     protected val binding: VB
         get() = requireNotNull(_binding) as VB
 
+    @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = bindingInflater.invoke(layoutInflater).also { setContentView(it.root) }
     }
 
+    @CallSuper
     override fun onDestroy() {
         super.onDestroy()
         _binding = null

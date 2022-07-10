@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.EditText
 import android.widget.PopupMenu
+import androidx.annotation.CallSuper
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
@@ -25,6 +26,7 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment(), MenuProvider {
     protected val binding: VB
         get() = requireNotNull(_binding) as VB
 
+    @CallSuper
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -35,11 +37,13 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment(), MenuProvider {
         return binding.root
     }
 
+    @CallSuper
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).addMenuProvider(this)
     }
 
+    @CallSuper
     override fun onDestroyView() {
         super.onDestroyView()
         (activity as AppCompatActivity).removeMenuProvider(this)
