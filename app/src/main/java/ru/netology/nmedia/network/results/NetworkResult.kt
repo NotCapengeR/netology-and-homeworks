@@ -53,7 +53,7 @@ enum class NetworkStatus {
     LOADING
 }
 
-fun <T, I : Iterable<T>> NetworkResult<I>.filter(predicate: (T) -> Boolean): NetworkResult<List<T>> {
+inline fun <T, I : Iterable<T>> NetworkResult<I>.filter(predicate: (T) -> Boolean): NetworkResult<List<T>> {
     return when (this) {
         is NetworkResult.Success ->
             NetworkResult.Success(data = this.data.filter(predicate), code = NetworkResult.RESPONSE_CODE_OK)
@@ -62,7 +62,7 @@ fun <T, I : Iterable<T>> NetworkResult<I>.filter(predicate: (T) -> Boolean): Net
     }
 }
 
-fun <T, I : Iterable<T>> NetworkResult<I>.filterNot(predicate: (T) -> Boolean): NetworkResult<List<T>> {
+inline fun <T, I : Iterable<T>> NetworkResult<I>.filterNot(predicate: (T) -> Boolean): NetworkResult<List<T>> {
     return when (this) {
         is NetworkResult.Success ->
             NetworkResult.Success(data = this.data.filterNot(predicate), code = NetworkResult.RESPONSE_CODE_OK)
