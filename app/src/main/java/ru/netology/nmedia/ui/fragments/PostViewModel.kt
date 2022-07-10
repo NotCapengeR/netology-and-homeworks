@@ -52,11 +52,6 @@ class PostViewModel @Inject constructor(
             repository.removePost(id).also {
                 if (it) {
                     loadData()
-                } else {
-                    showToast(
-                        "Something went wrong." +
-                                " Check your Internet connection and try again later"
-                    )
                 }
             }
         }
@@ -67,11 +62,6 @@ class PostViewModel @Inject constructor(
             repository.likePost(id).also {
                 if (it) {
                     loadData()
-                } else {
-                    showToast(
-                        "Something went wrong." +
-                                " Check your Internet connection and try again later"
-                    )
                 }
             }
         }
