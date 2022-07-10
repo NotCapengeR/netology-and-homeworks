@@ -1,6 +1,6 @@
 package ru.netology.nmedia.repository
 
-import ru.netology.nmedia.network.exceptions.ResultNotFoundException
+import ru.netology.nmedia.network.exceptions.PostNotFoundException
 import ru.netology.nmedia.network.post_api.dto.PostRequest
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.network.post_api.service.PostService
@@ -55,7 +55,7 @@ class RemotePostSourceImpl @Inject constructor(
 
     override suspend fun likeById(id: Long): NetworkResult<PostResponse> {
         val post = getPostById(id).data ?: return NetworkResult.Error(
-            error = ResultNotFoundException("Post not found!"),
+            error = PostNotFoundException("Post with id $id is not found!"),
             code = RESPONSE_CODE_NOT_FOUND
         )
         return if (post.isLiked) {

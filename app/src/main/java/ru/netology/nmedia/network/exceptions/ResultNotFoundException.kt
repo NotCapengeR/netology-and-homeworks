@@ -1,3 +1,5 @@
 package ru.netology.nmedia.network.exceptions
 
-class ResultNotFoundException(message: String) : NullPointerException(message)
+open class ResultNotFoundException(message: String? = null) : RuntimeException(message)
+
+class PostNotFoundException(message: String? = null) : ResultNotFoundException(message)
