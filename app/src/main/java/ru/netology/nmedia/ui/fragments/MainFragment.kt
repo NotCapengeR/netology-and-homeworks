@@ -153,7 +153,9 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                     Timber.e("Error: ${result.error}")
                     when (val it = result.error) {
                         is SocketTimeoutException -> showToast("Timed out waiting for a response from the server")
-                        is ConnectException -> showToast("Error: No Internet connection!")
+                        is ConnectException -> if (SystemClock.elapsedRealtime() - lastUpdateTime > args.updateDebounce) {
+                            showToast("Error: No Internet connection!")
+                        }
                         is IOException -> showToast("Error: Problem with Internet connection!")
                         is HttpException -> showToast("Error (${it.code()}): ${it.message()}")
                         else -> showToast("Error: ${it.getErrorMessage()}")
