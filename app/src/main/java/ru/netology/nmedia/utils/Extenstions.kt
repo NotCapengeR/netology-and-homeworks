@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment
 import com.google.gson.*
 import ru.netology.nmedia.App
 import ru.netology.nmedia.di.AppComponent
+import ru.netology.nmedia.network.results.NetworkResult
+import ru.netology.nmedia.network.results.NetworkResult.Companion.RESPONSE_CODE_OK
 import timber.log.Timber
 import java.io.Reader
 import java.lang.reflect.Type
@@ -68,7 +70,8 @@ fun View.setVisibility(visible: Boolean?) = when (visible) {
 }
 
 
-fun Fragment.getAppComponent(): AppComponent = (requireContext().applicationContext as App).appComponent
+fun Fragment.getAppComponent(): AppComponent =
+    (requireContext().applicationContext as App).appComponent
 
 fun Context.getAppComponent(): AppComponent = when (this) {
     is App -> appComponent

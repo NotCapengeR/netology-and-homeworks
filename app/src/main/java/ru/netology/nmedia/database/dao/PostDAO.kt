@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import ru.netology.nmedia.database.entities.PostEntity
+import ru.netology.nmedia.repository.dto.Attachment
 import ru.netology.nmedia.utils.Mapper
 import java.time.OffsetDateTime
 
@@ -24,6 +25,32 @@ interface PostDAO {
 
     @Query("DELETE FROM posts WHERE post_id = :id")
     suspend fun deletePostById(id: Long): Int
+
+    @Query("UPDATE posts SET likes_count = :newCount WHERE post_id = :id")
+    suspend fun updateLikesCount(id: Long, newCount: Int): Int
+
+    @Query("UPDATE posts SET text = :newText WHERE post_id = :id")
+    suspend fun updateText(id: Long, newText: String): Int
+
+    @Query("UPDATE posts SET title = :newTitle WHERE post_id = :id")
+    suspend fun updateTitle(id: Long, newTitle: String): Int
+
+    @Query("UPDATE posts SET avatar_name = :newAvatar WHERE post_id = :id")
+    suspend fun updateAvatar(id: Long, newAvatar: String): Int
+
+    @Query("UPDATE posts SET date = :newDate WHERE post_id = :id")
+    suspend fun updateDate(id: Long, newDate: String): Int
+
+    @Query(
+        "UPDATE posts SET attachment_name = :name, attachment_description = :description," +
+                "attachment_type = :type WHERE post_id = :id"
+    )
+    suspend fun updateAttachment(
+        id: Long,
+        name: String?,
+        description: String?,
+        type: Attachment.AttachmentType?
+    ): Int
 
     @Query("INSERT INTO posts (post_id, title, text, date) VALUES(:id, :title, :text, :date)")
     suspend fun addPost(

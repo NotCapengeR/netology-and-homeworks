@@ -24,8 +24,7 @@ import javax.inject.Inject
 
 class EditFragment : BaseFragment<EditFragmentBinding>() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    @Inject lateinit var viewModelFactory: ViewModelFactory
     private val args: EditFragmentArgs by navArgs()
     private val viewModel: EditViewModel by activityViewModels {
         viewModelFactory
@@ -48,7 +47,8 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
         mainNavController?.apply {
             val appBarConfiguration = AppBarConfiguration(graph)
             toolbar.setupWithNavController(this, appBarConfiguration).also {
-                (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
+                (activity as AppCompatActivity).supportActionBar?.title =
+                    getString(R.string.app_name)
             }
         }
         val id = args.postId
@@ -76,6 +76,8 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
                         .circleCrop()
                         .timeout(10_000)
                         .into(ivPostAvatar)
+                } else {
+                    Glide.with(requireContext()).clear(ivPostAvatar)
                 }
                 ivShare.text = post.shared.toPostText()
                 ivLikes.isChecked = post.isLiked
@@ -94,8 +96,18 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
                         .centerCrop()
                         .timeout(10_000)
                         .into(ivAttachment)
+                } else {
+                    Glide.with(requireContext()).clear(ivAttachment)
                 }
             }
+        }
+        viewModel.isLoaded.observe(viewLifecycleOwner) { isLoaded ->
+            if (isLoaded) {
+                onBackPressed()
+            }
+        }
+        viewModel.isUpdating.observe(viewLifecycleOwner) {
+            binding.postProgress.setVisibility(it)
         }
 
         cancelButton.setOnClickListener {
@@ -128,7 +140,6 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
                         url
                     )
                     clearKeyboard()
-                    onBackPressed()
                 }
             }
         }

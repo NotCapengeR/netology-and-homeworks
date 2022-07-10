@@ -58,7 +58,8 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
         mainNavController?.apply {
             val appBarConfiguration = AppBarConfiguration(graph)
             binding.toolbar.setupWithNavController(this, appBarConfiguration).also {
-                (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
+                (activity as AppCompatActivity).supportActionBar?.title =
+                    getString(R.string.app_name)
             }
         }
         val adapter = PostAdapter(object : PostListener {

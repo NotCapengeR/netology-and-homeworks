@@ -25,8 +25,7 @@ import javax.inject.Inject
 
 class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    @Inject lateinit var viewModelFactory: ViewModelFactory
     private val args: DetailsFragmentArgs by navArgs()
     private val viewModel: DetailsViewModel by activityViewModels {
         viewModelFactory
@@ -72,6 +71,8 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
                         .circleCrop()
                         .timeout(10_000)
                         .into(ivPostAvatar)
+                } else {
+                    Glide.with(requireContext()).clear(ivPostAvatar)
                 }
                 ivShare.text = post.shared.toPostText()
                 tvPostTitle.text = post.title
@@ -93,6 +94,8 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
                         .centerCrop()
                         .timeout(10_000)
                         .into(ivAttachment)
+                } else {
+                    Glide.with(requireContext()).clear(ivAttachment)
                 }
             }
         }

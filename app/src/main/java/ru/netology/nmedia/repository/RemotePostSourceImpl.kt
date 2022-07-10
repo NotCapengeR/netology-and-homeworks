@@ -14,7 +14,7 @@ import javax.inject.Singleton
 
 @Singleton
 class RemotePostSourceImpl @Inject constructor(
-    private val service: PostService
+    private val service: PostService,
 ) : RemotePostSource {
 
     override suspend fun getAll(): NetworkResult<List<PostResponse>> = safeApiCall { service.getAll() }

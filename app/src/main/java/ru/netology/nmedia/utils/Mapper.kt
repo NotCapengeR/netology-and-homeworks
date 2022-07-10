@@ -62,3 +62,4 @@ object Mapper {
         }.reduce { acc, s -> "$acc:$s" }
     }
 }
+

@@ -6,7 +6,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
+import ru.netology.nmedia.database.dao.DeletedPostDAO
 import ru.netology.nmedia.database.dao.PostDAO
+import ru.netology.nmedia.database.entities.DeletedPostEntity
 import ru.netology.nmedia.database.entities.PostEntity
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.network.results.NetworkResult
@@ -22,21 +24,67 @@ import javax.inject.Singleton
 @Singleton
 class PostRepositoryImpl @Inject constructor(
     private val dao: PostDAO,
+    private val deletedDAO: DeletedPostDAO,
     private val source: RemotePostSource
 ) : PostRepository, SyncHelper {
 
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
+    override suspend fun calculateDiffAndUpdate(local: PostEntity?, remote: PostResponse?) {
+        if (local == null || remote == null || local.id != remote.id) return
+        if (local.likes != remote.likes) {
+            if ((local.likes - remote.likes == 1 || local.likes - remote.likes == -1) &&
+                local.isLiked != remote.isLiked
+            ) {
+                source.likeById(local.id)
+            } else {
+                dao.updateLikesCount(local.id, remote.likes)
+            }
+        }
+
+        if (local.text != remote.text) {
+            dao.updateText(local.id, remote.text)
+        }
+        if (local.title != remote.title) {
+            dao.updateTitle(local.id, remote.title)
+        }
+        if (local.avatar != remote.avatar) {
+            dao.updateAvatar(local.id, remote.avatar)
+        }
+        if (local.attachment != remote.attachment) {
+            dao.updateAttachment(
+                local.id,
+                remote.attachment?.name,
+                remote.attachment?.description,
+                remote.attachment?.type
+            )
+        }
+        if (Mapper.parseStringToEpoch(local.date) != remote.date) {
+            dao.updateDate(local.id, Mapper.parseEpochToAbsolute(remote.date))
+        }
+    }
+
     override suspend fun syncDB(
         serverData: Map<Long, PostResponse>,
-        postsToAdd: List<PostEntity>,
-        postsToDelete: List<Long>
+        localData: Map<Long, PostEntity>
     ) {
-        postsToDelete.forEach {
-            dao.deletePostById(it)
+        deletedDAO.getAllIds().forEach { id ->
+            source.deletePostById(id).also { isSuccess ->
+                if (isSuccess) deletedDAO.removeFromDeleted(id)
+            }
         }
-        postsToAdd.forEach {
-            dao.insertPost(it)
+        serverData.keys.forEach { id ->
+            if (!localData.containsKey(id)) {
+                dao.insertPost(PostEntity.parser(serverData[id]!!))
+            }
+        }
+        localData.keys.forEach { id ->
+            if (!serverData.containsKey(id)) {
+                dao.deletePostById(id)
+                deletedDAO.removeFromDeleted(id)
+            } else {
+                calculateDiffAndUpdate(localData[id], serverData[id])
+            }
         }
     }
 
@@ -48,20 +96,19 @@ class PostRepositoryImpl @Inject constructor(
         } else null
     }
 
+    override suspend fun getDeletedPostsIds(): List<Long> {
+        return withContext(scope.coroutineContext + Dispatchers.IO) {
+            deletedDAO.getAllIds()
+        }
+    }
+
     override fun getAllPosts(): Flow<NetworkResult<List<PostResponse>>> = flow {
         emit(NetworkResult.Loading())
         emit(source.getAll().also { result ->
             if (result is NetworkResult.Success && result.code == RESPONSE_CODE_OK) {
-                val serverMap = result.data.associateBy { response -> response.id }
-                val dbMap = dao.getAllAsList().associateBy { entity -> entity.id }
                 syncDB(
-                    serverData = serverMap,
-                    postsToAdd = result.data
-                        .map { response -> PostEntity.parser(response) }
-                        .filterNot { entity -> dbMap.values.contains(entity) },
-                    postsToDelete = dbMap.values
-                        .map { entity -> entity.id }
-                        .filterNot { id -> serverMap.containsKey(id) }
+                    serverData = result.data.associateBy { response -> response.id },
+                    localData = dao.getAllAsList().associateBy { entity -> entity.id }
                 )
             }
 
@@ -159,11 +206,25 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     override suspend fun removePost(id: Long): Boolean {
-        return source.deletePostById(id).also {
+        return (dao.deletePostById(id) > 0).also {
             if (it) {
-                dao.deletePostById(id)
+                try {
+                    deletedDAO.addNew(id)
+                } catch (ex: SQLiteConstraintException) {
+                    deletedDAO.insert(DeletedPostEntity(id = id))
+                }
+                source.deletePostById(id).also { isSuccess ->
+                    if (isSuccess) {
+                        deletedDAO.removeFromDeleted(id)
+                    }
+                }
             }
         }
+//        return source.deletePostById(id).also {
+//            if (it) {
+//                dao.deletePostById(id)
+//            }
+//        }
     }
 
     override suspend fun editPost(id: Long, newText: String): Boolean {
@@ -175,15 +236,25 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     override suspend fun likePost(id: Long): Boolean {
-        return source.likeById(id).also { result ->
-            if (result is NetworkResult.Success && result.code == RESPONSE_CODE_OK) {
-                if (result.data.isLiked) {
-                    dao.likePostById(id)
-                } else {
-                    dao.dislikePostById(id)
-                }
+        val post = getPostFromDBById(id) ?: return false
+        return if (post.isLiked) {
+            dao.dislikePostById(id) > 0
+        } else {
+            dao.likePostById(id) > 0
+        }.also {
+            if (it) {
+                source.likeById(id)
             }
-        } is NetworkResult.Success
+        }
+//        return source.likeById(id).also { result ->
+//            if (result is NetworkResult.Success && result.code == RESPONSE_CODE_OK) {
+//                if (result.data.isLiked) {
+//                    dao.likePostById(id)
+//                } else {
+//                    dao.dislikePostById(id)
+//                }
+//            }
+//        } is NetworkResult.Success
     }
 
     override suspend fun sharePost(id: Long): Int {

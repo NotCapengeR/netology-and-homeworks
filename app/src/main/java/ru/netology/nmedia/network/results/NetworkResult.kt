@@ -53,6 +53,33 @@ enum class NetworkStatus {
     LOADING
 }
 
+fun <T, I : Iterable<T>> NetworkResult<I>.filter(predicate: (T) -> Boolean): NetworkResult<List<T>> {
+    return when (this) {
+        is NetworkResult.Success ->
+            NetworkResult.Success(data = this.data.filter(predicate), code = NetworkResult.RESPONSE_CODE_OK)
+        is NetworkResult.Error -> NetworkResult.Error(this.error, this.code)
+        is NetworkResult.Loading -> NetworkResult.Loading()
+    }
+}
+
+fun <T, I : Iterable<T>> NetworkResult<I>.filterNot(predicate: (T) -> Boolean): NetworkResult<List<T>> {
+    return when (this) {
+        is NetworkResult.Success ->
+            NetworkResult.Success(data = this.data.filterNot(predicate), code = NetworkResult.RESPONSE_CODE_OK)
+        is NetworkResult.Error -> NetworkResult.Error(this.error, this.code)
+        is NetworkResult.Loading -> NetworkResult.Loading()
+    }
+}
+
+fun <T, I : Iterable<T?>> NetworkResult<I>.filterNotNull(): NetworkResult<List<T>> {
+    return when (this) {
+        is NetworkResult.Success ->
+            NetworkResult.Success(data = this.data.filterNotNull(), code = NetworkResult.RESPONSE_CODE_OK)
+        is NetworkResult.Error -> NetworkResult.Error(this.error, this.code)
+        is NetworkResult.Loading -> NetworkResult.Loading()
+    }
+}
+
 suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): NetworkResult<T> {
     try {
         val response = apiCall.invoke()

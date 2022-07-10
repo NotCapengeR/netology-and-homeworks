@@ -39,11 +39,6 @@ class DetailsViewModel @Inject constructor(
             repository.likePost(id).also {
                 if (it) {
                     loadPost(id)
-                } else {
-                    showToast(
-                        "Something went wrong." +
-                                " Check your Internet connection and try again later"
-                    )
                 }
             }
         }

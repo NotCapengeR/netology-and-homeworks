@@ -7,7 +7,11 @@ interface SyncHelper {
 
     suspend fun syncDB(
         serverData: Map<Long, PostResponse>,
-        postsToAdd: List<PostEntity>,
-        postsToDelete: List<Long>
+        localData: Map<Long, PostEntity>
+    )
+
+    suspend fun calculateDiffAndUpdate(
+        local: PostEntity?,
+        remote: PostResponse?
     )
 }

@@ -20,6 +20,8 @@ class EditViewModel @Inject constructor(
     val post: MutableLiveData<Post> by lazy {
         MutableLiveData(Post.EMPTY_POST)
     }
+    val isUpdating: MutableLiveData<Boolean> = MutableLiveData(false)
+    val isLoaded: MutableLiveData<Boolean> = MutableLiveData(false)
 
 
     fun removeLink(id: Long) {
@@ -42,11 +44,14 @@ class EditViewModel @Inject constructor(
         newText: String,
         url: String? = null
     ) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Main) {
+            isUpdating.value = true
             Timber.d("Post was edited: $id")
             repository.editPost(id, newText).also {
+                isUpdating.value = false
                 if (it) {
-                    loadAllPosts()
+                    isLoaded.value = true
+                    isLoaded.value = false
                 } else {
                     showToast(
                         "Something went wrong." +
@@ -67,11 +72,6 @@ class EditViewModel @Inject constructor(
                 if (it) {
                     val newPost = getPostById(id) ?: return@also
                     post.value = post.value?.copy(likes = newPost.likes, isLiked = newPost.isLiked)
-                } else {
-                    showToast(
-                        "Something went wrong." +
-                                " Check your Internet connection and try again later"
-                    )
                 }
             }
         }
@@ -115,9 +115,5 @@ class EditViewModel @Inject constructor(
             val newPost = getPostById(postId) ?: return@launch
             post.value = newPost
         }
-    }
-
-    private fun loadAllPosts() {
-        repository.getAllPosts()
     }
 }

@@ -13,6 +13,7 @@ import kotlinx.coroutines.withContext
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.network.results.NetworkResult
 import ru.netology.nmedia.network.results.NetworkResult.Companion.RESPONSE_CODE_OK
+import ru.netology.nmedia.network.results.filterNot
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.ui.base.BaseViewModel
@@ -104,12 +105,19 @@ class PostViewModel @Inject constructor(
     private fun loadData() {
         viewModelScope.launch(Dispatchers.Main) {
             val dbList = Mapper.mapPostsToResponseList(repository.getPostsFromDBAsList())
+            val deletedPostsIds = repository.getDeletedPostsIds()
             if (postsList.value?.data != dbList) {
                 _postsList.value = NetworkResult.Success(dbList, RESPONSE_CODE_OK)
                 cachedIds = dbList.map { it.id }
+                    .filterNot { deletedPostsIds.contains(it) }
             }
             repository.getAllPosts()
                 .catch { Timber.e("Error while loading data in ViewModel: ${it.getErrorMessage()}") }
+                .map { result ->
+                    result.filterNot { response ->
+                        deletedPostsIds.contains(response.id)
+                    }
+                }
                 .flowOn(Dispatchers.IO)
                 .collect {
                     _postsList.value = it
@@ -123,6 +131,7 @@ class PostViewModel @Inject constructor(
 
     private fun loadToCurrentData() {
         viewModelScope.launch(Dispatchers.Main) {
+            val deletedPostsIds = repository.getDeletedPostsIds()
             repository.getPostsFromDB()
                 .map { posts ->
                     posts.filter { post ->
@@ -131,7 +140,11 @@ class PostViewModel @Inject constructor(
                         } else true
                     }
                 }
-                .map { Mapper.mapPostsToResponse(it) }
+                .map { posts ->
+                    Mapper.mapPostsToResponse(posts).filterNot { response ->
+                        deletedPostsIds.contains(response.id)
+                    }
+                }
                 .catch { Timber.e("Exception occurred while loading data from DB: ${it.getErrorMessage()}") }
                 .flowOn(Dispatchers.IO)
                 .collect {

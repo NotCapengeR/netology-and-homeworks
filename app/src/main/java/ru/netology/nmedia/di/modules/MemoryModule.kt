@@ -11,6 +11,7 @@ import dagger.Provides
 import ru.netology.nmedia.App
 import ru.netology.nmedia.database.PostDB
 import ru.netology.nmedia.database.PostDB.Companion.DB_NAME
+import ru.netology.nmedia.database.dao.DeletedPostDAO
 import ru.netology.nmedia.database.dao.PostDAO
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
@@ -42,7 +43,11 @@ class MemoryModule {
 
     @Provides
     @Singleton
-    fun providePostDAO(db: PostDB): PostDAO = db.getDao()
+    fun providePostDAO(db: PostDB): PostDAO = db.getPostDao()
+
+    @Provides
+    @Singleton
+    fun provideDeletedPostDAO(db: PostDB): DeletedPostDAO = db.getPostDeletedDao()
 }
 
 @Module

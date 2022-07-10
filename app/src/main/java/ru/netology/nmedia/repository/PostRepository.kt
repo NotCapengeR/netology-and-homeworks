@@ -15,6 +15,8 @@ interface PostRepository {
 
     suspend fun addPost(title: String, text: String): Long
 
+    suspend fun getDeletedPostsIds(): List<Long>
+
     fun addVideo(url: String, postId: Long)
 
     suspend fun removeLink(id: Long): Boolean
