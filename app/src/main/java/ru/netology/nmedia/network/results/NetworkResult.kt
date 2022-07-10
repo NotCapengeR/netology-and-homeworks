@@ -47,10 +47,10 @@ sealed class NetworkResult<T>(
     }
 }
 
-enum class NetworkStatus {
-    SUCCESS,
-    ERROR,
-    LOADING
+enum class NetworkStatus(val codesRange: IntRange?) {
+    SUCCESS(200..300),
+    ERROR(400..500),
+    LOADING(null)
 }
 
 inline fun <T, I : Iterable<T>> NetworkResult<I>.filter(predicate: (T) -> Boolean): NetworkResult<List<T>> {
