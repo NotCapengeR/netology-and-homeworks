@@ -11,8 +11,7 @@ import javax.inject.Inject
 
 class App : Application() {
 
-    @Inject
-    lateinit var pref: SharedPreferences
+    @Inject lateinit var pref: SharedPreferences
 
     val appComponent: AppComponent by lazy {
         DaggerAppComponent.builder()

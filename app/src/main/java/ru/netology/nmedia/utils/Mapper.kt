@@ -55,4 +55,10 @@ object Mapper {
 
     fun mapResponsesToPosts(responses: List<PostResponse>): List<Post> =
         responses.mapNotNull { Post.parser(it) }
+
+    fun formatYTDate(ytDate: String): String {
+        return ytDate.trim().split(":", ignoreCase = true, limit = 3).map {
+            if (it.length == 1) "0$it" else it
+        }.reduce { acc, s -> "$acc:$s" }
+    }
 }

@@ -3,6 +3,7 @@ package ru.netology.nmedia.repository.dto
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import ru.netology.nmedia.network.youtube.YouTubeVideo
+import ru.netology.nmedia.utils.Mapper
 
 @Parcelize
 data class YouTubeVideoData(
@@ -22,11 +23,13 @@ data class YouTubeVideoData(
                 id = data.items.first().id,
                 author = data.items.first().snippet.channelTitle,
                 title = data.items.first().snippet.title,
-                duration = data.items.first().contentDetails.duration
-                    .replace("PT", "")
-                    .replace('S', ' ')
-                    .replace('H', ':')
-                    .replace('M', ':'),
+                duration = Mapper.formatYTDate(
+                    data.items.first().contentDetails.duration
+                        .replace("PT", "")
+                        .replace('S', ' ')
+                        .replace('H', ':')
+                        .replace('M', ':')
+                ),
                 thumbnailUrl = data.items.first().snippet.thumbnails.thumbnail.url
             )
         }
