@@ -4,6 +4,7 @@ import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.database.entities.PostEntity
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.network.results.NetworkResult
+import ru.netology.nmedia.network.results.NetworkResult.Companion.RESPONSE_CODE_OK
 import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -14,7 +15,10 @@ object Mapper {
     val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern(Post.POST_DATE_ABSOLUTE)
 
     fun mapEntitiesToResponse(entities: List<PostEntity>): NetworkResult<List<PostResponse>> {
-        return NetworkResult.Success(data = entities.map { PostResponse.parser(it) })
+        return NetworkResult.Success(
+            data = entities.map { PostResponse.parser(it) },
+            code = RESPONSE_CODE_OK
+        )
     }
 
 
@@ -34,7 +38,7 @@ object Mapper {
     }
 
     fun mapPostsToResponse(posts: List<Post>): NetworkResult<List<PostResponse>> {
-        return NetworkResult.Success(data = mapPostsToResponseList(posts), code = 200)
+        return NetworkResult.Success(data = mapPostsToResponseList(posts), code = RESPONSE_CODE_OK)
     }
 
     fun mapPostsToResponseList(posts: List<Post>): List<PostResponse> {

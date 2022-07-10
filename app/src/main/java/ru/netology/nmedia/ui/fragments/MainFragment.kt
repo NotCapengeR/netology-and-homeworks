@@ -31,7 +31,8 @@ import javax.inject.Inject
 
 class MainFragment : BaseFragment<FragmentMainBinding>() {
 
-    @Inject lateinit var viewModelFactory: ViewModelFactory
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
     private var lastUpdateTime: Long = 0L
     private val args: MainFragmentArgs by navArgs()
     private val viewModel: PostViewModel by activityViewModels {
@@ -54,12 +55,12 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
 
     private fun initView() {
         (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
-        setHasOptionsMenu(true)
         mainNavController?.apply {
             val appBarConfiguration = AppBarConfiguration(graph)
-            binding.toolbar.setupWithNavController(this, appBarConfiguration)
+            binding.toolbar.setupWithNavController(this, appBarConfiguration).also {
+                (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
+            }
         }
-        (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
         val adapter = PostAdapter(object : PostListener {
 
             override fun onRemoved(id: Long) {

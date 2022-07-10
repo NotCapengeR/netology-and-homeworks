@@ -5,6 +5,7 @@ import ru.netology.nmedia.network.post_api.dto.PostRequest
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.network.post_api.service.PostService
 import ru.netology.nmedia.network.results.NetworkResult
+import ru.netology.nmedia.network.results.NetworkResult.Companion.RESPONSE_CODE_NOT_FOUND
 import ru.netology.nmedia.network.results.safeApiCall
 import ru.netology.nmedia.network.results.saveCall
 import java.time.OffsetDateTime
@@ -53,10 +54,16 @@ class RemotePostSourceImpl @Inject constructor(
     }
 
     override suspend fun likeById(id: Long): NetworkResult<PostResponse> {
-        val post = getPostById(id).data
-            ?: return NetworkResult.Error(error = ResultNotFoundException("Post not found!"))
+        val post = getPostById(id).data ?: return NetworkResult.Error(
+            error = ResultNotFoundException("Post not found!"),
+            code = RESPONSE_CODE_NOT_FOUND
+        )
         return if (post.isLiked) {
             safeApiCall { service.dislikePostById(id) }
         } else safeApiCall { service.likePostById(id) }
+    }
+
+    override suspend fun dislikeById(id: Long): NetworkResult<PostResponse> {
+        TODO("Maybe later???")
     }
 }

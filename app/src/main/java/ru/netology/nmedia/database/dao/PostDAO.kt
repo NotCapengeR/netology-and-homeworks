@@ -55,8 +55,11 @@ interface PostDAO {
     )
     suspend fun removeVideo(id: Long): Int
 
-    @Query("UPDATE posts SET likes_count = :newLikesCount, is_liked = :changed WHERE post_id = :id")
-    suspend fun likePostById(id: Long, newLikesCount: Int, changed: Boolean): Int
+    @Query("UPDATE posts SET likes_count = likes_count + 1, is_liked = 1 WHERE post_id = :id")
+    suspend fun likePostById(id: Long): Int
+
+    @Query("UPDATE posts SET likes_count = likes_count - 1, is_liked = 0 WHERE post_id = :id")
+    suspend fun dislikePostById(id: Long): Int
 
     @Query("UPDATE posts SET comments_count = :newCommentsCount WHERE post_id = :id")
     suspend fun commentPostById(id: Long, newCommentsCount: Int)

@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.network.results.NetworkResult
+import ru.netology.nmedia.network.results.NetworkResult.Companion.RESPONSE_CODE_OK
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.ui.base.BaseViewModel
@@ -104,7 +105,7 @@ class PostViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Main) {
             val dbList = Mapper.mapPostsToResponseList(repository.getPostsFromDBAsList())
             if (postsList.value?.data != dbList) {
-                _postsList.value = NetworkResult.Success(dbList)
+                _postsList.value = NetworkResult.Success(dbList, RESPONSE_CODE_OK)
                 cachedIds = dbList.map { it.id }
             }
             repository.getAllPosts()

@@ -1,10 +1,7 @@
 package ru.netology.nmedia.database.entities
 
 import android.text.format.DateFormat
-import androidx.room.ColumnInfo
-import androidx.room.Embedded
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.*
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.repository.dto.Attachment
 import ru.netology.nmedia.repository.dto.Post
@@ -12,7 +9,10 @@ import ru.netology.nmedia.repository.dto.YouTubeVideoData
 import ru.netology.nmedia.utils.Mapper
 import java.time.OffsetDateTime
 
-@Entity(tableName = "posts")
+@Entity(
+    tableName = "posts",
+    indices = [Index("post_id")]
+)
 data class PostEntity(
     @PrimaryKey
     @ColumnInfo(name = "post_id")

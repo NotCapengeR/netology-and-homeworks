@@ -2,6 +2,7 @@ package ru.netology.nmedia.network.results
 
 import retrofit2.Response
 import ru.netology.nmedia.network.exceptions.FailedHttpRequestException
+import ru.netology.nmedia.network.results.NetworkResult.Companion.EXCEPTION_OCCURRED_CODE
 import ru.netology.nmedia.utils.getErrorMessage
 import timber.log.Timber
 
@@ -14,17 +15,18 @@ sealed class NetworkResult<T>(
 
     data class Success<T>(
         override val data: T,
-        override val code: Int? = null
+        override val code: Int
     ) : NetworkResult<T>(status = NetworkStatus.SUCCESS)
 
     data class Error<T>(
         override val error: Throwable,
-        override val code: Int? = null,
+        override val code: Int,
     ) : NetworkResult<T>(status = NetworkStatus.ERROR)
 
     class Loading<T> : NetworkResult<T>(status = NetworkStatus.LOADING)
 
     companion object {
+        // HTTP response codes
         const val RESPONSE_CODE_CONTINUE: Int = 100
         const val RESPONSE_CODE_OK: Int = 200
         const val RESPONSE_CODE_CREATED: Int = 201
@@ -38,6 +40,10 @@ sealed class NetworkResult<T>(
         const val RESPONSE_CODE_NOT_ACCEPTABLE: Int = 406
         const val RESPONSE_CODE_BAD_GATEWAY: Int = 502
         const val RESPONSE_CODE_TIMEOUT_GATEWAY: Int = 504
+
+        // Custom codes
+        const val EXCEPTION_OCCURRED_CODE: Int = -1
+        const val EMPTY_CODE: Int = 0
     }
 }
 
@@ -49,7 +55,7 @@ enum class NetworkStatus {
 
 suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): NetworkResult<T> {
     try {
-        val response = apiCall()
+        val response = apiCall.invoke()
         if (response.isSuccessful) {
             Timber.d("Response with code ${response.code()} has been received!")
             val body = response.body()
@@ -59,13 +65,13 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): NetworkResult<T
         }
         return NetworkResult.Error(FailedHttpRequestException(response), response.code())
     } catch (t: Throwable) {
-        return NetworkResult.Error(t)
+        return NetworkResult.Error(t, EXCEPTION_OCCURRED_CODE)
     }
 }
 
 suspend fun saveCall(call: suspend () -> Unit): Boolean {
     return try {
-        call()
+        call.invoke()
         true
     } catch (t: Throwable) {
         Timber.e("Error occurred: ${t.getErrorMessage()}")

@@ -26,10 +26,8 @@ import javax.inject.Inject
 
 class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-    @Inject
-    lateinit var prefs: SharedPreferences
+    @Inject lateinit var viewModelFactory: ViewModelFactory
+    @Inject lateinit var prefs: SharedPreferences
     private val args: AddFragmentArgs by navArgs()
     private val viewModel: AddViewModel by activityViewModels {
         viewModelFactory
@@ -50,7 +48,6 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
 
     private fun initView() = with(binding) {
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
-        setHasOptionsMenu(true)
         tvPostText.setText(prefs.getString(ADD_FRAGMENT_TEXT, ""))
         tvPostTitle.setText(prefs.getString(ADD_FRAGMENT_TITLE, ""))
         prefs.edit {
@@ -58,9 +55,10 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
         }
         mainNavController?.apply {
             val appBarConfiguration = AppBarConfiguration(graph)
-            toolbar.setupWithNavController(this, appBarConfiguration)
+            toolbar.setupWithNavController(this, appBarConfiguration).also {
+                (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
+            }
         }
-        (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
         tvDateTime.text = DateFormat.format(POST_DATE_PATTERN, Date().time)
         cardViewSendPost.setDebouncedListener(600L, this@AddFragment)
         cancelButton.setDebouncedListener(50L, this@AddFragment)
@@ -125,8 +123,7 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
         }
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+    override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
         inflater.inflate(R.menu.empty, menu)
     }

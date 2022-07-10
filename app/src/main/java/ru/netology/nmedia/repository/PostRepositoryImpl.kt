@@ -23,11 +23,12 @@ import javax.inject.Singleton
 class PostRepositoryImpl @Inject constructor(
     private val dao: PostDAO,
     private val source: RemotePostSource
-) : PostRepository {
+) : PostRepository, SyncHelper {
 
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
-    private suspend fun syncDB(
+    override suspend fun syncDB(
+        serverData: Map<Long, PostResponse>,
         postsToAdd: List<PostEntity>,
         postsToDelete: List<Long>
     ) {
@@ -49,18 +50,18 @@ class PostRepositoryImpl @Inject constructor(
 
     override fun getAllPosts(): Flow<NetworkResult<List<PostResponse>>> = flow {
         emit(NetworkResult.Loading())
-        emit(source.getAll().also {
-            if (it is NetworkResult.Success && it.code == RESPONSE_CODE_OK) {
-                val dbList = dao.getAllAsList()
+        emit(source.getAll().also { result ->
+            if (result is NetworkResult.Success && result.code == RESPONSE_CODE_OK) {
+                val serverMap = result.data.associateBy { response -> response.id }
+                val dbMap = dao.getAllAsList().associateBy { entity -> entity.id }
                 syncDB(
-                    postsToAdd = it.data
+                    serverData = serverMap,
+                    postsToAdd = result.data
                         .map { response -> PostEntity.parser(response) }
-                        .filterNot { entity -> dbList.contains(entity) },
-                    postsToDelete = dbList
-                        .filterNot { entity ->
-                            it.data.map { response -> response.id }.contains(entity.id)
-                        }
+                        .filterNot { entity -> dbMap.values.contains(entity) },
+                    postsToDelete = dbMap.values
                         .map { entity -> entity.id }
+                        .filterNot { id -> serverMap.containsKey(id) }
                 )
             }
 
@@ -90,6 +91,7 @@ class PostRepositoryImpl @Inject constructor(
             Mapper.mapEntitiesToPosts(dao.getAllAsList())
         }
     }
+
     override suspend fun getException(id: Long): Throwable? {
         return when (val response = source.getPostById(id)) {
             is NetworkResult.Success -> response.error
@@ -173,9 +175,14 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     override suspend fun likePost(id: Long): Boolean {
-        return source.likeById(id).also {
-            val post = it.data ?: return@also
-            dao.likePostById(post.id, post.likes, post.isLiked)
+        return source.likeById(id).also { result ->
+            if (result is NetworkResult.Success && result.code == RESPONSE_CODE_OK) {
+                if (result.data.isLiked) {
+                    dao.likePostById(id)
+                } else {
+                    dao.dislikePostById(id)
+                }
+            }
         } is NetworkResult.Success
     }
 

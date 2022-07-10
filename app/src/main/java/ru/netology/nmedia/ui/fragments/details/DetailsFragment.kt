@@ -46,12 +46,12 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
 
     private fun initView() = with(binding) {
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
-        setHasOptionsMenu(true)
         mainNavController?.apply {
             val appBarConfiguration = AppBarConfiguration(graph)
-            toolbar.setupWithNavController(this, appBarConfiguration)
+            toolbar.setupWithNavController(this, appBarConfiguration).also {
+                (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
+            }
         }
-        (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
 
         val id = args.postId
         viewModel.loadPost(id)
@@ -135,8 +135,7 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
         }
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+    override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
         inflater.inflate(R.menu.empty, menu)
     }

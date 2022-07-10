@@ -6,6 +6,7 @@ import android.widget.EditText
 import android.widget.PopupMenu
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -13,7 +14,7 @@ import androidx.viewbinding.ViewBinding
 import ru.netology.nmedia.R
 import ru.netology.nmedia.utils.AndroidUtils
 
-abstract class BaseFragment<VB : ViewBinding> : Fragment() {
+abstract class BaseFragment<VB : ViewBinding> : Fragment(), MenuProvider {
 
     private var _binding: ViewBinding? = null
     abstract val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> VB
@@ -34,29 +35,14 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
         return binding.root
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.clear()
-        inflater.inflate(R.menu.main, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                onBackPressed()
-                true
-            }
-            R.id.delete -> {
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        (activity as AppCompatActivity).addMenuProvider(this)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        (activity as AppCompatActivity).removeMenuProvider(this)
         _binding = null
     }
 
@@ -89,5 +75,23 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
     protected fun openUrl(url: String?) {
         AndroidUtils.openUrl(requireContext(), url)
+    }
+
+    override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
+        inflater.inflate(R.menu.main, menu)
+    }
+
+    override fun onMenuItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
+            R.id.delete -> {
+                true
+            }
+            else -> false
+        }
     }
 }

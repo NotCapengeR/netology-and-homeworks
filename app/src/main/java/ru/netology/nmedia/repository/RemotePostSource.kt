@@ -16,4 +16,7 @@ interface RemotePostSource {
     suspend fun editPost(id: Long, newText: String): NetworkResult<PostResponse>
 
     suspend fun likeById(id: Long): NetworkResult<PostResponse>
+
+    suspend fun dislikeById(id: Long): NetworkResult<PostResponse>
+
 }

@@ -24,7 +24,8 @@ import javax.inject.Inject
 
 class EditFragment : BaseFragment<EditFragmentBinding>() {
 
-    @Inject lateinit var viewModelFactory: ViewModelFactory
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
     private val args: EditFragmentArgs by navArgs()
     private val viewModel: EditViewModel by activityViewModels {
         viewModelFactory
@@ -44,12 +45,12 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
 
     private fun initView() = with(binding) {
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
-        setHasOptionsMenu(true)
         mainNavController?.apply {
             val appBarConfiguration = AppBarConfiguration(graph)
-            toolbar.setupWithNavController(this, appBarConfiguration)
+            toolbar.setupWithNavController(this, appBarConfiguration).also {
+                (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
+            }
         }
-        (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
         val id = args.postId
         if (id != viewModel.post.value?.id) {
             viewModel.loadPost(id)
@@ -143,9 +144,7 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
         viewModel.saveTitle(binding.tvPostTitle.text.toString())
     }
 
-
-    @Deprecated("Deprecated in Java")
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+    override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
         inflater.inflate(R.menu.empty, menu)
     }
