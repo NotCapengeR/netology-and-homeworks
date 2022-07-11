@@ -58,4 +58,6 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
         popupMenu = inflater.invoke(anchor)
         popupMenu?.show()
     }
+
+    protected fun Int.dpTpPx(): Int = AndroidUtils.dpToPx(this@BaseActivity, this)
 }

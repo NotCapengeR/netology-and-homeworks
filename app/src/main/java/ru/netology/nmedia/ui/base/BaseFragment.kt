@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.viewbinding.ViewBinding
+import ru.netology.nmedia.App
 import ru.netology.nmedia.R
 import ru.netology.nmedia.utils.AndroidUtils
 
@@ -98,4 +99,6 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment(), MenuProvider {
             else -> false
         }
     }
+
+    protected fun Int.dpTpPx(): Int = AndroidUtils.dpToPx(activity as AppCompatActivity, this)
 }

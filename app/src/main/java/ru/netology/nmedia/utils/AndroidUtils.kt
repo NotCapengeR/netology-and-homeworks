@@ -102,16 +102,11 @@ object AndroidUtils {
     }
 
     fun openUrl(context: Context, uri: Uri) = with(context) {
-        try {
-            val browserIntent = Intent(Intent.ACTION_VIEW, uri)
-            if (this !is Activity) {
-                browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-            browserIntent.addCategory(Intent.CATEGORY_BROWSABLE)
+        val browserIntent = Intent(Intent.ACTION_VIEW, uri)
+        if (this !is Activity) browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        browserIntent.addCategory(Intent.CATEGORY_BROWSABLE)
+        if (browserIntent.resolveActivity(packageManager) != null) {
             startActivity(browserIntent)
-        } catch (ex: ActivityNotFoundException) {
-            Timber.e("Couldn't open this URL link: $uri\nMore details: ${ex.getErrorMessage()}")
-            showToast(this, getString(R.string.error_open_url, uri.toString()))
         }
     }
 

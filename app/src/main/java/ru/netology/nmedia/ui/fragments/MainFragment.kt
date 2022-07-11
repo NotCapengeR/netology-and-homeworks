@@ -121,9 +121,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
             rcViewPost.adapter = adapter
             rcViewPost.addItemDecoration(
-                LinearVerticalSpacingDecoration(
-                    AndroidUtils.dpToPx(activity as AppCompatActivity, 5)
-                )
+                LinearVerticalSpacingDecoration(INNER_SPACING_RC_VIEW.dpTpPx())
             )
             cardViewAddPost.setDebouncedListener(500L) {
                 mainNavController?.navigate(R.id.action_mainFragment_to_addFragment)
@@ -163,5 +161,8 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 }
             }
         }
+    }
+    private companion object {
+        private const val INNER_SPACING_RC_VIEW: Int = 5
     }
 }
