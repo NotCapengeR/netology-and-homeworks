@@ -51,7 +51,6 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
                 (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
             }
         }
-
         val id = args.postId
         viewModel.loadPost(id)
         viewModel.post.observe(viewLifecycleOwner) { post ->
@@ -109,8 +108,8 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
         ivComments.setDebouncedListener(50L) {
             viewModel.commentPost(it.tag as Long)
         }
-        menuButton.setDebouncedListener(50L) {
-            showPopupMenu(it) { view ->
+        menuButton.setDebouncedListener(50L) { view ->
+            showPopupMenu {
                 val postId: Long = view.tag as Long
                 PopupMenu(view.context, view).apply {
                     menu?.add(0, REMOVE_ID, Menu.NONE, getString(R.string.post_remove))

@@ -1,5 +1,6 @@
 package ru.netology.nmedia.ui.base
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.*
 import android.widget.EditText
@@ -20,6 +21,7 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment(), MenuProvider {
     private var _binding: ViewBinding? = null
     abstract val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> VB
     private var popupMenu: PopupMenu? = null
+    private var dialog: Dialog? = null
     protected val mainNavController: NavController? by lazy { activity?.findNavController(R.id.nav_host_fragment) }
 
     @Suppress("UNCHECKED_CAST")
@@ -72,9 +74,14 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment(), MenuProvider {
         showToast(getString(msgResId), isLong)
     }
 
-    protected fun showPopupMenu(anchor: View, inflater: (View) -> PopupMenu) {
-        popupMenu = inflater.invoke(anchor)
+    protected fun showPopupMenu(inflater: () -> PopupMenu) {
+        popupMenu = inflater.invoke()
         popupMenu?.show()
+    }
+
+    protected fun showDialog(inflater: () -> Dialog) {
+        dialog = inflater.invoke()
+        dialog?.show()
     }
 
     protected fun openUrl(url: String?) {
