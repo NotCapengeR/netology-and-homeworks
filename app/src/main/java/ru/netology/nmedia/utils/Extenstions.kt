@@ -11,6 +11,7 @@ import ru.netology.nmedia.network.results.NetworkResult
 import ru.netology.nmedia.network.results.NetworkResult.Companion.RESPONSE_CODE_OK
 import timber.log.Timber
 import java.io.Reader
+import java.lang.ArithmeticException
 import java.lang.reflect.Type
 import java.text.DecimalFormat
 import kotlin.reflect.KClass
@@ -82,9 +83,9 @@ fun String.checkIfNotEmpty(): Boolean = this.trim().isNotEmpty()
 
 fun Throwable.getErrorMessage(): String = this.message ?: this.toString()
 
-fun <T> Throwable.multiCatch(
+inline fun <T, E : Throwable> E.multiCatch(
     vararg exceptions: KClass<out Throwable>,
-    catchBlock: (Throwable) -> T,
+    catchBlock: (E) -> T,
 ): T {
     if (exceptions.isEmpty()) throw this
     return when {
