@@ -103,10 +103,7 @@ class PostAdapter(
             tvPostText.text = post.text
             tvPostTitle.text = post.title
             tvDateTime.text = Mapper.parseEpochSeconds(post.date)
-            if (post.id == 9L) {
-                Timber.d(tvDateTime.text.toString())
-                Timber.d(ivLikes.text.toString())
-            }
+            Timber.d("Post ${post.id}: ${tvDateTime.text}")
             if (post.avatar.isNotBlank() && post.avatar.isNotEmpty()) {
                 Glide.with(root.context)
                     .load("$AVATARS_BASE_URL${post.avatar}")
