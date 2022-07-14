@@ -20,7 +20,7 @@ object Mapper {
             code = RESPONSE_CODE_OK
         )
     }
-    
+
     fun parseEpochSeconds(epoch: Long): String {
         val date = Date(epoch * 1000L)
         return SIMPLE_POST_FORMAT.format(date)

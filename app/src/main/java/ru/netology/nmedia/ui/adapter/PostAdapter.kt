@@ -21,6 +21,7 @@ import ru.netology.nmedia.utils.Mapper
 import ru.netology.nmedia.utils.setDebouncedListener
 import ru.netology.nmedia.utils.setVisibility
 import ru.netology.nmedia.utils.toPostText
+import timber.log.Timber
 
 
 interface PostListener {
@@ -102,6 +103,10 @@ class PostAdapter(
             tvPostText.text = post.text
             tvPostTitle.text = post.title
             tvDateTime.text = Mapper.parseEpochSeconds(post.date)
+            if (post.id == 9L) {
+                Timber.d(tvDateTime.text.toString())
+                Timber.d(ivLikes.text.toString())
+            }
             if (post.avatar.isNotBlank() && post.avatar.isNotEmpty()) {
                 Glide.with(root.context)
                     .load("$AVATARS_BASE_URL${post.avatar}")

@@ -59,7 +59,7 @@ class PostViewModel @Inject constructor(
         viewModelScope.launch {
             repository.likePost(id).also {
                 if (it) {
-                    loadData()
+                    loadToCurrentData()
                 }
             }
         }
@@ -99,10 +99,10 @@ class PostViewModel @Inject constructor(
             repository.getAllPosts()
                 .catch { Timber.e("Error while loading data in ViewModel: ${it.getErrorMessage()}") }
                 .flowOn(Dispatchers.IO)
-                .collect {
-                    _postsList.value = it
+                .collect { result ->
+                    _postsList.value = result
                     cachedIds =
-                        it.data?.map { response -> response.id } ?: cachedIds
+                        result.data?.map { response -> response.id } ?: cachedIds
                 }
 
             needLoading.value = false
@@ -121,10 +121,10 @@ class PostViewModel @Inject constructor(
                 }
                 .catch { Timber.e("Exception occurred while loading data from DB: ${it.getErrorMessage()}") }
                 .flowOn(Dispatchers.IO)
-                .collect {
-                    _postsList.value = it
+                .collect { result ->
+                    _postsList.value = result
                     cachedIds =
-                        it.data?.map { response -> response.id } ?: cachedIds
+                        result.data?.map { response -> response.id } ?: cachedIds
                 }
         }
     }
