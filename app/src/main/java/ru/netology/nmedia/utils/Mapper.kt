@@ -1,10 +1,10 @@
 package ru.netology.nmedia.utils
 
-import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.database.entities.PostEntity
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.network.results.NetworkResult
 import ru.netology.nmedia.network.results.NetworkResult.Companion.RESPONSE_CODE_OK
+import ru.netology.nmedia.repository.dto.Post
 import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -20,8 +20,7 @@ object Mapper {
             code = RESPONSE_CODE_OK
         )
     }
-
-
+    
     fun parseEpochSeconds(epoch: Long): String {
         val date = Date(epoch * 1000L)
         return SIMPLE_POST_FORMAT.format(date)

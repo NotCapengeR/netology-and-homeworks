@@ -2,7 +2,6 @@ package ru.netology.nmedia.ui.adapter
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -12,18 +11,16 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
-import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.databinding.PostItemBinding
 import ru.netology.nmedia.repository.dto.Attachment
+import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.repository.dto.Post.Companion.ATTACHMENTS_BASE_URL
 import ru.netology.nmedia.repository.dto.Post.Companion.AVATARS_BASE_URL
-import ru.netology.nmedia.repository.dto.YouTubeVideoData.Companion.YOUTUBE_URL
 import ru.netology.nmedia.ui.base.BaseViewHolder
 import ru.netology.nmedia.utils.Mapper
 import ru.netology.nmedia.utils.setDebouncedListener
 import ru.netology.nmedia.utils.setVisibility
 import ru.netology.nmedia.utils.toPostText
-import timber.log.Timber
 
 
 interface PostListener {
@@ -113,6 +110,8 @@ class PostAdapter(
                     .circleCrop()
                     .timeout(10_000)
                     .into(ivPostAvatar)
+            } else {
+                Glide.with(root.context).clear(ivPostAvatar)
             }
             ivAttachment.setVisibility(post.attachment != null)
             if (post.attachment != null && post.attachment.type == Attachment.AttachmentType.IMAGE) {
