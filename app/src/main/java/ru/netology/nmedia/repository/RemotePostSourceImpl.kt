@@ -7,7 +7,6 @@ import ru.netology.nmedia.network.post_api.service.PostService
 import ru.netology.nmedia.network.results.NetworkResult
 import ru.netology.nmedia.network.results.NetworkResult.Companion.RESPONSE_CODE_NOT_FOUND
 import ru.netology.nmedia.network.results.safeApiCall
-import ru.netology.nmedia.network.results.saveCall
 import java.time.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -39,7 +38,7 @@ class RemotePostSourceImpl @Inject constructor(
         }
 
     override suspend fun deletePostById(id: Long): Boolean {
-        return saveCall { service.deletePostById(id) }
+        return safeApiCall { service.deletePostById(id) } is NetworkResult.Success
     }
 
     override suspend fun editPost(id: Long, newText: String): NetworkResult<PostResponse> {

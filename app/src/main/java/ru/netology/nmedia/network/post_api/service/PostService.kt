@@ -24,7 +24,7 @@ interface PostService {
     suspend fun editPost(@Body request: PostRequest): Response<PostResponse>
 
     @DELETE("posts/{post_id}")
-    suspend fun deletePostById(@Path("post_id") id: Long)
+    suspend fun deletePostById(@Path("post_id") id: Long): Response<Unit>
 
     @POST("posts/{post_id}/likes")
     suspend fun likePostById(@Path("post_id") id: Long): Response<PostResponse>

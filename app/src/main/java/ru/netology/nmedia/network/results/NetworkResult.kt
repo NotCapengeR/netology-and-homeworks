@@ -68,13 +68,3 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): NetworkResult<T
         return NetworkResult.Error(t, EXCEPTION_OCCURRED_CODE)
     }
 }
-
-suspend fun saveCall(call: suspend () -> Unit): Boolean {
-    return try {
-        call.invoke()
-        true
-    } catch (t: Throwable) {
-        Timber.e("Error occurred: ${t.getErrorMessage()}")
-        false
-    }
-}
