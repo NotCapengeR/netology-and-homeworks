@@ -3,7 +3,6 @@ package ru.netology.nmedia.network.results
 import retrofit2.Response
 import ru.netology.nmedia.network.exceptions.FailedHttpRequestException
 import ru.netology.nmedia.network.results.NetworkResult.Companion.EXCEPTION_OCCURRED_CODE
-import ru.netology.nmedia.utils.getErrorMessage
 import timber.log.Timber
 
 sealed class NetworkResult<T>(
