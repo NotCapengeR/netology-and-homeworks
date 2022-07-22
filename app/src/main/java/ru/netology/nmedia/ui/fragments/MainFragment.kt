@@ -156,7 +156,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                             showToast("Error: No Internet connection!")
                         }
                         is IOException -> showToast("Error: Problem with Internet connection!")
-                        is FailedHttpRequestException -> showToast("Error ${it.code()}: ${it.response()}")
+                        is FailedHttpRequestException -> showToast("Server respond an error ${it.code()}: ${it.message()}")
                         is HttpException -> showToast("Error (${it.code()}): ${it.message()}")
                         else -> showToast("Error: ${it.getErrorMessage()}")
                     }
