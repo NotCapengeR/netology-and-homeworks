@@ -1,9 +1,8 @@
 package ru.netology.nmedia.repository
 
-import  android.database.sqlite.SQLiteConstraintException
+import android.database.sqlite.SQLiteConstraintException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import ru.netology.nmedia.database.dao.DeletedPostDAO
@@ -23,12 +22,12 @@ import javax.inject.Singleton
 
 @Singleton
 class PostRepositoryImpl @Inject constructor(
+    private val scope: CoroutineScope,
     private val dao: PostDAO,
     private val deletedDAO: DeletedPostDAO,
-    private val source: RemotePostSource
+    private val source: RemotePostSource,
 ) : PostRepository, SyncHelper {
 
-    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     override suspend fun calculateDiffAndUpdate(local: PostEntity?, remote: PostResponse?) {
         if (local == null || remote == null || local.id != remote.id) return
@@ -104,18 +103,22 @@ class PostRepositoryImpl @Inject constructor(
 
     override fun getAllPosts(): Flow<NetworkResult<List<PostResponse>>> = flow {
         emit(NetworkResult.Loading())
-        emit(source.getAll().also { result ->
+        emit(pingServer())
+    }.flowOn(Dispatchers.IO)
+
+    override suspend fun pingServer(): NetworkResult<List<PostResponse>> {
+        return source.getAll().also { result ->
             if (result is NetworkResult.Success && result.code == RESPONSE_CODE_OK) {
+                Timber.d(result.data.map { it.isLiked }.toString())
                 syncDB(
                     serverData = result.data.associateBy { response -> response.id },
                     localData = dao.getAllAsList().associateBy { entity -> entity.id }
                 )
             }
+        }
+    }
 
-        })
-    }.flowOn(Dispatchers.IO)
-
-    override fun getPostsFromDB(): Flow<List<Post>> = dao.getAll()
+    override fun getPostsFromDB(): Flow<List<Post>> = flow { emit(dao.getAllAsList()) }
         .map { Mapper.mapEntitiesToPosts(it) }
         .catch { Timber.e("Error occurred while getting posts from DB: ${it.getErrorMessage()}") }
         .flowOn(Dispatchers.IO)

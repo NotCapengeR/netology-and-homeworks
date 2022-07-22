@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import retrofit2.HttpException
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentMainBinding
+import ru.netology.nmedia.network.exceptions.FailedHttpRequestException
 import ru.netology.nmedia.network.results.NetworkResult
 import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.ui.adapter.PostAdapter
@@ -128,10 +129,10 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
             }
             refreshPostLayout.setOnRefreshListener {
                 binding.refreshPostLayout.isRefreshing = true
-                viewModel.updateLiveData()
+                viewModel.loadData()
             }
         }
-        viewModel.updateLiveData()
+        viewModel.loadToCurrentData()
         viewModel.postsList.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is NetworkResult.Success -> {
@@ -155,6 +156,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                             showToast("Error: No Internet connection!")
                         }
                         is IOException -> showToast("Error: Problem with Internet connection!")
+                        is FailedHttpRequestException -> showToast("Error ${it.code()}: ${it.response()}")
                         is HttpException -> showToast("Error (${it.code()}): ${it.message()}")
                         else -> showToast("Error: ${it.getErrorMessage()}")
                     }
@@ -162,6 +164,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
             }
         }
     }
+
     private companion object {
         private const val INNER_SPACING_RC_VIEW: Int = 5
     }

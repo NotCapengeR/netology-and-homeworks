@@ -12,6 +12,7 @@ import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.network.results.NetworkResult
 import ru.netology.nmedia.network.results.NetworkResult.Companion.RESPONSE_CODE_OK
 import ru.netology.nmedia.repository.PostRepository
+import ru.netology.nmedia.repository.SyncHelper
 import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.ui.base.BaseViewModel
 import ru.netology.nmedia.utils.Mapper
@@ -31,10 +32,6 @@ class PostViewModel @Inject constructor(
         MutableLiveData(false) // заготовка для следующих дз
     }
 
-    init {
-        loadData()
-    }
-
     private fun addVideo(url: String, id: Long) {
         repository.addVideo(url, id)
     }
@@ -49,7 +46,12 @@ class PostViewModel @Inject constructor(
         viewModelScope.launch {
             repository.removePost(id).also {
                 if (it) {
-                    loadData()
+                    loadToCurrentData()
+                    withContext(Dispatchers.IO) {
+                        if (repository is SyncHelper) {
+                            repository.pingServer()
+                        }
+                    }
                 }
             }
         }
@@ -60,6 +62,11 @@ class PostViewModel @Inject constructor(
             repository.likePost(id).also {
                 if (it) {
                     loadToCurrentData()
+                    withContext(Dispatchers.IO) {
+                        if (repository is SyncHelper) {
+                            repository.pingServer()
+                        }
+                    }
                 }
             }
         }
@@ -77,19 +84,7 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun updateLiveData() {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.getAllPosts().collect {
-                if (postsList.value != it && it.data != null) {
-                    loadData()
-                } else {
-                    loadToCurrentData()
-                }
-            }
-        }
-    }
-
-    private fun loadData() {
+    fun loadData() {
         viewModelScope.launch(Dispatchers.Main) {
             val dbList = Mapper.mapPostsToResponseList(repository.getPostsFromDBAsList())
             if (postsList.value?.data != dbList) {
@@ -104,12 +99,11 @@ class PostViewModel @Inject constructor(
                     cachedIds =
                         result.data?.map { response -> response.id } ?: cachedIds
                 }
-
             needLoading.value = false
         }
     }
 
-    private fun loadToCurrentData() {
+    fun loadToCurrentData() {
         viewModelScope.launch(Dispatchers.Main) {
             repository.getPostsFromDB()
                 .map { posts ->

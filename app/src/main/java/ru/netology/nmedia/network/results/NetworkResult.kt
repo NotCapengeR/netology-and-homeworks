@@ -1,9 +1,14 @@
 package ru.netology.nmedia.network.results
 
+import kotlinx.coroutines.CloseableCoroutineDispatcher
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.Response
 import ru.netology.nmedia.network.exceptions.FailedHttpRequestException
 import ru.netology.nmedia.network.results.NetworkResult.Companion.EXCEPTION_OCCURRED_CODE
 import timber.log.Timber
+import kotlin.coroutines.CoroutineContext
 
 sealed class NetworkResult<T>(
     open val data: T? = null,
@@ -52,18 +57,26 @@ enum class NetworkStatus(val codesRange: IntRange?) {
     LOADING(null)
 }
 
-suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): NetworkResult<T> {
-    try {
-        val response = apiCall.invoke()
-        if (response.isSuccessful) {
-            Timber.d("Response with code ${response.code()} has been received!")
-            val body = response.body()
-            if (body != null) {
-                return NetworkResult.Success(body, response.code())
-            }
+suspend fun <T> safeApiCall(
+    dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    apiCall: suspend () -> Response<T>
+): NetworkResult<T> {
+    return withContext(dispatcher) {
+         try {
+            getNetworkResult(apiCall.invoke())
+        } catch (t: Throwable) {
+            NetworkResult.Error(t, EXCEPTION_OCCURRED_CODE)
         }
-        return NetworkResult.Error(FailedHttpRequestException(response), response.code())
-    } catch (t: Throwable) {
-        return NetworkResult.Error(t, EXCEPTION_OCCURRED_CODE)
     }
+}
+
+private fun <T> getNetworkResult(response: Response<T>): NetworkResult<T> {
+    if (response.isSuccessful) {
+        Timber.d("Response with code ${response.code()} has been received!")
+        val body = response.body()
+        if (body != null) {
+            return NetworkResult.Success(body, response.code())
+        }
+    }
+    return NetworkResult.Error(FailedHttpRequestException(response), response.code())
 }
