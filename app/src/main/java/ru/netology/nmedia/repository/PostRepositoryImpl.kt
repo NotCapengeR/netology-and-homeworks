@@ -213,9 +213,11 @@ class PostRepositoryImpl @Inject constructor(
         return (dao.deletePostById(id) > 0).also {
             if (it) {
                 deletedDAO.insert(DeletedPostEntity.parser(post))
-                source.deletePostById(id).also { isSuccess ->
-                    if (isSuccess) {
-                        deletedDAO.removeFromDeleted(id)
+                scope.launch(Dispatchers.IO) {
+                    source.deletePostById(id).also { isSuccess ->
+                        if (isSuccess) {
+                            deletedDAO.removeFromDeleted(id)
+                        }
                     }
                 }
             }
