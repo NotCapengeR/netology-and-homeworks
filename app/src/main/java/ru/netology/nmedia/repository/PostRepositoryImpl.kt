@@ -4,6 +4,7 @@ import android.database.sqlite.SQLiteConstraintException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.netology.nmedia.database.dao.DeletedPostDAO
 import ru.netology.nmedia.database.dao.PostDAO
@@ -109,7 +110,6 @@ class PostRepositoryImpl @Inject constructor(
     override suspend fun pingServer(): NetworkResult<List<PostResponse>> {
         return source.getAll().also { result ->
             if (result is NetworkResult.Success && result.code == RESPONSE_CODE_OK) {
-                Timber.d(result.data.map { it.isLiked }.toString())
                 syncDB(
                     serverData = result.data.associateBy { response -> response.id },
                     localData = dao.getAllAsList().associateBy { entity -> entity.id }
@@ -243,18 +243,11 @@ class PostRepositoryImpl @Inject constructor(
             dao.likePostById(id) > 0
         }.also {
             if (it) {
-                source.likeById(id)
+                scope.launch(Dispatchers.IO) {
+                    source.likeById(id)
+                }
             }
         }
-//        return source.likeById(id).also { result ->
-//            if (result is NetworkResult.Success && result.code == RESPONSE_CODE_OK) {
-//                if (result.data.isLiked) {
-//                    dao.likePostById(id)
-//                } else {
-//                    dao.dislikePostById(id)
-//                }
-//            }
-//        } is NetworkResult.Success
     }
 
     override suspend fun sharePost(id: Long): Int {

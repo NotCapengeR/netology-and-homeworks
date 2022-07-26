@@ -60,6 +60,7 @@ class PostViewModel @Inject constructor(
     fun likePost(id: Long) {
         viewModelScope.launch {
             repository.likePost(id).also {
+                Timber.d("Hueta: $it")
                 if (it) {
                     loadToCurrentData()
                     withContext(Dispatchers.IO) {

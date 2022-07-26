@@ -5,7 +5,6 @@ import kotlinx.parcelize.Parcelize
 import ru.netology.nmedia.database.entities.PostEntity
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.utils.Mapper
-import timber.log.Timber
 
 @Parcelize
 data class Post(
@@ -46,9 +45,6 @@ data class Post(
 
         fun parser(entity: PostEntity?): Post? {
             if (entity == null) return null
-            if (entity.id == 3L) {
-                Timber.tag("parser").d("Post entity: $entity")
-            }
             return Post(
                 id = entity.id,
                 title = entity.title,
@@ -67,10 +63,6 @@ data class Post(
 
         fun parser(response: PostResponse?): Post? {
             if (response == null) return null
-            if (response.id == 3L) {
-
-                Timber.tag("parser").d("Post response: $response")
-            }
             return Post(
                 id = response.id,
                 title = response.title,
