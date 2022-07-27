@@ -22,7 +22,6 @@ import ru.netology.nmedia.utils.setDebouncedListener
 import ru.netology.nmedia.utils.setVisibility
 import ru.netology.nmedia.utils.toPostText
 import timber.log.Timber
-import kotlin.math.abs
 
 
 interface PostListener {
@@ -170,10 +169,10 @@ class PostAdapter(
         if (payloads.isEmpty()) {
             return super.onBindViewHolder(holder, position, payloads)
         }
-        when (payloads.first()) {
-            null -> super.onBindViewHolder(holder, position, payloads)
-            LIKES -> holder.bindLikes(getItem(position))
-            DATE -> {/*Do nothing */}
+
+        val payload = payloads.first() as List<*>
+        if (payload.contains(LIKES)) {
+            holder.bindLikes(getItem(position))
         }
     }
 
@@ -186,17 +185,17 @@ class PostAdapter(
         override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean =
             oldItem == newItem
 
-        override fun getChangePayload(oldItem: Post, newItem: Post): Any? {
-            return when {
-                newItem.likes != oldItem.likes -> {
-                    LIKES
-                }
-                oldItem.date != newItem.date -> DATE
-                else -> null
+        override fun getChangePayload(oldItem: Post, newItem: Post): List<Int> {
+            val payloads: MutableList<Int> = mutableListOf()
+            if (newItem.likes != oldItem.likes) {
+                payloads.add(LIKES)
             }
+            if (oldItem.date != newItem.date) {
+                DATE
+            }
+            return payloads
         }
     }
-
     private companion object {
         private const val REMOVE_ID: Int = 1
         private const val EDIT_ID: Int = 2

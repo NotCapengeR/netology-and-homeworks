@@ -15,7 +15,6 @@ import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.AddFragmentBinding
-import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.repository.dto.Post.Companion.POST_DATE_PATTERN
 import ru.netology.nmedia.ui.base.BaseFragment
 import ru.netology.nmedia.ui.viewmodels.ViewModelFactory
