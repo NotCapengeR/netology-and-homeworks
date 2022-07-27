@@ -8,10 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentMainBinding
@@ -129,10 +132,18 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
             }
             refreshPostLayout.setOnRefreshListener {
                 binding.refreshPostLayout.isRefreshing = true
-                viewModel.loadData()
+                viewModel.fetchData()
+                lifecycleScope.launch {
+                    delay(1000L)
+                    try {
+                        binding.refreshPostLayout.isRefreshing = false
+                    } catch (ex: IllegalArgumentException) {
+                        Timber.e(ex)
+                    }
+                }
             }
         }
-        viewModel.loadToCurrentData()
+        binding.refreshPostLayout.isRefreshing = false
         viewModel.postsList.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is NetworkResult.Success -> {

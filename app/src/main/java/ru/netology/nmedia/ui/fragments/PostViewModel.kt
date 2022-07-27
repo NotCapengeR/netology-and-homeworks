@@ -5,12 +5,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.network.results.NetworkResult
-import ru.netology.nmedia.network.results.NetworkResult.Companion.RESPONSE_CODE_OK
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.SyncHelper
 import ru.netology.nmedia.repository.dto.Post
@@ -26,7 +27,6 @@ class PostViewModel @Inject constructor(
 ) : BaseViewModel(application) {
 
     private val _postsList: MutableLiveData<NetworkResult<List<PostResponse>>> = MutableLiveData()
-    private var cachedIds: List<Long> = emptyList()
     val postsList: LiveData<NetworkResult<List<PostResponse>>> = _postsList
     private val needLoading: MutableLiveData<Boolean> by lazy {
         MutableLiveData(false) // заготовка для следующих дз
@@ -34,6 +34,12 @@ class PostViewModel @Inject constructor(
 
     private fun addVideo(url: String, id: Long) {
         repository.addVideo(url, id)
+    }
+
+    init {
+        loadToCurrentData().also {
+            fetchData()
+        }
     }
 
     fun removeLink(id: Long) {
@@ -44,32 +50,13 @@ class PostViewModel @Inject constructor(
 
     fun removePost(id: Long) {
         viewModelScope.launch {
-            repository.removePost(id).also {
-                if (it) {
-                    loadToCurrentData()
-                    withContext(Dispatchers.IO) {
-                        if (repository is SyncHelper) {
-                            repository.pingServer()
-                        }
-                    }
-                }
-            }
+            repository.removePost(id)
         }
     }
 
     fun likePost(id: Long) {
         viewModelScope.launch {
-            repository.likePost(id).also {
-                Timber.d("Hueta: $it")
-                if (it) {
-                    loadToCurrentData()
-                    withContext(Dispatchers.IO) {
-                        if (repository is SyncHelper) {
-                            repository.pingServer()
-                        }
-                    }
-                }
-            }
+            repository.likePost(id)
         }
     }
 
@@ -85,41 +72,31 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun loadData() {
-        viewModelScope.launch(Dispatchers.Main) {
-            val dbList = Mapper.mapPostsToResponseList(repository.getPostsFromDBAsList())
-            if (postsList.value?.data != dbList) {
-                _postsList.value = NetworkResult.Success(dbList, RESPONSE_CODE_OK)
-                cachedIds = dbList.map { it.id }
-            }
-            repository.getAllPosts()
-                .catch { Timber.e("Error while loading data in ViewModel: ${it.getErrorMessage()}") }
-                .flowOn(Dispatchers.IO)
-                .collect { result ->
-                    _postsList.value = result
-                    cachedIds =
-                        result.data?.map { response -> response.id } ?: cachedIds
+    fun fetchData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (repository is SyncHelper) {
+                repository.pingServer().also { result ->
+                    if (result !is NetworkResult.Success) {
+                        withContext(Dispatchers.Main) {
+                            _postsList.value = result
+                            loadToCurrentData()
+                        }
+                    }
                 }
-            needLoading.value = false
+            }
         }
     }
 
-    fun loadToCurrentData() {
+    private fun loadToCurrentData() {
         viewModelScope.launch(Dispatchers.Main) {
             repository.getPostsFromDB()
                 .map { posts ->
-                    Mapper.mapPostsToResponse(posts.filter { post ->
-                        if (cachedIds.isNotEmpty()) {
-                            cachedIds.contains(post.id)
-                        } else true
-                    })
+                    Mapper.mapPostsToResponse(posts)
                 }
                 .catch { Timber.e("Exception occurred while loading data from DB: ${it.getErrorMessage()}") }
                 .flowOn(Dispatchers.IO)
                 .collect { result ->
                     _postsList.value = result
-                    cachedIds =
-                        result.data?.map { response -> response.id } ?: cachedIds
                 }
         }
     }

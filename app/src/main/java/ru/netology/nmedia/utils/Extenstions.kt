@@ -19,7 +19,7 @@ import kotlin.reflect.full.isSubclassOf
 private val DECIMAL_FORMAT = DecimalFormat("###.#")
 
 fun Int.toPostText(): String = when (this) {
-    in 0..999 -> this.toString()
+    in Int.MIN_VALUE..999 -> this.toString()
     in 1_000..10_000 -> "${DECIMAL_FORMAT.format(this.toDouble() / 1000.0)}K"
     in 10_001..999_999 -> "${this / 1000}K"
     else -> "${DECIMAL_FORMAT.format(this.toDouble() / 1_000_000)}M"

@@ -5,6 +5,7 @@ import kotlinx.parcelize.Parcelize
 import ru.netology.nmedia.database.entities.PostEntity
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.utils.Mapper
+import timber.log.Timber
 
 @Parcelize
 data class Post(

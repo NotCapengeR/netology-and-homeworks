@@ -1,14 +1,13 @@
 package ru.netology.nmedia.network.results
 
-import kotlinx.coroutines.CloseableCoroutineDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Response
 import ru.netology.nmedia.network.exceptions.FailedHttpRequestException
+import ru.netology.nmedia.network.exceptions.EmptyBodyException
 import ru.netology.nmedia.network.results.NetworkResult.Companion.EXCEPTION_OCCURRED_CODE
 import timber.log.Timber
-import kotlin.coroutines.CoroutineContext
 
 sealed class NetworkResult<T>(
     open val data: T? = null,
@@ -74,9 +73,9 @@ private fun <T> getNetworkResult(response: Response<T>): NetworkResult<T> {
     if (response.isSuccessful) {
         Timber.d("Response with code ${response.code()} has been received!")
         val body = response.body()
-        if (body != null) {
-            return NetworkResult.Success(body, response.code())
-        }
+        return if (body != null) {
+            NetworkResult.Success(body, response.code())
+        } else NetworkResult.Error(EmptyBodyException(response), response.code())
     }
     return NetworkResult.Error(FailedHttpRequestException(response), response.code())
 }

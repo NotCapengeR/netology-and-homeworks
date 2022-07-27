@@ -12,8 +12,10 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.AddFragmentBinding
+import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.repository.dto.Post.Companion.POST_DATE_PATTERN
 import ru.netology.nmedia.ui.base.BaseFragment
 import ru.netology.nmedia.ui.viewmodels.ViewModelFactory
@@ -49,7 +51,6 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
     private fun initView() = with(binding) {
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
         tvPostText.setText(prefs.getString(ADD_FRAGMENT_TEXT, ""))
-        tvPostTitle.setText(prefs.getString(ADD_FRAGMENT_TITLE, ""))
         prefs.edit {
             putInt(ADD_FRAGMENT_POST_ID, 1)
         }
@@ -59,6 +60,13 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
                 (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
             }
         }
+        Glide.with(requireContext())
+            .load(R.drawable.ic_launcher_foreground)
+            .placeholder(R.drawable.ic_baseline_account_circle_24)
+            .error(R.drawable.alert_circle)
+            .centerCrop()
+            .timeout(10_000)
+            .into(ivPostAvatar)
         tvDateTime.text = DateFormat.format(POST_DATE_PATTERN, Date().time)
         cardViewSendPost.setDebouncedListener(600L, this@AddFragment)
         cancelButton.setDebouncedListener(50L, this@AddFragment)

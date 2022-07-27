@@ -118,7 +118,7 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getPostsFromDB(): Flow<List<Post>> = flow { emit(dao.getAllAsList()) }
+    override fun getPostsFromDB(): Flow<List<Post>> = dao.getAll()
         .map { Mapper.mapEntitiesToPosts(it) }
         .catch { Timber.e("Error occurred while getting posts from DB: ${it.getErrorMessage()}") }
         .flowOn(Dispatchers.IO)
@@ -152,19 +152,20 @@ class PostRepositoryImpl @Inject constructor(
 
 
     override suspend fun addPost(title: String, text: String): Long {
-        source.addPost(title, text).data?.id?.let {
+        source.addPost(title, text).data?.also {
             try {
-                dao.addPost(it, title, text)
+                dao.addPost(it.id, title, text, avatar = it.avatar)
             } catch (ex: SQLiteConstraintException) {
                 dao.insertPost(
                     PostEntity(
-                        id = it,
+                        id = it.id,
                         title = title,
                         text = text,
+                        avatar = it.avatar
                     )
                 )
             }
-            return it
+            return it.id
         }
         return 0L
     }
@@ -222,11 +223,6 @@ class PostRepositoryImpl @Inject constructor(
                 }
             }
         }
-//        return source.deletePostById(id).also {
-//            if (it) {
-//                dao.deletePostById(id)
-//            }
-//        }
     }
 
     override suspend fun editPost(id: Long, newText: String): Boolean {

@@ -7,6 +7,7 @@ import ru.netology.nmedia.network.post_api.service.PostService
 import ru.netology.nmedia.network.results.NetworkResult
 import ru.netology.nmedia.network.results.NetworkResult.Companion.RESPONSE_CODE_NOT_FOUND
 import ru.netology.nmedia.network.results.safeApiCall
+import timber.log.Timber
 import java.time.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -16,7 +17,8 @@ class RemotePostSourceImpl @Inject constructor(
     private val service: PostService,
 ) : RemotePostSource {
 
-    override suspend fun getAll(): NetworkResult<List<PostResponse>> = safeApiCall { service.getAll() }
+    override suspend fun getAll(): NetworkResult<List<PostResponse>> =
+        safeApiCall { service.getAll() }
 
     override suspend fun getPostById(id: Long): NetworkResult<PostResponse> =
         safeApiCall { service.getPostById(id) }

@@ -22,6 +22,7 @@ import ru.netology.nmedia.utils.setDebouncedListener
 import ru.netology.nmedia.utils.setVisibility
 import ru.netology.nmedia.utils.toPostText
 import timber.log.Timber
+import kotlin.math.abs
 
 
 interface PostListener {
@@ -61,7 +62,8 @@ class PostAdapter(
 
             R.id.post_item -> listener.onItemPressed(post.id, post.text, post.title)
 
-            else -> {/* do nothing */}
+            else -> {/* do nothing */
+            }
         }
     }
 
@@ -103,6 +105,7 @@ class PostAdapter(
             tvPostText.text = post.text
             tvPostTitle.text = post.title
             tvDateTime.text = Mapper.parseEpochSeconds(post.date)
+            Timber.d("Post ${post.id}: ${tvDateTime.text}")
             if (post.avatar.isNotBlank() && post.avatar.isNotEmpty()) {
                 Glide.with(root.context)
                     .load("$AVATARS_BASE_URL${post.avatar}")
@@ -137,6 +140,16 @@ class PostAdapter(
             ivComments.setDebouncedListener(50L, this@PostAdapter)
         }
 
+        fun bindLikes(post: Post) = with(binding) {
+            ivLikes.text = post.likes.toPostText()
+            if (post.isLiked) {
+                ivLikes.setIconResource(R.drawable.heart)
+            } else {
+                ivLikes.setIconResource(R.drawable.heart_outline)
+            }
+            ivLikes.isChecked = post.isLiked
+        }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostAdapter.PostViewHolder {
@@ -149,19 +162,48 @@ class PostAdapter(
         holder.bind(getItem(position))
     }
 
+    override fun onBindViewHolder(
+        holder: PostViewHolder,
+        position: Int,
+        payloads: MutableList<Any?>
+    ) {
+        if (payloads.isEmpty()) {
+            return super.onBindViewHolder(holder, position, payloads)
+        }
+        when (payloads.first()) {
+            null -> super.onBindViewHolder(holder, position, payloads)
+            LIKES -> holder.bindLikes(getItem(position))
+            DATE -> {/*Do nothing */}
+        }
+    }
+
     override fun getItemId(position: Int): Long = getItem(position).id
 
     private object DiffUtilCallback : DiffUtil.ItemCallback<Post>() {
         override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean =
-            oldItem == newItem
+            oldItem.id == newItem.id
 
         override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean =
             oldItem == newItem
+
+        override fun getChangePayload(oldItem: Post, newItem: Post): Any? {
+            return when {
+                newItem.likes != oldItem.likes -> {
+                    LIKES
+                }
+                oldItem.date != newItem.date -> DATE
+                else -> null
+            }
+        }
     }
 
     private companion object {
         private const val REMOVE_ID: Int = 1
         private const val EDIT_ID: Int = 2
+
+        private const val LIKES: Int = 0
+        private const val AVATAR: Int = 1
+        private const val DATE: Int = 2
     }
 }
 

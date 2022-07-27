@@ -66,8 +66,9 @@ class DetailsViewModel @Inject constructor(
 
     private suspend fun getPostById(id: Long): Post? {
         return withContext(viewModelScope.coroutineContext + Dispatchers.Main) {
-            post.value = repository.getPostFromDBById(id)
-            repository.getPostById(id)
+            repository.getPostFromDBById(id).also {
+                post.value = repository.getPostFromDBById(id)
+            }
         }
     }
 

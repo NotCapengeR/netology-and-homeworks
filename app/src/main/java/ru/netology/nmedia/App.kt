@@ -6,6 +6,7 @@ import ru.netology.nmedia.di.DaggerAppComponent
 import ru.netology.nmedia.di.modules.AppModule
 import ru.netology.nmedia.utils.getAppComponent
 import timber.log.Timber
+import kotlin.system.exitProcess
 
 class App : Application() {
 
