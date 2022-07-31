@@ -92,12 +92,9 @@ inline fun <T, E : Throwable> E.multiCatch(
     vararg exceptions: KClass<out Throwable>,
     catchBlock: (E) -> T,
 ): T {
-    if (exceptions.isEmpty()) throw this
-    return when {
-        this::class in exceptions -> catchBlock.invoke(this)
-        exceptions.any { error -> this::class.isSubclassOf(error) } -> catchBlock.invoke(this)
-        else -> throw this
-    }
+    return if (exceptions.any { error -> this::class.isSubclassOf(error) }) {
+        catchBlock.invoke(this)
+    } else throw this
 }
 
 fun <T> Gson.fromJsonOrNull(json: String?, classOfT: Class<T>): T? {
