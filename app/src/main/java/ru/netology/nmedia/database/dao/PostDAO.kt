@@ -17,6 +17,9 @@ interface PostDAO {
     @Query("SELECT * FROM posts WHERE post_id > 0 ORDER BY post_id ASC")
     fun getAll(): Flow<List<PostEntity>>
 
+    @Query("SELECT post_id FROM posts ORDER BY post_id DESC LIMIT 1")
+    suspend fun getLastId(): Long?
+
     @Query("SELECT * FROM posts WHERE post_id > 0 ORDER BY post_id ASC")
     suspend fun getAllAsList(): List<PostEntity>
 

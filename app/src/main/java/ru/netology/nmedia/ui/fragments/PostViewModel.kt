@@ -28,8 +28,8 @@ class PostViewModel @Inject constructor(
 
     private val _postsList: MutableLiveData<NetworkResult<List<PostResponse>>> = MutableLiveData()
     val postsList: LiveData<NetworkResult<List<PostResponse>>> = _postsList
-    private val needLoading: MutableLiveData<Boolean> by lazy {
-        MutableLiveData(false) // заготовка для следующих дз
+    val newerPosts: MutableLiveData<List<PostResponse>> by lazy {
+        MutableLiveData(emptyList())
     }
 
     private fun addVideo(url: String, id: Long) {
@@ -37,10 +37,25 @@ class PostViewModel @Inject constructor(
     }
 
     init {
-        loadToCurrentData().also {
-            fetchData()
+        viewModelScope.launch {
+            loadToCurrentData().also {
+                fetchData()
+            }
+            repository.latestPosts.collect { latest ->
+                newerPosts.value = latest
+            }
         }
     }
+
+    fun insertNewer() {
+        viewModelScope.launch {
+            val latest = newerPosts.value
+            if (latest != null) {
+                repository.insertLatest(latest)
+            }
+        }
+    }
+
 
     fun removeLink(id: Long) {
         viewModelScope.launch {

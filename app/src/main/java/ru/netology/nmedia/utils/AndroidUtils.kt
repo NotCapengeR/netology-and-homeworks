@@ -1,27 +1,19 @@
 package ru.netology.nmedia.utils
 
 import android.app.Activity
-import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
-import android.net.ParseException
 import android.net.Uri
 import android.os.Build
 import android.text.Html
 import android.text.Spanned
 import android.util.TypedValue
-import android.view.LayoutInflater
-import android.view.MenuInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.StringRes
-import androidx.viewbinding.ViewBinding
-import ru.netology.nmedia.R
-import timber.log.Timber
 import java.util.regex.Pattern
 import kotlin.math.roundToInt
 

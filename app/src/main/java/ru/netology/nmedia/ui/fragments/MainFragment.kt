@@ -131,19 +131,32 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 mainNavController?.navigate(R.id.action_mainFragment_to_addFragment)
             }
             refreshPostLayout.setOnRefreshListener {
-                binding.refreshPostLayout.isRefreshing = true
+                refreshPostLayout.isRefreshing = true
                 viewModel.fetchData()
                 lifecycleScope.launch {
                     delay(1000L)
                     try {
-                        binding.refreshPostLayout.isRefreshing = false
+                        refreshPostLayout.isRefreshing = false
                     } catch (ex: IllegalArgumentException) {
                         Timber.e(ex)
                     }
                 }
             }
+            btnNewer.setDebouncedListener(500L) {
+                viewModel.insertNewer()
+                btnNewer.setVisibility(false)
+                lifecycleScope.launch {
+                    delay(50L)
+                    rcViewPost.smoothScrollToPosition(0)
+                }
+            }
         }
         binding.refreshPostLayout.isRefreshing = false
+        viewModel.newerPosts.observe(viewLifecycleOwner) { latest ->
+            Timber.d("Live data posts: $latest")
+            binding.btnNewer.setVisibility(latest.isNotEmpty())
+
+        }
         viewModel.postsList.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is NetworkResult.Success -> {

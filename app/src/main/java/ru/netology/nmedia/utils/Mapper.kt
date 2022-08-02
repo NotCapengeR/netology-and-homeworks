@@ -5,7 +5,6 @@ import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.network.results.NetworkResult
 import ru.netology.nmedia.network.results.NetworkResult.Companion.RESPONSE_CODE_OK
 import ru.netology.nmedia.repository.dto.Post
-import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
 import java.util.*

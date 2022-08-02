@@ -1,11 +1,16 @@
 package ru.netology.nmedia.repository
 
 import kotlinx.coroutines.flow.Flow
-import ru.netology.nmedia.repository.dto.Post
+import ru.netology.nmedia.database.entities.PostEntity
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.network.results.NetworkResult
+import ru.netology.nmedia.repository.dto.Post
 
 interface PostRepository {
+
+    val latestPosts: Flow<List<PostResponse>>
+
+    suspend fun insertLatest(latest: List<PostResponse>): List<PostEntity>
 
     fun getAllPosts(): Flow<NetworkResult<List<PostResponse>>>
 

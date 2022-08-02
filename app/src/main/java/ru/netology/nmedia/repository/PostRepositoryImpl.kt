@@ -29,6 +29,21 @@ class PostRepositoryImpl @Inject constructor(
     private val source: RemotePostSource,
 ) : PostRepository, SyncHelper {
 
+    override val latestPosts: Flow<List<PostResponse>> = source.latestPosts.map { latest ->
+        latest.filter { post ->
+            dao.getPostById(post.id) == null
+        }
+    }.catch { Timber.e("Error occurred while parsing newer posts: ${it.getErrorMessage()}") }
+        .flowOn(Dispatchers.IO)
+
+    override suspend fun insertLatest(latest: List<PostResponse>): List<PostEntity> {
+        return withContext(Dispatchers.IO) {
+            latest.map { post -> PostEntity.parser(post) }
+                .onEach { post ->
+                    dao.insertPost(post)
+                }
+        }
+    }
 
     override suspend fun calculateDiffAndUpdate(local: PostEntity?, remote: PostResponse?) {
         if (local == null || remote == null || local.id != remote.id) return

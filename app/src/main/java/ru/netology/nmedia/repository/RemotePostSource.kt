@@ -2,8 +2,11 @@ package ru.netology.nmedia.repository
 
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.network.results.NetworkResult
+import kotlinx.coroutines.flow.Flow
 
 interface RemotePostSource {
+
+    val latestPosts: Flow<List<PostResponse>>
 
     suspend fun getAll(): NetworkResult<List<PostResponse>>
 
@@ -16,7 +19,5 @@ interface RemotePostSource {
     suspend fun editPost(id: Long, newText: String): NetworkResult<PostResponse>
 
     suspend fun likeById(id: Long): NetworkResult<PostResponse>
-
-    suspend fun dislikeById(id: Long): NetworkResult<PostResponse>
 
 }
