@@ -3,6 +3,7 @@ package ru.netology.nmedia.ui.fragments
 import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -28,22 +29,16 @@ class PostViewModel @Inject constructor(
 
     private val _postsList: MutableLiveData<NetworkResult<List<PostResponse>>> = MutableLiveData()
     val postsList: LiveData<NetworkResult<List<PostResponse>>> = _postsList
-    val newerPosts: MutableLiveData<List<PostResponse>> by lazy {
-        MutableLiveData(emptyList())
-    }
+    val newerPosts: LiveData<List<PostResponse>> =
+        repository.latestPosts.asLiveData(Dispatchers.Default)
 
     private fun addVideo(url: String, id: Long) {
         repository.addVideo(url, id)
     }
 
     init {
-        viewModelScope.launch {
-            loadToCurrentData().also {
-                fetchData()
-            }
-            repository.latestPosts.collect { latest ->
-                newerPosts.value = latest
-            }
+        loadToCurrentData().also {
+            fetchData()
         }
     }
 
