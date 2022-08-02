@@ -180,8 +180,8 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                             showToast(R.string.error_no_internet_connection)
                         }
                         is IOException -> showToast(R.string.error_problem_with_internet_connection)
-                        is FailedHttpRequestException -> showToast(getString(R.string.error_server_respond_error, it.code(), it.message()))
-                        is HttpException -> showToast(getString(R.string.error_server_respond_error, it.code(), it.message()))
+                        is FailedHttpRequestException -> showToast(getString(R.string.error_server_respond_error, it.code().toString(), it.message()))
+                        is HttpException -> showToast(getString(R.string.error_server_respond_error, it.code().toString(), it.message()))
                         else -> showToast(getString(R.string.error_error, it.getErrorMessage()))
                     }
                 }
