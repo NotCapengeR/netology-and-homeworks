@@ -101,7 +101,6 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
                         viewModel.addPost(
                             tvPostTitle.text.toString().trim(),
                             tvPostText.text.toString().trim(),
-                            url
                         )
                     } else {
                         showToast(R.string.text_is_unfilled)

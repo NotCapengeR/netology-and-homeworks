@@ -23,4 +23,9 @@
     <string name="notification_new_post">Пользователь %1$s опубликовал новый пост:</string>
     <string name="error_open_url">Не удалось открыть ссылку: %1$s</string>
     <string name="newer_posts">Свежие записи</string>
+    <string name="error_no_internet_connection">Нет соединения с Интернетом</string>
+    <string name="error_timed_out_from_response">Превышено время ожидания ответа от сервера</string>
+    <string name="error_problem_with_internet_connection">Произошли неполадки с сетью. Проверьте своё подключение и попробуйте позже</string>
+    <string name="error_server_respond_error">Ошибка %1$s: %2$s</string>
+    <string name="error_error">Ошибка: %1$s</string>
 </resources>

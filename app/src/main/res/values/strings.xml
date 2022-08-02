@@ -24,4 +24,9 @@
     <string name="notification_new_post">User %1$s has published a new post:</string>
     <string name="error_open_url">Couldn\'t open this URL: %1$s</string>
     <string name="newer_posts">Newer posts</string>
+    <string name="error_no_internet_connection">Error: No Internet connection</string>
+    <string name="error_timed_out_from_response">Timed out waiting for a response from the server</string>
+    <string name="error_problem_with_internet_connection">Error: Problem with Internet connection. Check your Internet connection and try again later</string>
+    <string name="error_server_respond_error">Server respond an error %1$s: %2$s</string>
+    <string name="error_error">Error: %1$s</string>
 </resources>

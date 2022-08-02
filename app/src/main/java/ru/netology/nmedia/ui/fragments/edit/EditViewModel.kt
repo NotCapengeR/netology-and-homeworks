@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import ru.netology.nmedia.R
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.ui.base.BaseViewModel
@@ -53,14 +54,8 @@ class EditViewModel @Inject constructor(
                     isLoaded.value = true
                     isLoaded.value = false
                 } else {
-                    showToast(
-                        "Something went wrong." +
-                                " Check your Internet connection and try again later"
-                    )
+                    showToast(R.string.error_problem_with_internet_connection)
                 }
-//                if (it && url != null) {
-//                    addVideo(url, id)
-//                }
             }
         }
     }

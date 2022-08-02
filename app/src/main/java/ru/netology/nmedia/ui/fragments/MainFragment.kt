@@ -177,12 +177,12 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                     when (val it = result.error) {
                         is SocketTimeoutException -> showToast("Timed out waiting for a response from the server")
                         is ConnectException -> if (SystemClock.elapsedRealtime() - lastUpdateTime > args.updateDebounce) {
-                            showToast("Error: No Internet connection!")
+                            showToast(R.string.error_no_internet_connection)
                         }
-                        is IOException -> showToast("Error: Problem with Internet connection!")
-                        is FailedHttpRequestException -> showToast("Server respond an error ${it.code()}: ${it.message()}")
-                        is HttpException -> showToast("Error (${it.code()}): ${it.message()}")
-                        else -> showToast("Error: ${it.getErrorMessage()}")
+                        is IOException -> showToast(R.string.error_problem_with_internet_connection)
+                        is FailedHttpRequestException -> showToast(getString(R.string.error_server_respond_error, it.code(), it.message()))
+                        is HttpException -> showToast(getString(R.string.error_server_respond_error, it.code(), it.message()))
+                        else -> showToast(getString(R.string.error_error, it.getErrorMessage()))
                     }
                 }
             }
