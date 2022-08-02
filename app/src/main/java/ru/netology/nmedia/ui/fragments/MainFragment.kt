@@ -175,7 +175,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                     binding.postProgress.setVisibility(false)
                     Timber.e("Error: ${result.error}")
                     when (val it = result.error) {
-                        is SocketTimeoutException -> showToast("Timed out waiting for a response from the server")
+                        is SocketTimeoutException -> showToast(R.string.error_timed_out_from_response)
                         is ConnectException -> if (SystemClock.elapsedRealtime() - lastUpdateTime > args.updateDebounce) {
                             showToast(R.string.error_no_internet_connection)
                         }
