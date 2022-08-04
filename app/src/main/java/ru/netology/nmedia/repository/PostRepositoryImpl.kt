@@ -13,6 +13,8 @@ import ru.netology.nmedia.database.entities.PostEntity
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.network.results.NetworkResult
 import ru.netology.nmedia.network.results.NetworkResult.Companion.RESPONSE_CODE_OK
+import ru.netology.nmedia.repository.dto.Attachment
+import ru.netology.nmedia.repository.dto.Photo
 import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.utils.Mapper
 import ru.netology.nmedia.utils.getErrorMessage
@@ -103,14 +105,6 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    private fun getIdFromYouTubeLink(link: String?): String? {
-        if (link == null) return null
-        val matcher = COMPILED_PATTERN.matcher(link)
-        return if (matcher.find()) {
-            matcher.group(1)
-        } else null
-    }
-
     override suspend fun getDeletedPostsIds(): List<Long> {
         return withContext(scope.coroutineContext + Dispatchers.IO) {
             deletedDAO.getAllIds()
@@ -157,17 +151,9 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getException(id: Long): Throwable? {
-        return when (val response = source.getPostById(id)) {
-            is NetworkResult.Success -> response.error
-            is NetworkResult.Loading -> response.error
-            is NetworkResult.Error -> response.error
-        }
-    }
 
-
-    override suspend fun addPost(title: String, text: String): Long {
-        source.addPost(title, text).data?.also {
+    override suspend fun addPost(title: String, text: String, attachment: Attachment?): Long {
+        source.addPost(title, text, attachment).data?.also {
             try {
                 dao.addPost(it.id, title, text, avatar = it.avatar)
             } catch (ex: SQLiteConstraintException) {
@@ -176,7 +162,8 @@ class PostRepositoryImpl @Inject constructor(
                         id = it.id,
                         title = title,
                         text = text,
-                        avatar = it.avatar
+                        avatar = it.avatar,
+                        attachment = it.attachment
                     )
                 )
             }
@@ -185,38 +172,15 @@ class PostRepositoryImpl @Inject constructor(
         return 0L
     }
 
+    override suspend fun addPostWithAttachment(title: String, text: String, photo: Photo?): Long {
+        return withContext(scope.coroutineContext + Dispatchers.IO) {
+            val media = source.uploadImage(photo)
+            addPost(title, text, Attachment.attachmentFromMedia(media.data))
+        }
+    }
+
 
     override fun addVideo(url: String, postId: Long) {
-//        val id = getIdFromYouTubeLink(url) ?: return
-//        service.getVideoData(id).enqueue(object : Callback<YouTubeVideo> {
-//            override fun onResponse(
-//                call: Call<YouTubeVideo>,
-//                response: Response<YouTubeVideo>
-//            ) {
-//                Timber.d(
-//                    "Response code: ${response.code()}, " +
-//                            "body id: ${response.body()?.items?.first()?.id}"
-//                )
-//                if (response.code() == 200) {
-//                    scope.launch(Dispatchers.IO) {
-//                        val post = getPostById(postId) ?: return@launch
-//                        val video = YouTubeVideoData.parser(response.body())
-//                        dao.addVideo(
-//                            post.id,
-//                            video?.id,
-//                            video?.author,
-//                            video?.title,
-//                            video?.duration,
-//                            video?.thumbnailUrl
-//                        )
-//                    }
-//                }
-//            }
-//
-//            override fun onFailure(call: Call<YouTubeVideo>, t: Throwable) {
-//                Timber.e("Exception occurred: ${t.message ?: t.toString()}")
-//            }
-//        })
     }
 
     override suspend fun removeLink(id: Long): Boolean {

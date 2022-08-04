@@ -6,9 +6,11 @@
     <string name="post_remove">Remove</string>
     <string name="post_move_up">Move up</string>
     <string name="post_mode_down">Move down</string>
-    <string name="notifyAddPost">Enter the text and the title for post…</string>
+    <string name="notifyAddPost">Enter the text for post…</string>
     <string name="send_post">Send post!</string>
     <string name="back">Back</string>
+    <string name="add_photo">Add photo</string>
+    <string name="add_image">Add image</string>
     <string name="edit">Edit</string>
     <string name="edit_message">Edit Post</string>
     <string name="text_is_unfilled">Text is unfilled!</string>

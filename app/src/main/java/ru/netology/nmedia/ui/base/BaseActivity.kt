@@ -11,6 +11,7 @@ import androidx.annotation.CallSuper
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewbinding.ViewBinding
+import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.utils.AndroidUtils
 
 abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
@@ -65,6 +66,12 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
         popupMenu = inflater.invoke()
         popupMenu?.show()
     }
+
+    protected fun showSnackbar(text: String, isLong: Boolean = false) = Snackbar.make(
+        binding.root,
+        text,
+        if (isLong) Snackbar.LENGTH_LONG else Snackbar.LENGTH_SHORT,
+    ).show()
 
 
     protected fun Int.dpTpPx(): Int = AndroidUtils.dpToPx(this@BaseActivity, this)

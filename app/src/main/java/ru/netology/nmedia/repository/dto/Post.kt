@@ -28,7 +28,7 @@ data class Post(
         const val POST_DATE_PATTERN: String = "d MMMM yyyy, HH:mm"
         const val POST_DATE_ABSOLUTE: String = "dd-MM-yyyy, HH:mm:ss"
         const val AVATARS_BASE_URL: String = "http://10.0.2.2:9999/avatars/"
-        const val ATTACHMENTS_BASE_URL: String = "http://10.0.2.2:9999/images/"
+        const val ATTACHMENTS_BASE_URL: String = "http://10.0.2.2:9999/media/"
         val EMPTY_POST: Post = Post(
             id = 0L,
             title = "",

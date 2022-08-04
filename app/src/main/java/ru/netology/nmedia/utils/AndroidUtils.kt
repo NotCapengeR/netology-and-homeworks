@@ -82,11 +82,12 @@ object AndroidUtils {
 
     fun showToast(context: Context, message: String?, isLong: Boolean = false) {
         if (message == null) return
-        if (isLong) {
-            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
-        } else {
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-        }
+        Toast.makeText(
+            context,
+            message,
+            if (isLong) Toast.LENGTH_LONG else Toast.LENGTH_SHORT
+        ).show()
+
     }
 
     fun showToast(context: Context, @StringRes msgResId: Int, isLong: Boolean = false) {

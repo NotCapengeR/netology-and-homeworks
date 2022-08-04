@@ -41,6 +41,8 @@ interface PostListener {
     fun onLinkRemoved(id: Long)
 
     fun onItemPressed(id: Long, currentText: String, currentTitle: String)
+
+    fun onImageDetails(id: Long, uri: String)
 }
 
 class PostAdapter(
@@ -57,6 +59,15 @@ class PostAdapter(
             R.id.ivComments -> listener.onCommented(post.id)
 
             R.id.ivShare -> listener.onShared(post.id)
+
+            R.id.ivAttachment -> {
+                if (post.attachment != null) {
+                    listener.onImageDetails(
+                        post.id,
+                        "$ATTACHMENTS_BASE_URL${post.attachment.name}"
+                    )
+                }
+            }
 
 
             R.id.post_item -> listener.onItemPressed(post.id, post.text, post.title)
@@ -97,6 +108,7 @@ class PostAdapter(
             ivLikes.tag = post
             ivComments.tag = post
             ivShare.tag = post
+            ivAttachment.tag = post
             ivComments.text = post.comments.toPostText()
             ivLikes.text = post.likes.toPostText()
             ivShare.text = post.shared.toPostText()
@@ -137,9 +149,11 @@ class PostAdapter(
             menuButton.setDebouncedListener(200L, this@PostAdapter)
             ivShare.setDebouncedListener(50L, this@PostAdapter)
             ivComments.setDebouncedListener(50L, this@PostAdapter)
+            ivAttachment.setDebouncedListener(50L, this@PostAdapter)
         }
 
         fun bindLikes(post: Post) = with(binding) {
+            ivLikes.tag = post
             ivLikes.text = post.likes.toPostText()
             if (post.isLiked) {
                 ivLikes.setIconResource(R.drawable.heart)
@@ -196,6 +210,7 @@ class PostAdapter(
             return payloads
         }
     }
+
     private companion object {
         private const val REMOVE_ID: Int = 1
         private const val EDIT_ID: Int = 2

@@ -1,9 +1,11 @@
 package ru.netology.nmedia.network.post_api.service
 
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
 import ru.netology.nmedia.network.post_api.dto.PostRequest
 import ru.netology.nmedia.network.post_api.dto.PostResponse
+import ru.netology.nmedia.repository.dto.Media
 
 interface PostService {
 
@@ -16,6 +18,10 @@ interface PostService {
 
     @GET("posts/{post_id}/newer")
     suspend fun getNewer(@Path("post_id") id: Long): Response<List<PostResponse>>
+
+    @Multipart
+    @POST("media")
+    suspend fun uploadImage(@Part media: MultipartBody.Part): Response<Media>
 
     @GET("posts/{post_id}")
     suspend fun getPostById(@Path("post_id") id: Long): Response<PostResponse>

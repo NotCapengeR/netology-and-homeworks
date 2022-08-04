@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/image"
+        android:title="@string/add_image"
+        android:icon="@drawable/ic_baseline_image_24"
+        app:showAsAction="always">
+    </item>
+    <item
+        android:id="@+id/photo"
+        android:title="@string/add_photo"
+        android:icon="@drawable/ic_baseline_photo_camera_24"
+        app:showAsAction="ifRoom">
+    </item>
+
+</menu>

@@ -5,9 +5,11 @@
     <string name="post_remove">Удалить</string>
     <string name="post_move_up">Переместить вверх</string>
     <string name="post_mode_down">Переместить вниз</string>
-    <string name="notifyAddPost">Введите текст и заговолок поста…</string>
+    <string name="notifyAddPost">Введите текст поста…</string>
     <string name="send_post">Отправить пост!</string>
     <string name="back">Назад</string>
+    <string name="add_photo">Добавить фотографию</string>
+    <string name="add_image">Добавить изображение</string>
     <string name="edit">Редактировать</string>
     <string name="edit_message">Редактировать пост</string>
     <string name="text_is_unfilled">Поле текста не заполнено!</string>

@@ -5,6 +5,7 @@ import ru.netology.nmedia.App
 import ru.netology.nmedia.di.modules.*
 import ru.netology.nmedia.service.FCMService
 import ru.netology.nmedia.ui.activity.MainActivity
+import ru.netology.nmedia.ui.fragments.image.ImageDetailsFragment
 import ru.netology.nmedia.ui.fragments.add.AddFragment
 import ru.netology.nmedia.ui.fragments.details.DetailsFragment
 import ru.netology.nmedia.ui.fragments.edit.EditFragment
@@ -24,10 +25,11 @@ interface AppComponent {
     }
 
     fun inject(application: App)
+    fun inject(activity: MainActivity)
     fun inject(fragment: MainFragment)
     fun inject(fragment: AddFragment)
     fun inject(fragment: EditFragment)
-    fun inject(activity: MainActivity)
+    fun inject(fragment: ImageDetailsFragment)
     fun inject(fragment: DetailsFragment)
     fun inject(service: FCMService)
 }

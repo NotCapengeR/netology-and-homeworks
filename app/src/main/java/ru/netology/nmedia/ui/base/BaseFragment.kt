@@ -8,11 +8,13 @@ import android.widget.PopupMenu
 import androidx.annotation.CallSuper
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.viewbinding.ViewBinding
+import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.R
 import ru.netology.nmedia.utils.AndroidUtils
 
@@ -83,6 +85,12 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment(), MenuProvider {
         dialog = inflater.invoke()
         dialog?.show()
     }
+
+    protected fun showSnackbar(text: String, isLong: Boolean = false) = Snackbar.make(
+        binding.root,
+        text,
+        if (isLong) Snackbar.LENGTH_LONG else Snackbar.LENGTH_SHORT,
+    ).show()
 
     protected fun openUrl(url: String?) {
         AndroidUtils.openUrl(requireContext(), url)

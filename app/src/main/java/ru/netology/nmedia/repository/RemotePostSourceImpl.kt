@@ -6,16 +6,23 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import ru.netology.nmedia.database.dao.PostDAO
 import ru.netology.nmedia.network.exceptions.PostNotFoundException
 import ru.netology.nmedia.network.post_api.dto.PostRequest
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.network.post_api.service.PostService
 import ru.netology.nmedia.network.results.NetworkResult
+import ru.netology.nmedia.network.results.NetworkResult.Companion.EXCEPTION_OCCURRED_CODE
 import ru.netology.nmedia.network.results.NetworkResult.Companion.RESPONSE_CODE_NOT_FOUND
 import ru.netology.nmedia.network.results.safeApiCall
+import ru.netology.nmedia.repository.dto.Attachment
+import ru.netology.nmedia.repository.dto.Media
+import ru.netology.nmedia.repository.dto.Photo
 import ru.netology.nmedia.utils.getErrorMessage
 import timber.log.Timber
+import java.lang.NullPointerException
 import java.time.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -44,7 +51,7 @@ class RemotePostSourceImpl @Inject constructor(
     override suspend fun getPostById(id: Long): NetworkResult<PostResponse> =
         safeApiCall { service.getPostById(id) }
 
-    override suspend fun addPost(title: String, text: String): NetworkResult<PostResponse> =
+    override suspend fun addPost(title: String, text: String, attachment: Attachment?): NetworkResult<PostResponse> =
         safeApiCall {
             service.createPost(
                 PostRequest(
@@ -55,7 +62,7 @@ class RemotePostSourceImpl @Inject constructor(
                     date = OffsetDateTime.now().toEpochSecond(),
                     isLiked = false,
                     likes = 0,
-                    attachment = null
+                    attachment = attachment
                 )
             )
         }
@@ -83,6 +90,17 @@ class RemotePostSourceImpl @Inject constructor(
         return if (post.isLiked) {
             safeApiCall { service.dislikePostById(id) }
         } else safeApiCall { service.likePostById(id) }
+    }
+
+    override suspend fun uploadImage(photo: Photo?): NetworkResult<Media> {
+        if (photo?.file == null) return NetworkResult.Error(NullPointerException("Image is null"), EXCEPTION_OCCURRED_CODE)
+        return safeApiCall {
+            service.uploadImage(
+                MultipartBody.Part.createFormData(
+                    "file", photo.file.name, photo.file.asRequestBody()
+                )
+            )
+        }
     }
 
     private companion object {

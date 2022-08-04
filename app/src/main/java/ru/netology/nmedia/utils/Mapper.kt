@@ -22,13 +22,11 @@ object Mapper {
     }
 
     fun parseEpochSeconds(epoch: Long): String {
-        val date = Date(epoch * 1000L)
-        return SIMPLE_POST_FORMAT.format(date)
+        return SIMPLE_POST_FORMAT.format(Date(epoch * 1000L))
     }
 
     fun parseEpochToAbsolute(epoch: Long): String {
-        val date = Date(epoch * 1000L)
-        return ABSOLUTE_POST_FORMAT.format(date)
+        return ABSOLUTE_POST_FORMAT.format(Date(epoch * 1000L))
     }
 
     fun parseStringToEpoch(date: String): Long {

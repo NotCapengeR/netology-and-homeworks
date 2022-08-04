@@ -21,7 +21,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:menu="@menu/main"
+        app:menu="@menu/image"
         app:navigationIcon="@drawable/keyboard_backspace"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:title="@string/app_name" />
@@ -60,8 +60,8 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="4dp"
                 android:maxLength="40"
-                android:text="Student"
                 android:maxLines="1"
+                android:text="Student"
                 android:textColorHint="@color/white_gray"
                 android:textSize="20sp"
                 android:textStyle="bold"
@@ -210,20 +210,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvPostText" />
 
-            <TextView
-                android:id="@+id/tvAddNotification"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_marginTop="30dp"
-                android:text="@string/notifyAddPost"
-                android:textColor="@color/gray"
-                android:textSize="20sp"
-                android:textStyle="italic"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvCommentsCount"
-                tools:text="@string/notifyAddPost" />
-
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardViewSendPost"
                 android:layout_width="match_parent"
@@ -239,7 +225,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvAddNotification">
+                app:layout_constraintTop_toBottomOf="@id/ivAttachment">
 
                 <TextView
                     android:id="@+id/tvSend"
@@ -253,6 +239,21 @@
 
             </androidx.cardview.widget.CardView>
 
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivAttachment"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/gray"
+                android:src="@drawable/play"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ivLikes">
+
+
+            </androidx.appcompat.widget.AppCompatImageView>
+
             <ProgressBar
                 android:id="@+id/post_progress"
                 style="?android:attr/progressBarStyle"
@@ -262,6 +263,7 @@
                 app:layout_constraintBottom_toTopOf="@id/cardViewSendPost"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

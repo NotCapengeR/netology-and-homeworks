@@ -93,6 +93,14 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
                         .centerCrop()
                         .timeout(10_000)
                         .into(ivAttachment)
+                    ivAttachment.setDebouncedListener(50L) {
+                        mainNavController?.navigate(
+                            DetailsFragmentDirections.actionDetailsFragmentToImageDetailsFragment(
+                                args.postId,
+                                "${ATTACHMENTS_BASE_URL}${post.attachment.name}"
+                            )
+                        )
+                    }
                 } else {
                     Glide.with(requireContext()).clear(ivAttachment)
                 }

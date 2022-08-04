@@ -1,18 +1,25 @@
 package ru.netology.nmedia.ui.fragments.add
 
+import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.text.util.Linkify
 import android.view.*
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
+import androidx.core.net.toFile
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
+import com.github.dhaval2404.imagepicker.ImagePicker
+import com.github.dhaval2404.imagepicker.constant.ImageProvider
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.AddFragmentBinding
 import ru.netology.nmedia.repository.dto.Post.Companion.POST_DATE_PATTERN
@@ -33,6 +40,18 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
     private val viewModel: AddViewModel by activityViewModels {
         viewModelFactory
     }
+    private val pickPhotoLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            when (result.resultCode) {
+                ImagePicker.RESULT_ERROR -> {
+                    showSnackbar(ImagePicker.getError(result.data), true)
+                }
+                Activity.RESULT_OK -> {
+                    val uri: Uri? = result.data?.data
+                    viewModel.setPhoto(uri?.toFile(), uri)
+                }
+            }
+        }
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> AddFragmentBinding
         get() = AddFragmentBinding::inflate
 
@@ -56,7 +75,8 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
         mainNavController?.apply {
             val appBarConfiguration = AppBarConfiguration(graph)
             toolbar.setupWithNavController(this, appBarConfiguration).also {
-                (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
+                (activity as AppCompatActivity).supportActionBar?.title =
+                    getString(R.string.app_name)
             }
         }
         Glide.with(requireContext())
@@ -66,6 +86,21 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
             .centerCrop()
             .timeout(10_000)
             .into(ivPostAvatar)
+        viewModel.photo.observe(viewLifecycleOwner) { photo ->
+            if (photo.uri != null) {
+                ivAttachment.setVisibility(true)
+                Glide.with(requireContext())
+                    .load(photo.uri)
+                    .placeholder(R.drawable.play)
+                    .error(R.drawable.alert_circle)
+                    .centerCrop()
+                    .timeout(10_000)
+                    .into(ivAttachment)
+            } else {
+                ivAttachment.setVisibility(false)
+                Glide.with(requireContext()).clear(ivAttachment)
+            }
+        }
         tvDateTime.text = DateFormat.format(POST_DATE_PATTERN, Date().time)
         cardViewSendPost.setDebouncedListener(600L, this@AddFragment)
         cancelButton.setDebouncedListener(50L, this@AddFragment)
@@ -110,7 +145,8 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
 
             R.id.cancel_button -> onBackPressed()
 
-            else -> {/* do nothing */}
+            else -> {/* do nothing */
+            }
         }
     }
 
@@ -131,7 +167,30 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
 
     override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
-        inflater.inflate(R.menu.empty, menu)
+        inflater.inflate(R.menu.image, menu)
+    }
+
+    override fun onMenuItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.image -> {
+                ImagePicker.with(this)
+                    .crop()
+                    .compress(2048)
+                    .provider(ImageProvider.GALLERY)
+                    .galleryMimeTypes(arrayOf("image/png", "image/jpeg"))
+                    .createIntent(pickPhotoLauncher::launch)
+                true
+            }
+            R.id.photo -> {
+                ImagePicker.with(this)
+                    .crop()
+                    .compress(2048)
+                    .provider(ImageProvider.CAMERA)
+                    .createIntent(pickPhotoLauncher::launch)
+                true
+            }
+            else -> super.onMenuItemSelected(item)
+        }
     }
 
     private companion object {

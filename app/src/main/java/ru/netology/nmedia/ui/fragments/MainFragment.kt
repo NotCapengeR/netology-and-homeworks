@@ -21,6 +21,7 @@ import ru.netology.nmedia.databinding.FragmentMainBinding
 import ru.netology.nmedia.network.exceptions.FailedHttpRequestException
 import ru.netology.nmedia.network.results.NetworkResult
 import ru.netology.nmedia.repository.dto.Post
+import ru.netology.nmedia.repository.dto.Post.Companion.ATTACHMENTS_BASE_URL
 import ru.netology.nmedia.ui.adapter.PostAdapter
 import ru.netology.nmedia.ui.adapter.PostListener
 import ru.netology.nmedia.ui.adapter.decorators.LinearVerticalSpacingDecoration
@@ -115,6 +116,15 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                         currentText,
                         currentTitle,
                         id
+                    )
+                )
+            }
+
+            override fun onImageDetails(id: Long, uri: String) {
+                mainNavController?.navigate(
+                    MainFragmentDirections.actionMainFragmentToImageDetailsFragment(
+                        id,
+                        uri
                     )
                 )
             }

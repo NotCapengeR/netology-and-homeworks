@@ -4,6 +4,8 @@ import kotlinx.coroutines.flow.Flow
 import ru.netology.nmedia.database.entities.PostEntity
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.network.results.NetworkResult
+import ru.netology.nmedia.repository.dto.Attachment
+import ru.netology.nmedia.repository.dto.Photo
 import ru.netology.nmedia.repository.dto.Post
 
 interface PostRepository {
@@ -18,7 +20,9 @@ interface PostRepository {
 
     suspend fun getPostsFromDBAsList(): List<Post>
 
-    suspend fun addPost(title: String, text: String): Long
+    suspend fun addPost(title: String, text: String, attachment: Attachment? = null): Long
+
+    suspend fun addPostWithAttachment(title: String, text: String, photo: Photo?): Long
 
     suspend fun getDeletedPostsIds(): List<Long>
 
@@ -33,8 +37,6 @@ interface PostRepository {
     suspend fun getPostById(id: Long): Post?
 
     suspend fun getPostFromDBById(id: Long): Post?
-
-    suspend fun getException(id: Long): Throwable?
 
     suspend fun likePost(id: Long): Boolean
 

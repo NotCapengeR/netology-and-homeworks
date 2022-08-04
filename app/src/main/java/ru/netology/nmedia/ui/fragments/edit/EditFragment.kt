@@ -18,6 +18,7 @@ import ru.netology.nmedia.repository.dto.Attachment
 import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.repository.dto.Post.Companion.ATTACHMENTS_BASE_URL
 import ru.netology.nmedia.ui.base.BaseFragment
+import ru.netology.nmedia.ui.fragments.details.DetailsFragmentDirections
 import ru.netology.nmedia.ui.viewmodels.ViewModelFactory
 import ru.netology.nmedia.utils.*
 import javax.inject.Inject
@@ -96,6 +97,14 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
                         .centerCrop()
                         .timeout(10_000)
                         .into(ivAttachment)
+                    ivAttachment.setDebouncedListener(50L) {
+                        mainNavController?.navigate(
+                            EditFragmentDirections.actionEditFragmentToImageDetailsFragment(
+                                args.postId,
+                                "${ATTACHMENTS_BASE_URL}${post.attachment.name}"
+                            )
+                        )
+                    }
                 } else {
                     Glide.with(requireContext()).clear(ivAttachment)
                 }

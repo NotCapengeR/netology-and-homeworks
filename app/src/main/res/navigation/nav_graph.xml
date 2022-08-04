@@ -28,6 +28,9 @@
             android:name="updateDebounce"
             app:argType="long"
             android:defaultValue="200L" />
+        <action
+            android:id="@+id/action_mainFragment_to_imageDetailsFragment"
+            app:destination="@id/imageDetailsFragment" />
     </fragment>
 
     <fragment
@@ -54,6 +57,9 @@
         <argument
             android:name="post_id"
             app:argType="long" />
+        <action
+            android:id="@+id/action_editFragment_to_imageDetailsFragment"
+            app:destination="@id/imageDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/detailsFragment"
@@ -72,6 +78,21 @@
         <argument
             android:name="post_id"
             app:argType="long" />
+        <action
+            android:id="@+id/action_detailsFragment_to_imageDetailsFragment"
+            app:destination="@id/imageDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/imageDetailsFragment"
+        tools:layout="@layout/image_details_fragment"
+        android:name="ru.netology.nmedia.ui.fragments.image.ImageDetailsFragment"
+        android:label="ImageDetailsFragment" >
+        <argument
+            android:name="post_id"
+            app:argType="long" />
+        <argument
+            android:name="uri"
+            app:argType="string" />
     </fragment>
 
 
