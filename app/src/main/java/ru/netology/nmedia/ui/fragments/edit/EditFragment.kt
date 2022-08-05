@@ -18,7 +18,6 @@ import ru.netology.nmedia.repository.dto.Attachment
 import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.repository.dto.Post.Companion.ATTACHMENTS_BASE_URL
 import ru.netology.nmedia.ui.base.BaseFragment
-import ru.netology.nmedia.ui.fragments.details.DetailsFragmentDirections
 import ru.netology.nmedia.ui.viewmodels.ViewModelFactory
 import ru.netology.nmedia.utils.*
 import javax.inject.Inject

@@ -22,8 +22,8 @@ class ImageDetailsViewModel @Inject constructor(
 
     private suspend fun getPostById(id: Long): Post? {
         return withContext(viewModelScope.coroutineContext + Dispatchers.Main) {
-            repository.getPostFromDBById(id).also {
-                post.value = repository.getPostFromDBById(id)
+            repository.getPostFromDBById(id).also { newPost ->
+                post.value = newPost
             }
         }
     }
