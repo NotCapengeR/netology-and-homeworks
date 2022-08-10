@@ -82,6 +82,7 @@ class PostAdapter(
         val context = view.context
         val popupMenu = PopupMenu(context, view)
         val post = view.tag as Post
+        if (!post.isOwner) return
 
         popupMenu.menu.add(0, EDIT_ID, Menu.NONE, context.getString(R.string.edit))
         popupMenu.menu.add(0, REMOVE_ID, Menu.NONE, context.getString(R.string.post_remove))
@@ -143,6 +144,7 @@ class PostAdapter(
             } else {
                 ivLikes.setIconResource(R.drawable.heart_outline)
             }
+            menuButton.setVisibility(post.isOwner)
             ivLikes.isChecked = post.isLiked
             postItem.setDebouncedListener(50L, this@PostAdapter)
             ivLikes.setDebouncedListener(50L, this@PostAdapter)
@@ -163,6 +165,17 @@ class PostAdapter(
             ivLikes.isChecked = post.isLiked
         }
 
+        fun bindText(post: Post) = with(binding) {
+            tvPostText.text = post.text
+        }
+
+    }
+
+    fun notifyAuth(id: Long) {
+        currentList.onEach { post ->
+            post.isOwner = post.authorId == id
+        }
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostAdapter.PostViewHolder {
@@ -188,6 +201,9 @@ class PostAdapter(
         if (payload.contains(LIKES)) {
             holder.bindLikes(getItem(position))
         }
+        if (payload.contains(TEXT)) {
+            holder.bindText(getItem(position))
+        }
     }
 
     override fun getItemId(position: Int): Long = getItem(position).id
@@ -204,6 +220,9 @@ class PostAdapter(
             if (newItem.likes != oldItem.likes) {
                 payloads.add(LIKES)
             }
+            if (newItem.text != oldItem.text) {
+                payloads.add(TEXT)
+            }
             if (oldItem.date != newItem.date) {
                 DATE
             }
@@ -216,7 +235,7 @@ class PostAdapter(
         private const val EDIT_ID: Int = 2
 
         private const val LIKES: Int = 0
-        private const val AVATAR: Int = 1
+        private const val TEXT: Int = 1
         private const val DATE: Int = 2
     }
 }

@@ -1,11 +1,10 @@
 package ru.netology.nmedia.ui.fragments
 
+import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.os.SystemClock
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -21,11 +20,11 @@ import ru.netology.nmedia.databinding.FragmentMainBinding
 import ru.netology.nmedia.network.exceptions.FailedHttpRequestException
 import ru.netology.nmedia.network.results.NetworkResult
 import ru.netology.nmedia.repository.dto.Post
-import ru.netology.nmedia.repository.dto.Post.Companion.ATTACHMENTS_BASE_URL
 import ru.netology.nmedia.ui.adapter.PostAdapter
 import ru.netology.nmedia.ui.adapter.PostListener
 import ru.netology.nmedia.ui.adapter.decorators.LinearVerticalSpacingDecoration
 import ru.netology.nmedia.ui.base.BaseFragment
+import ru.netology.nmedia.ui.fragments.login.LoginFragment
 import ru.netology.nmedia.ui.viewmodels.ViewModelFactory
 import ru.netology.nmedia.utils.*
 import timber.log.Timber
@@ -86,6 +85,30 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
             }
 
             override fun onLiked(id: Long) {
+                if (viewModel.getAuthId() == 0L) {
+                    activity?.let {
+                        AlertDialog.Builder(it).setTitle(R.string.note)
+                            .setMessage(R.string.auth_please_signin)
+                            .setPositiveButton(R.string.log_in) { _, _ ->
+                                mainNavController?.navigate(
+                                    MainFragmentDirections.actionMainFragmentToLoginFragment(
+                                        LoginFragment.LoginFlags.LOGIN
+                                    )
+                                )
+                            }
+                            .setNegativeButton(R.string.sign_up) { _, _ ->
+                                mainNavController?.navigate(
+                                    MainFragmentDirections.actionMainFragmentToLoginFragment(
+                                        LoginFragment.LoginFlags.SIGNUP
+                                    )
+                                )
+                            }
+                            .setNeutralButton(com.github.dhaval2404.imagepicker.R.string.action_cancel, null)
+                            .setIcon(R.drawable.ic_launcher_foreground)
+                            .show()
+                    }
+                    return
+                }
                 viewModel.likePost(id)
                 lastUpdateTime = SystemClock.elapsedRealtime()
             }
@@ -138,6 +161,30 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 LinearVerticalSpacingDecoration(INNER_SPACING_RC_VIEW.dpTpPx())
             )
             cardViewAddPost.setDebouncedListener(500L) {
+                if (viewModel.getAuthId() == 0L) {
+                    activity?.let {
+                        AlertDialog.Builder(it).setTitle(R.string.note)
+                            .setMessage(R.string.auth_please_signin)
+                            .setPositiveButton(R.string.log_in) { _, _ ->
+                                mainNavController?.navigate(
+                                    MainFragmentDirections.actionMainFragmentToLoginFragment(
+                                        LoginFragment.LoginFlags.LOGIN
+                                    )
+                                )
+                            }
+                            .setNegativeButton(R.string.sign_up) { _, _ ->
+                                mainNavController?.navigate(
+                                    MainFragmentDirections.actionMainFragmentToLoginFragment(
+                                        LoginFragment.LoginFlags.SIGNUP
+                                    )
+                                )
+                            }
+                            .setNeutralButton(com.github.dhaval2404.imagepicker.R.string.action_cancel, null)
+                            .setIcon(R.drawable.ic_launcher_foreground)
+                            .show()
+                    }
+                    return@setDebouncedListener
+                }
                 mainNavController?.navigate(R.id.action_mainFragment_to_addFragment)
             }
             refreshPostLayout.setOnRefreshListener {
@@ -161,6 +208,11 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 }
             }
         }
+        viewModel.authData.observe(viewLifecycleOwner) { auth ->
+            activity?.removeMenuProvider(this)
+            activity?.addMenuProvider(this)
+            adapter.notifyAuth(auth.id)
+        }
         binding.refreshPostLayout.isRefreshing = false
         viewModel.newerPosts.observe(viewLifecycleOwner) { latest ->
             Timber.d("Live data posts: $latest")
@@ -172,7 +224,12 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 is NetworkResult.Success -> {
                     binding.refreshPostLayout.isRefreshing = false
                     binding.postProgress.setVisibility(false)
-                    adapter.submitList(result.data.map { Post.parser(it) })
+                    adapter.submitList(result.data.map { response ->
+                            Post.parser(response).also { post ->
+                                post?.isOwner = viewModel.getAuthId() == post?.authorId
+                            }
+                        }
+                    )
                 }
                 is NetworkResult.Loading -> {
                     if (SystemClock.elapsedRealtime() - lastUpdateTime < args.updateDebounce) {
@@ -196,6 +253,34 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                     }
                 }
             }
+        }
+    }
+
+    override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateMenu(menu, inflater)
+        menu.setGroupVisible(R.id.unauthorized, viewModel.authData.value?.id == 0L)
+        menu.setGroupVisible(R.id.authorized, viewModel.authData.value?.id != 0L)
+    }
+
+    override fun onMenuItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId) {
+            R.id.sign_out -> {
+                viewModel.clearAuth()
+                true
+            }
+            R.id.signup -> {
+                mainNavController?.navigate(
+                    MainFragmentDirections.actionMainFragmentToLoginFragment(LoginFragment.LoginFlags.SIGNUP)
+                )
+                true
+            }
+            R.id.login -> {
+                mainNavController?.navigate(
+                    MainFragmentDirections.actionMainFragmentToLoginFragment(LoginFragment.LoginFlags.LOGIN)
+                )
+                true
+            }
+            else -> super.onMenuItemSelected(item)
         }
     }
 

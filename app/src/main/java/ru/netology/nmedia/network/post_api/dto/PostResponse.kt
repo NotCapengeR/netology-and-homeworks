@@ -13,6 +13,7 @@ import java.time.OffsetDateTime
 data class PostResponse(
     @SerializedName("id") val id: Long,
     @SerializedName("author") val title: String,
+    @SerializedName("authorId") val authorId: Long,
     @SerializedName("content") val text: String,
     @SerializedName("authorAvatar") val avatar: String,
     @SerializedName("published") val date: Long,
@@ -25,6 +26,7 @@ data class PostResponse(
         val EMPTY_POST_RESPONSE = PostResponse(
             id = 0L,
             title = "",
+            authorId = 0L,
             text = "",
             avatar = "",
             date = 0L,
@@ -38,6 +40,7 @@ data class PostResponse(
                 id = entity.id,
                 title = entity.title,
                 text = entity.text,
+                authorId = entity.authorId,
                 avatar = entity.avatar,
                 date = OffsetDateTime.parse(entity.date, Mapper.formatter).toEpochSecond(),
                 isLiked = entity.isLiked,
@@ -51,6 +54,7 @@ data class PostResponse(
                 id = post.id,
                 title = post.title,
                 text = post.text,
+                authorId = post.authorId,
                 avatar = post.avatar,
                 date = post.date,
                 isLiked = post.isLiked,

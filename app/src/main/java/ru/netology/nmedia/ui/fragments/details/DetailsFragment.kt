@@ -1,5 +1,6 @@
 package ru.netology.nmedia.ui.fragments.details
 
+import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -19,13 +20,16 @@ import ru.netology.nmedia.repository.dto.Attachment
 import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.repository.dto.Post.Companion.ATTACHMENTS_BASE_URL
 import ru.netology.nmedia.ui.base.BaseFragment
+import ru.netology.nmedia.ui.fragments.login.LoginFragment
 import ru.netology.nmedia.ui.viewmodels.ViewModelFactory
 import ru.netology.nmedia.utils.*
+import timber.log.Timber
 import javax.inject.Inject
 
 class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
 
-    @Inject lateinit var viewModelFactory: ViewModelFactory
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
     private val args: DetailsFragmentArgs by navArgs()
     private val viewModel: DetailsViewModel by activityViewModels {
         viewModelFactory
@@ -48,7 +52,8 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
         mainNavController?.apply {
             val appBarConfiguration = AppBarConfiguration(graph)
             toolbar.setupWithNavController(this, appBarConfiguration).also {
-                (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
+                (activity as AppCompatActivity).supportActionBar?.title =
+                    getString(R.string.app_name)
             }
         }
         val id = args.postId
@@ -77,6 +82,7 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
                 tvPostTitle.text = post.title
                 tvPostText.text = post.text
                 ivLikes.isChecked = post.isLiked
+                menuButton.setVisibility(post.isOwner)
                 Linkify.addLinks(tvPostText, Linkify.WEB_URLS)
 
                 if (post.isLiked) {
@@ -108,6 +114,33 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
         }
 
         ivLikes.setDebouncedListener(50L) {
+            if (viewModel.getAuthId() == 0L) {
+                activity?.let { activity ->
+                    AlertDialog.Builder(activity).setTitle(R.string.note)
+                        .setMessage(R.string.auth_please_signin)
+                        .setPositiveButton(R.string.log_in) { _, _ ->
+                            mainNavController?.navigate(
+                                DetailsFragmentDirections.actionDetailsFragmentToLoginFragment(
+                                    LoginFragment.LoginFlags.LOGIN
+                                )
+                            )
+                        }
+                        .setNegativeButton(R.string.sign_up) { _, _ ->
+                            mainNavController?.navigate(
+                                DetailsFragmentDirections.actionDetailsFragmentToLoginFragment(
+                                    LoginFragment.LoginFlags.SIGNUP
+                                )
+                            )
+                        }
+                        .setNeutralButton(
+                            com.github.dhaval2404.imagepicker.R.string.action_cancel,
+                            null
+                        )
+                        .setIcon(R.drawable.ic_launcher_foreground)
+                        .show()
+                }
+                return@setDebouncedListener
+            }
             viewModel.likePost(it.tag as Long)
         }
         ivShare.setDebouncedListener(50L) {

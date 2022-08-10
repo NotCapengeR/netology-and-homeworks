@@ -30,4 +30,16 @@
     <string name="error_problem_with_internet_connection">Произошли неполадки с сетью. Проверьте своё подключение и попробуйте позже</string>
     <string name="error_server_respond_error">Ошибка %1$s: %2$s</string>
     <string name="error_error">Ошибка: %1$s</string>
+    <string name="error_user_not_found">Пользователь не найден</string>
+    <string name="error_unknown">Неизвестная ошибка</string>
+    <string name="log_in">Вход</string>
+    <string name="sign_up">Регистрация</string>
+    <string name="sign_out">Выйти</string>
+    <string name="auth_login">Введите Логин</string>
+    <string name="auth_pass">Введите Пароль</string>
+    <string name="note">Примечание</string>
+    <string name="auth_please_signin">Чтоб продолжить, войдите или зарегистрируйтесь</string>
+    <string name="auth_confirm_pass">Подтвердите Пароль</string>
+    <string name="auth_user_name">Введите Имя Пользователя</string>
+    <string name="auth_authorization">Авторизация</string>
 </resources>

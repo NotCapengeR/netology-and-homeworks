@@ -43,4 +43,6 @@ interface PostRepository {
     suspend fun sharePost(id: Long): Int
 
     suspend fun commentPost(id: Long): Int
+
+    fun getAuthId(): Long
 }

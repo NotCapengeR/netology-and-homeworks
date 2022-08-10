@@ -55,13 +55,14 @@ interface PostDAO {
         type: Attachment.AttachmentType?
     ): Int
 
-    @Query("INSERT INTO posts (post_id, title, text, date, avatar_name) VALUES(:id, :title, :text, :date, :avatar)")
+    @Query("INSERT INTO posts (post_id, title, text, date, avatar_name, author_id) VALUES(:id, :title, :text, :date, :avatar, :authorId)")
     suspend fun addPost(
         id: Long,
         title: String,
         text: String,
         date: String = Mapper.parseEpochToAbsolute(OffsetDateTime.now().toEpochSecond()),
-        avatar: String
+        avatar: String,
+        authorId: Long,
     ): Long
 
     @Query("UPDATE posts SET text = :newText WHERE post_id = :id")

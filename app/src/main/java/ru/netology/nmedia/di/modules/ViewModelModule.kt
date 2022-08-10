@@ -12,6 +12,7 @@ import ru.netology.nmedia.ui.fragments.edit.EditViewModel
 import ru.netology.nmedia.ui.fragments.PostViewModel
 import ru.netology.nmedia.ui.fragments.add.AddViewModel
 import ru.netology.nmedia.ui.fragments.image.ImageDetailsViewModel
+import ru.netology.nmedia.ui.fragments.login.LoginViewModel
 import ru.netology.nmedia.ui.viewmodels.ViewModelFactory
 import kotlin.reflect.KClass
 
@@ -50,6 +51,12 @@ interface ViewModelModule {
     @IntoMap
     @ViewModelKey(ImageDetailsViewModel::class)
     fun bindImageDetailsViewModel(viewModel: ImageDetailsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(LoginViewModel::class)
+    fun bindLoginViewModel(viewModel: LoginViewModel): ViewModel
+
 
 }
 

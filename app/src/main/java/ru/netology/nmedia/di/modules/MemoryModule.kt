@@ -17,6 +17,8 @@ import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
 import ru.netology.nmedia.repository.RemotePostSource
 import ru.netology.nmedia.repository.RemotePostSourceImpl
+import ru.netology.nmedia.repository.auth.AuthRepository
+import ru.netology.nmedia.repository.auth.AuthRepositoryImpl
 import ru.netology.nmedia.repository.dto.Post.Companion.POST_ID
 import javax.inject.Singleton
 
@@ -67,11 +69,15 @@ interface RepositoryModule {
 
     @Binds
     @Singleton
-    fun bindPostRepository(postRepository: PostRepositoryImpl): PostRepository
+    fun bindPostRepository(repository: PostRepositoryImpl): PostRepository
 
     @Binds
     @Singleton
-    fun bindRemotePostSource(remotePostSourceImpl: RemotePostSourceImpl): RemotePostSource
+    fun bindRemotePostSource(source: RemotePostSourceImpl): RemotePostSource
+
+    @Binds
+    @Singleton
+    fun bindAuthRepository(repository: AuthRepositoryImpl): AuthRepository
 
 }
 

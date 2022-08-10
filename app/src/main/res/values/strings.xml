@@ -31,4 +31,16 @@
     <string name="error_problem_with_internet_connection">Error: Problem with Internet connection. Check your Internet connection and try again later</string>
     <string name="error_server_respond_error">Server respond an error %1$s: %2$s</string>
     <string name="error_error">Error: %1$s</string>
+    <string name="error_user_not_found">User is not found</string>
+    <string name="error_unknown">Unknown Error</string>
+    <string name="log_in">Log-in</string>
+    <string name="sign_up">Sign-up</string>
+    <string name="sign_out">Sign-out</string>
+    <string name="auth_login">Enter Login</string>
+    <string name="auth_please_signin">Please login or register to continue</string>
+    <string name="note">Note</string>
+    <string name="auth_pass">Enter Password</string>
+    <string name="auth_confirm_pass">Confirm Password</string>
+    <string name="auth_user_name">Enter Your User Name</string>
+    <string name="auth_authorization">Authorization</string>
 </resources>

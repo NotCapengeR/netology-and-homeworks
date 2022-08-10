@@ -21,6 +21,8 @@ data class PostEntity(
     val title: String,
     @ColumnInfo(name = "text")
     val text: String,
+    @ColumnInfo(name= "author_id", defaultValue = "5")
+    val authorId: Long = 5L,
     @ColumnInfo(name = "avatar_name", defaultValue = "")
     val avatar: String = "",
     @ColumnInfo(name = "date")
@@ -47,6 +49,7 @@ data class PostEntity(
                 title = post.title,
                 text = post.text,
                 avatar = post.avatar,
+                authorId = post.authorId,
                 date = DateFormat.format(Post.POST_DATE_ABSOLUTE, post.date).toString(),
                 likes = post.likes,
                 comments = post.comments,
@@ -63,6 +66,7 @@ data class PostEntity(
                 id = response.id,
                 title = response.title,
                 text = response.text,
+                authorId = response.authorId,
                 avatar = response.avatar,
                 date = Mapper.parseEpochToAbsolute(response.date),
                 likes = response.likes,

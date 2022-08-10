@@ -10,6 +10,7 @@ import ru.netology.nmedia.ui.fragments.add.AddFragment
 import ru.netology.nmedia.ui.fragments.details.DetailsFragment
 import ru.netology.nmedia.ui.fragments.edit.EditFragment
 import ru.netology.nmedia.ui.fragments.MainFragment
+import ru.netology.nmedia.ui.fragments.login.LoginFragment
 import javax.inject.Singleton
 
 @Singleton
@@ -31,6 +32,7 @@ interface AppComponent {
     fun inject(fragment: EditFragment)
     fun inject(fragment: ImageDetailsFragment)
     fun inject(fragment: DetailsFragment)
+    fun inject(fragment: LoginFragment)
     fun inject(service: FCMService)
 }
 

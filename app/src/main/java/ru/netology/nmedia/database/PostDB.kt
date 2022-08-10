@@ -19,7 +19,7 @@ abstract class PostDB : RoomDatabase() {
     abstract fun getPostDeletedDao(): DeletedPostDAO
 
     companion object {
-        const val DB_VERSION: Int = 6
+        const val DB_VERSION: Int = 8
         const val DB_NAME: String = "posts-database"
     }
 }

@@ -18,6 +18,8 @@ data class DeletedPostEntity(
     val title: String? = null,
     @ColumnInfo(name = "text")
     val text: String? = null,
+    @ColumnInfo(name= "author_id", defaultValue = "5")
+    val authorId: Long = 5L,
     @ColumnInfo(name = "avatar_name", defaultValue = "")
     val avatar: String = "",
     @ColumnInfo(name = "date")
@@ -45,6 +47,7 @@ data class DeletedPostEntity(
                 text = entity.text,
                 avatar = entity.avatar,
                 date = entity.date,
+                authorId = entity.authorId,
                 likes = entity.likes,
                 comments = entity.comments,
                 shares = entity.shares,

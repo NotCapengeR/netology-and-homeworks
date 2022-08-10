@@ -13,6 +13,7 @@ data class Post(
     val title: String,
     val text: String,
     val avatar: String,
+    val authorId: Long,
     val date: Long,
     val likes: Int = 0,
     val comments: Int = 0,
@@ -20,7 +21,8 @@ data class Post(
     val views: Int = 0,
     val isLiked: Boolean = false,
     val video: YouTubeVideoData? = null,
-    val attachment: Attachment? = null
+    val attachment: Attachment? = null,
+    var isOwner: Boolean = false
 ) : Parcelable {
 
     companion object {
@@ -35,13 +37,15 @@ data class Post(
             text = "",
             avatar = "",
             date = 0L,
+            authorId = 0L,
             likes = 0,
             comments = 0,
             shared = 0,
             views = 0,
             isLiked = false,
             video = null,
-            attachment = null
+            attachment = null,
+            isOwner = false
         )
 
         fun parser(entity: PostEntity?): Post? {
@@ -50,6 +54,7 @@ data class Post(
                 id = entity.id,
                 title = entity.title,
                 text = entity.text,
+                authorId = entity.authorId,
                 date = Mapper.parseStringToEpoch(entity.date),
                 avatar = entity.avatar,
                 likes = entity.likes,
@@ -58,7 +63,8 @@ data class Post(
                 views = entity.views,
                 isLiked = entity.isLiked,
                 video = entity.video,
-                attachment = entity.attachment
+                attachment = entity.attachment,
+                isOwner = false
             )
         }
 
@@ -68,11 +74,13 @@ data class Post(
                 id = response.id,
                 title = response.title,
                 text = response.text,
+                authorId = response.authorId,
                 avatar = response.avatar,
                 date = response.date,
                 likes = response.likes,
                 isLiked = response.isLiked,
-                attachment = response.attachment
+                attachment = response.attachment,
+                isOwner = false
             )
         }
     }

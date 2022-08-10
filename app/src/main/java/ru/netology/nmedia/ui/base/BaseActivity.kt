@@ -1,10 +1,7 @@
 package ru.netology.nmedia.ui.base
 
-import android.app.Dialog
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.EditText
 import android.widget.PopupMenu
 import androidx.annotation.CallSuper
@@ -19,7 +16,6 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
     private var _binding: ViewBinding? = null
     abstract val bindingInflater: (LayoutInflater) -> VB
     private var popupMenu: PopupMenu? = null
-    private var dialog: Dialog? = null
     @Suppress("UNCHECKED_CAST")
     protected val binding: VB
         get() = requireNotNull(_binding) as VB
@@ -48,10 +44,6 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
         AndroidUtils.openUrl(this, url)
     }
 
-    protected fun showDialog(inflater: () -> Dialog) {
-        dialog = inflater.invoke()
-        dialog?.show()
-    }
 
     protected fun clearKeyboard(editText: EditText? = null) {
         AndroidUtils.hideKeyboard(this)

@@ -1,6 +1,5 @@
 package ru.netology.nmedia.ui.base
 
-import android.app.Dialog
 import android.os.Bundle
 import android.view.*
 import android.widget.EditText
@@ -8,7 +7,6 @@ import android.widget.PopupMenu
 import androidx.annotation.CallSuper
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -23,7 +21,6 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment(), MenuProvider {
     private var _binding: ViewBinding? = null
     abstract val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> VB
     private var popupMenu: PopupMenu? = null
-    private var dialog: Dialog? = null
     protected val mainNavController: NavController? by lazy { activity?.findNavController(R.id.nav_host_fragment) }
 
     @Suppress("UNCHECKED_CAST")
@@ -81,10 +78,6 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment(), MenuProvider {
         popupMenu?.show()
     }
 
-    protected fun showDialog(inflater: () -> Dialog) {
-        dialog = inflater.invoke()
-        dialog?.show()
-    }
 
     protected fun showSnackbar(text: String, isLong: Boolean = false) = Snackbar.make(
         binding.root,
@@ -105,9 +98,6 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment(), MenuProvider {
         return when (item.itemId) {
             android.R.id.home -> {
                 onBackPressed()
-                true
-            }
-            R.id.delete -> {
                 true
             }
             else -> false

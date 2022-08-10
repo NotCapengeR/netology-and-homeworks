@@ -52,6 +52,10 @@ fun View.clickWithDebounce(debounceTime: Long = 600L, action: () -> Unit) {
     })
 }
 
+fun String.isNotBlankOrEmpty(): Boolean = this.isNotEmpty() && this.isNotBlank()
+
+fun String.isBlankOrEmpty(): Boolean = this.isEmpty() || this.isBlank()
+
 fun View.showPopupMenu(inflater: (View) -> PopupMenu) = inflater.invoke(this).show()
 
 fun View.showDialog(inflater: (View) -> Dialog) = inflater.invoke(this).show()

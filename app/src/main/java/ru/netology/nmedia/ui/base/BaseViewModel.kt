@@ -13,6 +13,14 @@ abstract class BaseViewModel(application: Application) : AndroidViewModel(applic
     }
 
     protected fun showToast(@StringRes msgResId: Int, isLong: Boolean = false) {
-        showToast(this.getApplication<App>().getString(msgResId), isLong)
+        showToast(getString(msgResId), isLong)
+    }
+
+    fun getString(@StringRes msgResId: Int): String {
+        return this.getApplication<App>().getString(msgResId)
+    }
+
+    fun getString(@StringRes msgResId: Int, vararg formatArgs: Any): String {
+        return this.getApplication<App>().getString(msgResId, formatArgs)
     }
 }

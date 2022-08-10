@@ -15,6 +15,8 @@ import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.network.results.NetworkResult
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.SyncHelper
+import ru.netology.nmedia.repository.auth.AuthData
+import ru.netology.nmedia.repository.auth.AuthManager
 import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.ui.base.BaseViewModel
 import ru.netology.nmedia.utils.Mapper
@@ -24,9 +26,13 @@ import javax.inject.Inject
 
 class PostViewModel @Inject constructor(
     application: Application,
+    private val authManager: AuthManager,
     private val repository: PostRepository
 ) : BaseViewModel(application) {
 
+
+    val authData: LiveData<AuthData> =
+        authManager.authData.asLiveData(Dispatchers.Default)
     private val _postsList: MutableLiveData<NetworkResult<List<PostResponse>>> = MutableLiveData()
     val postsList: LiveData<NetworkResult<List<PostResponse>>> = _postsList
     val newerPosts: LiveData<List<PostResponse>> =
@@ -97,6 +103,15 @@ class PostViewModel @Inject constructor(
         }
     }
 
+    fun setAuth(id: Long, token: String) {
+        return authManager.setAuth(id, token)
+    }
+
+    fun clearAuth() {
+        return authManager.clearAuth()
+    }
+
+
     private fun loadToCurrentData() {
         viewModelScope.launch(Dispatchers.Main) {
             repository.getPostsFromDB()
@@ -110,6 +125,8 @@ class PostViewModel @Inject constructor(
                 }
         }
     }
+
+    fun getAuthId(): Long = repository.getAuthId()
 
     private suspend fun getPostById(id: Long): Post? {
         return withContext(viewModelScope.coroutineContext + Dispatchers.Main) {

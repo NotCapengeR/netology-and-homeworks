@@ -1,5 +1,6 @@
 package ru.netology.nmedia.repository
 
+import android.content.SharedPreferences
 import android.database.sqlite.SQLiteConstraintException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,6 +14,7 @@ import ru.netology.nmedia.database.entities.PostEntity
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.network.results.NetworkResult
 import ru.netology.nmedia.network.results.NetworkResult.Companion.RESPONSE_CODE_OK
+import ru.netology.nmedia.repository.auth.AuthManager.Companion.ID_KEY
 import ru.netology.nmedia.repository.dto.Attachment
 import ru.netology.nmedia.repository.dto.Photo
 import ru.netology.nmedia.repository.dto.Post
@@ -25,6 +27,7 @@ import javax.inject.Singleton
 
 @Singleton
 class PostRepositoryImpl @Inject constructor(
+    private val prefs: SharedPreferences,
     private val scope: CoroutineScope,
     private val dao: PostDAO,
     private val deletedDAO: DeletedPostDAO,
@@ -155,7 +158,7 @@ class PostRepositoryImpl @Inject constructor(
     override suspend fun addPost(title: String, text: String, attachment: Attachment?): Long {
         source.addPost(title, text, attachment).data?.also {
             try {
-                dao.addPost(it.id, title, text, avatar = it.avatar)
+                dao.addPost(it.id, title, text, avatar = it.avatar, authorId = getAuthId())
             } catch (ex: SQLiteConstraintException) {
                 dao.insertPost(
                     PostEntity(
@@ -163,7 +166,8 @@ class PostRepositoryImpl @Inject constructor(
                         title = title,
                         text = text,
                         avatar = it.avatar,
-                        attachment = it.attachment
+                        attachment = it.attachment,
+                        authorId = getAuthId()
                     )
                 )
             }
@@ -241,6 +245,10 @@ class PostRepositoryImpl @Inject constructor(
 //        val nextValue = post.comments + 1
 //        dao.commentPostById(post.id, nextValue)
 //        return nextValue
+    }
+
+    override fun getAuthId(): Long {
+        return prefs.getLong(ID_KEY, 0L)
     }
 
     private companion object {
