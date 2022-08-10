@@ -265,7 +265,16 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
     override fun onMenuItemSelected(item: MenuItem): Boolean {
         return when(item.itemId) {
             R.id.sign_out -> {
-                viewModel.clearAuth()
+                activity?.let { activity ->
+                    AlertDialog.Builder(activity).setTitle(R.string.sign_out)
+                        .setMessage(R.string.auth_are_sure)
+                        .setPositiveButton(R.string.sign_out) { _, _ ->
+                            viewModel.clearAuth()
+                        }
+                        .setNegativeButton(com.github.dhaval2404.imagepicker.R.string.action_cancel, null)
+                        .setIcon(R.drawable.ic_launcher_foreground)
+                        .show()
+                }
                 true
             }
             R.id.signup -> {
