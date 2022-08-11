@@ -3,16 +3,19 @@ package ru.netology.nmedia.ui.activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.activity.viewModels
+import com.google.firebase.messaging.FirebaseMessaging
 import ru.netology.nmedia.databinding.ActivityMainBinding
 import ru.netology.nmedia.ui.base.BaseActivity
 import ru.netology.nmedia.ui.viewmodels.ViewModelFactory
 import ru.netology.nmedia.utils.getAppComponent
+import timber.log.Timber
 import javax.inject.Inject
 
 
 class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     @Inject lateinit var factory: ViewModelFactory
+    @Inject lateinit var messaging: FirebaseMessaging
     private val viewModel: MainViewModel by viewModels {
         factory
     }

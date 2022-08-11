@@ -97,7 +97,7 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>() {
                 ivAvatar.setVisibility(true)
                 Glide.with(requireContext())
                     .load(avatarUri)
-                    .placeholder(R.drawable.play)
+                    .placeholder(R.drawable.push_nmedia)
                     .error(R.drawable.alert_circle)
                     .centerCrop()
                     .timeout(10_000)

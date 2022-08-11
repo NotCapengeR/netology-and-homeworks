@@ -80,7 +80,7 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
             }
         }
         Glide.with(requireContext())
-            .load(R.drawable.ic_launcher_foreground)
+            .load(R.drawable.ic_netology)
             .placeholder(R.drawable.ic_baseline_account_circle_24)
             .error(R.drawable.alert_circle)
             .centerCrop()
@@ -91,7 +91,7 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
                 ivAttachment.setVisibility(true)
                 Glide.with(requireContext())
                     .load(photo.uri)
-                    .placeholder(R.drawable.play)
+                    .placeholder(R.drawable.push_nmedia)
                     .error(R.drawable.alert_circle)
                     .centerCrop()
                     .timeout(10_000)

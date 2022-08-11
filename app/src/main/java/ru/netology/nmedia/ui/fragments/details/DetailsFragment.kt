@@ -94,7 +94,7 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
                 if (post.attachment != null && post.attachment.type == Attachment.AttachmentType.IMAGE) {
                     Glide.with(requireContext())
                         .load("$ATTACHMENTS_BASE_URL${post.attachment.name}")
-                        .placeholder(R.drawable.play)
+                        .placeholder(R.drawable.push_nmedia)
                         .error(ColorDrawable(Color.RED))
                         .centerCrop()
                         .timeout(10_000)
@@ -136,7 +136,7 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
                             com.github.dhaval2404.imagepicker.R.string.action_cancel,
                             null
                         )
-                        .setIcon(R.drawable.ic_launcher_foreground)
+                        .setIcon(R.drawable.ic_netology)
                         .show()
                 }
                 return@setDebouncedListener

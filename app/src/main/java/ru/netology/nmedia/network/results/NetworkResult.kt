@@ -71,7 +71,6 @@ suspend fun <T> safeApiCall(
 
 private fun <T> getNetworkResult(response: Response<T>): NetworkResult<T> {
     if (response.isSuccessful) {
-        Timber.d("Response with code ${response.code()} has been received!")
         val body = response.body()
         return if (body != null) {
             NetworkResult.Success(body, response.code())

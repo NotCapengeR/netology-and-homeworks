@@ -56,7 +56,7 @@ class ImageDetailsFragment : BaseFragment<ImageDetailsFragmentBinding>() {
         }
         Glide.with(requireContext())
             .load(args.uri)
-            .placeholder(R.drawable.play)
+            .placeholder(R.drawable.push_nmedia)
             .error(R.drawable.alert_circle)
             .override(1600, 1200)
             .fitCenter()

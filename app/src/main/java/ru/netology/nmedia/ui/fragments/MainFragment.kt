@@ -104,7 +104,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                                 )
                             }
                             .setNeutralButton(com.github.dhaval2404.imagepicker.R.string.action_cancel, null)
-                            .setIcon(R.drawable.ic_launcher_foreground)
+                            .setIcon(R.drawable.ic_netology)
                             .show()
                     }
                     return
@@ -180,7 +180,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                                 )
                             }
                             .setNeutralButton(com.github.dhaval2404.imagepicker.R.string.action_cancel, null)
-                            .setIcon(R.drawable.ic_launcher_foreground)
+                            .setIcon(R.drawable.ic_netology)
                             .show()
                     }
                     return@setDebouncedListener
@@ -272,7 +272,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                             viewModel.clearAuth()
                         }
                         .setNegativeButton(com.github.dhaval2404.imagepicker.R.string.action_cancel, null)
-                        .setIcon(R.drawable.ic_launcher_foreground)
+                        .setIcon(R.drawable.ic_netology)
                         .show()
                 }
                 true

@@ -91,7 +91,7 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
                 if (post.attachment != null && post.attachment.type == Attachment.AttachmentType.IMAGE) {
                     Glide.with(requireContext())
                         .load("$ATTACHMENTS_BASE_URL${post.attachment.name}")
-                        .placeholder(R.drawable.play)
+                        .placeholder(R.drawable.push_nmedia)
                         .error(ColorDrawable(Color.RED))
                         .centerCrop()
                         .timeout(10_000)
