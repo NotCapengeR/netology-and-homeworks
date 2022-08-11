@@ -130,6 +130,9 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>() {
     override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
         inflater.inflate(R.menu.image, menu)
+        if (args.loginFlag != LoginFlags.SIGNUP) {
+            menu.setGroupVisible(R.id.image_group, false)
+        }
     }
 
 
