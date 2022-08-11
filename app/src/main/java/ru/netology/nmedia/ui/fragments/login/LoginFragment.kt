@@ -29,8 +29,7 @@ import javax.inject.Inject
 
 class LoginFragment : BaseFragment<LoginFragmentBinding>() {
 
-    @Inject
-    lateinit var factory: ViewModelFactory
+    @Inject lateinit var factory: ViewModelFactory
     private val args: LoginFragmentArgs by navArgs()
     private val viewModel: LoginViewModel by activityViewModels {
         factory
@@ -69,6 +68,7 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>() {
                     getString(R.string.auth_authorization)
             }
         }
+        viewModel.clearState()
         btnAuth.text = args.loginFlag.name
         cardName.setVisibility(args.loginFlag == LoginFlags.SIGNUP)
         cardConfirmPass.setVisibility(args.loginFlag == LoginFlags.SIGNUP)
@@ -132,15 +132,6 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>() {
         inflater.inflate(R.menu.image, menu)
     }
 
-    private fun saveText() = with(binding) {
-        viewModel.apply {
-            setLogin(etLogin.text.toString(), args.loginFlag)
-            setPassword(etPassword.text.toString(), args.loginFlag)
-            setConfirmPassword(etConfirmPassword.text.toString(), args.loginFlag)
-            setName(etName.text.toString(), args.loginFlag)
-        }
-    }
-
 
     override fun onMenuItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
@@ -165,12 +156,6 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>() {
         }
     }
 
-    override fun onDestroyView() {
-        if (viewModel.isSuccess.value == false) {
-            saveText()
-        }
-        super.onDestroyView()
-    }
 
     @Parcelize
     enum class LoginFlags : Parcelable {

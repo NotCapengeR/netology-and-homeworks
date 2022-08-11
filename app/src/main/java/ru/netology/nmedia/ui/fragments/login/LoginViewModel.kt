@@ -38,6 +38,10 @@ class LoginViewModel @Inject constructor(
         loginData.value = loginData.value?.copy(avatar = Photo(file, uri))
     }
 
+    fun clearState() {
+        isSuccess.value = false
+    }
+
     fun login(login: String, password: String) {
         viewModelScope.launch {
             if (login.isBlankOrEmpty() || password.isBlankOrEmpty()) {
