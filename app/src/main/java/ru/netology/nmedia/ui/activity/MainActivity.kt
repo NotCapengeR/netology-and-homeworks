@@ -15,7 +15,6 @@ import javax.inject.Inject
 class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     @Inject lateinit var factory: ViewModelFactory
-    @Inject lateinit var messaging: FirebaseMessaging
     private val viewModel: MainViewModel by viewModels {
         factory
     }
