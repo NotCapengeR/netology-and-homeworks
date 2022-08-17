@@ -16,7 +16,7 @@ import ru.netology.nmedia.repository.dto.Attachment
 import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.repository.dto.Post.Companion.ATTACHMENTS_BASE_URL
 import ru.netology.nmedia.repository.dto.Post.Companion.AVATARS_BASE_URL
-import ru.netology.nmedia.ui.base.BaseViewHolder
+import ru.netology.nmedia.ui.base.ItemViewHolder
 import ru.netology.nmedia.utils.Mapper
 import ru.netology.nmedia.utils.setDebouncedListener
 import ru.netology.nmedia.utils.setVisibility
@@ -101,26 +101,26 @@ class PostAdapter(
     }
 
     inner class PostViewHolder(private val binding: PostItemBinding) :
-        BaseViewHolder(binding.root) {
+        ItemViewHolder<Post>(binding.root) {
 
-        fun bind(post: Post) = with(binding) {
-            postItem.tag = post
-            menuButton.tag = post
-            ivLikes.tag = post
-            ivComments.tag = post
-            ivShare.tag = post
-            ivAttachment.tag = post
-            ivComments.text = post.comments.toPostText()
-            ivLikes.text = post.likes.toPostText()
-            ivShare.text = post.shared.toPostText()
-            tvViewsCount.text = post.views.toPostText()
-            tvPostText.text = post.text
-            tvPostTitle.text = post.title
-            tvDateTime.text = Mapper.parseEpochSeconds(post.date)
-            Timber.d("Post ${post.id}: ${tvDateTime.text}")
-            if (post.avatar.isNotBlank() && post.avatar.isNotEmpty()) {
+        override fun bind(item: Post) = with(binding) {
+            postItem.tag = item
+            menuButton.tag = item
+            ivLikes.tag = item
+            ivComments.tag = item
+            ivShare.tag = item
+            ivAttachment.tag = item
+            ivComments.text = item.comments.toPostText()
+            ivLikes.text = item.likes.toPostText()
+            ivShare.text = item.shared.toPostText()
+            tvViewsCount.text = item.views.toPostText()
+            tvPostText.text = item.text
+            tvPostTitle.text = item.title
+            tvDateTime.text = Mapper.parseEpochSeconds(item.date)
+            Timber.d("Post ${item.id}: ${tvDateTime.text}")
+            if (item.avatar.isNotBlank() && item.avatar.isNotEmpty()) {
                 Glide.with(root.context)
-                    .load("$AVATARS_BASE_URL${post.avatar}")
+                    .load("$AVATARS_BASE_URL${item.avatar}")
                     .placeholder(R.drawable.ic_baseline_account_circle_24)
                     .error(R.drawable.alert_circle)
                     .circleCrop()
@@ -129,23 +129,23 @@ class PostAdapter(
             } else {
                 Glide.with(root.context).clear(ivPostAvatar)
             }
-            ivAttachment.setVisibility(post.attachment != null)
-            if (post.attachment != null && post.attachment.type == Attachment.AttachmentType.IMAGE) {
+            ivAttachment.setVisibility(item.attachment != null)
+            if (item.attachment != null && item.attachment.type == Attachment.AttachmentType.IMAGE) {
                 Glide.with(root.context)
-                    .load("$ATTACHMENTS_BASE_URL${post.attachment.name}")
+                    .load("$ATTACHMENTS_BASE_URL${item.attachment.name}")
                     .placeholder(R.drawable.push_nmedia)
                     .error(ColorDrawable(Color.RED))
                     .centerCrop()
                     .timeout(10_000)
                     .into(ivAttachment)
             }
-            if (post.isLiked) {
+            if (item.isLiked) {
                 ivLikes.setIconResource(R.drawable.heart)
             } else {
                 ivLikes.setIconResource(R.drawable.heart_outline)
             }
-            menuButton.setVisibility(post.isOwner)
-            ivLikes.isChecked = post.isLiked
+            menuButton.setVisibility(item.isOwner)
+            ivLikes.isChecked = item.isLiked
             postItem.setDebouncedListener(50L, this@PostAdapter)
             ivLikes.setDebouncedListener(50L, this@PostAdapter)
             menuButton.setDebouncedListener(200L, this@PostAdapter)
