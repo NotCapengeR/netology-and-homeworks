@@ -9,7 +9,7 @@
     <fragment
         android:id="@+id/mainFragment"
         android:name="ru.netology.nmedia.ui.fragments.MainFragment"
-        android:label="main_fragment"
+        android:label="@string/app_name"
         tools:layout="@layout/fragment_main">
         <action
             android:id="@+id/action_mainFragment_to_addFragment"
@@ -39,7 +39,7 @@
     <fragment
         android:id="@+id/addFragment"
         android:name="ru.netology.nmedia.ui.fragments.add.AddFragment"
-        android:label="add_fragment"
+        android:label="@string/app_name"
         tools:layout="@layout/add_fragment">
         <argument
             android:name="post_id"
@@ -50,7 +50,7 @@
         android:id="@+id/editFragment"
         android:name="ru.netology.nmedia.ui.fragments.edit.EditFragment"
         tools:layout="@layout/edit_fragment"
-        android:label="EditFragment" >
+        android:label="@string/app_name" >
         <argument
             android:name="post_text"
             app:argType="string"/>
@@ -67,7 +67,7 @@
     <fragment
         android:id="@+id/detailsFragment"
         android:name="ru.netology.nmedia.ui.fragments.details.DetailsFragment"
-        android:label="details_fragment"
+        android:label="@string/app_name"
         tools:layout="@layout/details_fragment" >
         <action
             android:id="@+id/action_detailsFragment_to_editFragment"
@@ -104,7 +104,7 @@
         android:id="@+id/loginFragment"
         tools:layout="@layout/login_fragment"
         android:name="ru.netology.nmedia.ui.fragments.login.LoginFragment"
-        android:label="LoginFragment" >
+        android:label="@string/auth_authorization" >
         <argument
             android:name="loginFlag"
             app:argType="ru.netology.nmedia.ui.fragments.login.LoginFragment$LoginFlags" />

@@ -70,12 +70,11 @@ class FCMService : FirebaseMessagingService() {
         gson.fromJsonOrNull(message.data[CONTENT], PushMessage::class.java)?.let { push ->
             val authId = manager.getAuthId()
             when (val it = push.recipientId) {
-                null -> {
+
+                null, authId -> {
                     testPush(push.content)
                 }
-                authId -> {
-                    testPush(push.content)
-                }
+
                 0L -> {
                     if (authId != it) {
                         manager.sendPushToken()
