@@ -1,7 +1,7 @@
 package ru.netology.nmedia.repository.dto
 
 import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import kotlinx.android.parcel.Parcelize
 import ru.netology.nmedia.network.youtube.YouTubeVideo
 import ru.netology.nmedia.utils.Mapper
 

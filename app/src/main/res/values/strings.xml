@@ -40,6 +40,7 @@
     <string name="auth_please_signin">Please login or register to continue</string>
     <string name="auth_are_sure">Are you sure?</string>
     <string name="note">Note</string>
+    <string name="attachment">Attachment</string>
     <string name="auth_pass">Enter Password</string>
     <string name="auth_confirm_pass">Confirm Password</string>
     <string name="auth_user_name">Enter Your User Name</string>

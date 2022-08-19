@@ -2,9 +2,7 @@ package ru.netology.nmedia.ui.fragments.image
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
@@ -14,7 +12,6 @@ import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.ImageDetailsFragmentBinding
 import ru.netology.nmedia.ui.base.BaseFragment
-import ru.netology.nmedia.ui.fragments.PostViewModel
 import ru.netology.nmedia.ui.viewmodels.ViewModelFactory
 import ru.netology.nmedia.utils.getAppComponent
 import ru.netology.nmedia.utils.toPostText
@@ -45,10 +42,7 @@ class ImageDetailsFragment : BaseFragment<ImageDetailsFragmentBinding>() {
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
         mainNavController?.apply {
             val appBarConfiguration = AppBarConfiguration(graph)
-            binding.toolbar.setupWithNavController(this, appBarConfiguration).also {
-                (activity as AppCompatActivity).supportActionBar?.title =
-                    getString(R.string.app_name)
-            }
+            toolbar.setupWithNavController(this, appBarConfiguration)
         }
         viewModel.loadPost(args.postId)
         viewModel.post.observe(viewLifecycleOwner) {
@@ -62,5 +56,10 @@ class ImageDetailsFragment : BaseFragment<ImageDetailsFragmentBinding>() {
             .fitCenter()
             .timeout(10_000)
             .into(ivAttachment)
+    }
+
+    override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
+        inflater.inflate(R.menu.empty, menu)
     }
 }

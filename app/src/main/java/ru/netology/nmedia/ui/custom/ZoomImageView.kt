@@ -12,7 +12,7 @@ import androidx.appcompat.widget.AppCompatImageView
 
 //Source: https://daveson.medium.com/android-imageview-double-tap-and-pinch-zoom-with-multi-touch-gestures-in-kotlin-1559a5dd4a69
 
-class ZoomView : AppCompatImageView, View.OnTouchListener,
+class ZoomImageView : AppCompatImageView, View.OnTouchListener,
     GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
     //shared constructing
     private var mContext: Context? = null

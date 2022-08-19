@@ -5,8 +5,8 @@ import android.net.Uri
 import android.os.Parcelable
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.launch
-import kotlinx.parcelize.Parcelize
 import retrofit2.HttpException
 import ru.netology.nmedia.R
 import ru.netology.nmedia.network.exceptions.FailedHttpRequestException

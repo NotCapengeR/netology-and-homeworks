@@ -34,4 +34,6 @@ class ImageDetailsViewModel @Inject constructor(
             post.value = newPost
         }
     }
+
+
 }

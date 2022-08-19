@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.text.format.DateFormat
 import android.text.util.Linkify
 import android.view.*
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
@@ -74,10 +73,7 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
         }
         mainNavController?.apply {
             val appBarConfiguration = AppBarConfiguration(graph)
-            toolbar.setupWithNavController(this, appBarConfiguration).also {
-                (activity as AppCompatActivity).supportActionBar?.title =
-                    getString(R.string.app_name)
-            }
+            toolbar.setupWithNavController(this, appBarConfiguration)
         }
         Glide.with(requireContext())
             .load(R.drawable.ic_netology)

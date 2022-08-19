@@ -6,13 +6,13 @@ import androidx.core.content.edit
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
 import dagger.Lazy
+import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import kotlinx.parcelize.Parcelize
 import ru.netology.nmedia.network.post_api.dto.PushToken
 import ru.netology.nmedia.network.post_api.service.PostService
 import ru.netology.nmedia.network.results.safeApiCall

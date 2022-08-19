@@ -1,9 +1,8 @@
 package ru.netology.nmedia.network.post_api.dto
 
 import android.os.Parcelable
-import androidx.annotation.StringRes
 import com.google.gson.annotations.SerializedName
-import kotlinx.parcelize.Parcelize
+import kotlinx.android.parcel.Parcelize
 import ru.netology.nmedia.repository.dto.Attachment
 import java.time.OffsetDateTime
 

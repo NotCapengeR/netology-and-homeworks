@@ -23,7 +23,6 @@ import ru.netology.nmedia.ui.base.BaseFragment
 import ru.netology.nmedia.ui.fragments.login.LoginFragment
 import ru.netology.nmedia.ui.viewmodels.ViewModelFactory
 import ru.netology.nmedia.utils.*
-import timber.log.Timber
 import javax.inject.Inject
 
 class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
@@ -51,10 +50,7 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
         mainNavController?.apply {
             val appBarConfiguration = AppBarConfiguration(graph)
-            toolbar.setupWithNavController(this, appBarConfiguration).also {
-                (activity as AppCompatActivity).supportActionBar?.title =
-                    getString(R.string.app_name)
-            }
+            toolbar.setupWithNavController(this, appBarConfiguration)
         }
         val id = args.postId
         viewModel.loadPost(id)

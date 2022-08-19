@@ -46,10 +46,7 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
         mainNavController?.apply {
             val appBarConfiguration = AppBarConfiguration(graph)
-            toolbar.setupWithNavController(this, appBarConfiguration).also {
-                (activity as AppCompatActivity).supportActionBar?.title =
-                    getString(R.string.app_name)
-            }
+            toolbar.setupWithNavController(this, appBarConfiguration)
         }
         val id = args.postId
         if (id != viewModel.post.value?.id) {

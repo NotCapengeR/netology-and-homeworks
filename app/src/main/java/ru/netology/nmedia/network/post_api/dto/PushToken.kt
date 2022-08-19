@@ -1,7 +1,7 @@
 package ru.netology.nmedia.network.post_api.dto
 
 import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class PushToken(

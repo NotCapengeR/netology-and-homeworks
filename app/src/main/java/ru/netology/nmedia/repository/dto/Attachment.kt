@@ -3,7 +3,7 @@ package ru.netology.nmedia.repository.dto
 import android.net.Uri
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
-import kotlinx.parcelize.Parcelize
+import kotlinx.android.parcel.Parcelize
 import java.io.File
 
 @Parcelize

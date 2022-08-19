@@ -1,11 +1,10 @@
 package ru.netology.nmedia.repository.dto
 
 import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import kotlinx.android.parcel.Parcelize
 import ru.netology.nmedia.database.entities.PostEntity
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.utils.Mapper
-import timber.log.Timber
 
 @Parcelize
 data class Post(

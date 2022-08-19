@@ -92,7 +92,7 @@
         android:id="@+id/imageDetailsFragment"
         tools:layout="@layout/image_details_fragment"
         android:name="ru.netology.nmedia.ui.fragments.image.ImageDetailsFragment"
-        android:label="ImageDetailsFragment" >
+        android:label="@string/attachment" >
         <argument
             android:name="post_id"
             app:argType="long" />

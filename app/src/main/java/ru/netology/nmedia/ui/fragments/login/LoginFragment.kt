@@ -17,7 +17,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.dhaval2404.imagepicker.constant.ImageProvider
-import kotlinx.parcelize.Parcelize
+import kotlinx.android.parcel.Parcelize
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.LoginFragmentBinding
 import ru.netology.nmedia.ui.base.BaseFragment
@@ -63,10 +63,7 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>() {
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
         mainNavController?.apply {
             val appBarConfiguration = AppBarConfiguration(graph)
-            toolbar.setupWithNavController(this, appBarConfiguration).also {
-                (activity as AppCompatActivity).supportActionBar?.title =
-                    getString(R.string.auth_authorization)
-            }
+            toolbar.setupWithNavController(this, appBarConfiguration)
         }
         viewModel.clearState()
         btnAuth.text = args.loginFlag.name

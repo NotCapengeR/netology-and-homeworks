@@ -39,6 +39,7 @@
     <string name="auth_pass">Введите Пароль</string>
     <string name="auth_are_sure">Вы уверены?</string>
     <string name="note">Примечание</string>
+    <string name="attachment">Вложение</string>
     <string name="auth_please_signin">Чтоб продолжить, войдите или зарегистрируйтесь</string>
     <string name="auth_confirm_pass">Подтвердите Пароль</string>
     <string name="auth_user_name">Введите Имя Пользователя</string>
