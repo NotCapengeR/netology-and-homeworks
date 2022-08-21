@@ -206,8 +206,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
             }
         }
         viewModel.authData.observe(viewLifecycleOwner) { auth ->
-            activity?.removeMenuProvider(this)
-            activity?.addMenuProvider(this)
+            activity?.invalidateMenu()
             adapter.notifyAuth(auth.id)
         }
         binding.refreshPostLayout.isRefreshing = false

@@ -41,13 +41,12 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment(), MenuProvider {
     @CallSuper
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as AppCompatActivity).addMenuProvider(this)
+        activity?.addMenuProvider(this, viewLifecycleOwner)
     }
 
     @CallSuper
     override fun onDestroyView() {
         super.onDestroyView()
-        (activity as AppCompatActivity).removeMenuProvider(this)
         _binding = null
     }
 
@@ -60,8 +59,8 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment(), MenuProvider {
         AndroidUtils.showKeyboard(mEtSearch, requireContext())
     }
 
-    protected fun onBackPressed(callback: () -> Unit = {}) {
-        callback.invoke()
+    protected inline fun <T : BaseFragment<VB>> T.onBackPressed(callback: T.() -> Unit = {}) {
+        this.callback()
         mainNavController?.navigateUp()
     }
 
