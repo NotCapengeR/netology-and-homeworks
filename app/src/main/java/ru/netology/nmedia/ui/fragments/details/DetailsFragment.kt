@@ -2,6 +2,7 @@ package ru.netology.nmedia.ui.fragments.details
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -140,7 +141,17 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
             viewModel.likePost(it.tag as Long)
         }
         ivShare.setDebouncedListener(50L) {
-            viewModel.sharePost(it.tag as Long)
+            val intent = Intent(Intent.ACTION_SEND).apply {
+                putExtra(Intent.EXTRA_TEXT, binding.tvPostText.text.toString())
+                type = "text/plain"
+            }
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+            val shareIntent =
+                Intent.createChooser(intent, getString(R.string.chooser_share_post))
+            if (shareIntent.resolveActivity(requireContext().packageManager) != null) {
+                startActivity(shareIntent)
+            }
         }
         ivComments.setDebouncedListener(50L) {
             viewModel.commentPost(it.tag as Long)

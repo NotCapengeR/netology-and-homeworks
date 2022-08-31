@@ -32,7 +32,7 @@ interface PostListener {
 
     fun onLiked(id: Long)
 
-    fun onShared(id: Long)
+    fun onShared(text: String)
 
     fun onCommented(id: Long)
 
@@ -58,7 +58,7 @@ class PostAdapter(
 
             R.id.ivComments -> listener.onCommented(post.id)
 
-            R.id.ivShare -> listener.onShared(post.id)
+            R.id.ivShare -> listener.onShared(post.text)
 
             R.id.ivAttachment -> {
                 if (post.attachment != null) {

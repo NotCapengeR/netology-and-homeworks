@@ -2,6 +2,7 @@ package ru.netology.nmedia.ui.fragments
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import android.view.*
@@ -113,8 +114,18 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 lastUpdateTime = SystemClock.elapsedRealtime()
             }
 
-            override fun onShared(id: Long) {
-                viewModel.sharePost(id)
+            override fun onShared(text: String) {
+                val intent = Intent(Intent.ACTION_SEND).apply {
+                    putExtra(Intent.EXTRA_TEXT, text)
+                    type = "text/plain"
+                }
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+                val shareIntent =
+                    Intent.createChooser(intent, getString(R.string.chooser_share_post))
+                if (shareIntent.resolveActivity(requireContext().packageManager) != null) {
+                    startActivity(shareIntent)
+                }
             }
 
             override fun onCommented(id: Long) {
