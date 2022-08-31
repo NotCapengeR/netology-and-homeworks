@@ -100,7 +100,10 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                                     )
                                 )
                             }
-                            .setNeutralButton(com.github.dhaval2404.imagepicker.R.string.action_cancel, null)
+                            .setNeutralButton(
+                                com.github.dhaval2404.imagepicker.R.string.action_cancel,
+                                null
+                            )
                             .setIcon(R.drawable.ic_netology)
                             .show()
                     }
@@ -176,7 +179,10 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                                     )
                                 )
                             }
-                            .setNeutralButton(com.github.dhaval2404.imagepicker.R.string.action_cancel, null)
+                            .setNeutralButton(
+                                com.github.dhaval2404.imagepicker.R.string.action_cancel,
+                                null
+                            )
                             .setIcon(R.drawable.ic_netology)
                             .show()
                     }
@@ -221,10 +227,10 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                     binding.refreshPostLayout.isRefreshing = false
                     binding.postProgress.setVisibility(false)
                     adapter.submitList(result.data.map { response ->
-                            Post.parser(response).also { post ->
-                                post?.isOwner = viewModel.getAuthId() == post?.authorId
-                            }
+                        Post.parser(response).also { post ->
+                            post?.isOwner = viewModel.getAuthId() == post?.authorId
                         }
+                    }
                     )
                 }
                 is NetworkResult.Loading -> {
@@ -243,8 +249,20 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                             showToast(R.string.error_no_internet_connection)
                         }
                         is IOException -> showToast(R.string.error_problem_with_internet_connection)
-                        is FailedHttpRequestException -> showToast(getString(R.string.error_server_respond_error, it.code().toString(), it.message()))
-                        is HttpException -> showToast(getString(R.string.error_server_respond_error, it.code().toString(), it.message()))
+                        is FailedHttpRequestException -> showToast(
+                            getString(
+                                R.string.error_server_respond_error,
+                                it.code().toString(),
+                                it.message()
+                            )
+                        )
+                        is HttpException -> showToast(
+                            getString(
+                                R.string.error_server_respond_error,
+                                it.code().toString(),
+                                it.message()
+                            )
+                        )
                         else -> showToast(getString(R.string.error_error, it.getErrorMessage()))
                     }
                 }
@@ -253,13 +271,14 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
     }
 
     override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateMenu(menu, inflater)
+        menu.clear()
+        inflater.inflate(R.menu.main, menu)
         menu.setGroupVisible(R.id.unauthorized, viewModel.authData.value?.id == 0L)
         menu.setGroupVisible(R.id.authorized, viewModel.authData.value?.id != 0L)
     }
 
     override fun onMenuItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId) {
+        return when (item.itemId) {
             R.id.sign_out -> {
                 activity?.let { activity ->
                     AlertDialog.Builder(activity).setTitle(R.string.sign_out)
@@ -267,7 +286,10 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                         .setPositiveButton(R.string.sign_out) { _, _ ->
                             viewModel.clearAuth()
                         }
-                        .setNegativeButton(com.github.dhaval2404.imagepicker.R.string.action_cancel, null)
+                        .setNegativeButton(
+                            com.github.dhaval2404.imagepicker.R.string.action_cancel,
+                            null
+                        )
                         .setIcon(R.drawable.ic_netology)
                         .show()
                 }

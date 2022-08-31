@@ -9,6 +9,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.viewbinding.ViewBinding
@@ -41,7 +42,7 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment(), MenuProvider {
     @CallSuper
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.addMenuProvider(this, viewLifecycleOwner)
+        activity?.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     @CallSuper
@@ -88,10 +89,7 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment(), MenuProvider {
         AndroidUtils.openUrl(requireContext(), url)
     }
 
-    override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
-        menu.clear()
-        inflater.inflate(R.menu.main, menu)
-    }
+    override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {}
 
     override fun onMenuItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
