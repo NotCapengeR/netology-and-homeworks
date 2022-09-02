@@ -27,6 +27,10 @@ class App : Application() {
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
-        WorkManager.initialize(this, Configuration.Builder().setWorkerFactory(factory).build())
+        WorkManager.initialize(this, Configuration.Builder()
+            .setWorkerFactory(factory)
+            .setMinimumLoggingLevel(android.util.Log.DEBUG)
+            .build()
+        )
     }
 }
