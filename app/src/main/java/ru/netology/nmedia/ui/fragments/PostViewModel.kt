@@ -95,9 +95,9 @@ class PostViewModel @Inject constructor(
                     if (result !is NetworkResult.Success) {
                         withContext(Dispatchers.Main) {
                             _postsList.value = result
-                            loadToCurrentData()
                         }
                     }
+                    loadToCurrentData()
                 }
             }
         }

@@ -109,9 +109,7 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getDeletedPostsIds(): List<Long> {
-        return withContext(scope.coroutineContext + Dispatchers.IO) {
-            deletedDAO.getAllIds()
-        }
+        return deletedDAO.getAllIds()
     }
 
     override fun getAllPosts(): Flow<NetworkResult<List<PostResponse>>> = flow {
