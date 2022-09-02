@@ -54,7 +54,7 @@ class StubWorker (
 ) : Worker(appContext, params) {
     override fun doWork(): Result {
         Timber.d("Work have done! ${repository.getAuthId()}")
-        return Result.Success()
+        return Result.success()
     }
 
     class Factory @Inject constructor(
