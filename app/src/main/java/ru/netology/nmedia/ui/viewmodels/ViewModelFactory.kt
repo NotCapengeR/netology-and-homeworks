@@ -3,7 +3,6 @@ package ru.netology.nmedia.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import ru.netology.nmedia.utils.getErrorMessage
-import java.lang.ClassCastException
 import javax.inject.Inject
 import javax.inject.Provider
 

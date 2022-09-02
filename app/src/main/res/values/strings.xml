@@ -46,4 +46,5 @@
     <string name="auth_confirm_pass">Confirm Password</string>
     <string name="auth_user_name">Enter Your User Name</string>
     <string name="auth_authorization">Authorization</string>
+    <string name="google_play_unavailable">Google Play services are unavailable! Some features may not work!</string>
 </resources>

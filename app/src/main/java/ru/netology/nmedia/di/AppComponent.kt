@@ -14,7 +14,9 @@ import ru.netology.nmedia.ui.fragments.login.LoginFragment
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [ViewModelModule::class, MemoryModule::class, ApiModule::class, UtilsModule::class])
+@Component(
+    modules = [ViewModelModule::class, MemoryModule::class, ApiModule::class, UtilsModule::class, WorkManagerModule::class]
+)
 interface AppComponent {
 
     @Component.Builder
