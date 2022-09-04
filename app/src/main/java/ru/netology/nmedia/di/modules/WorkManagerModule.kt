@@ -37,14 +37,14 @@ interface WorkManagerBinder {
 
 }
 
-
-@MapKey
+@MustBeDocumented
 @Target(
     AnnotationTarget.FUNCTION,
     AnnotationTarget.PROPERTY_GETTER,
     AnnotationTarget.PROPERTY_SETTER
 )
 @Retention(AnnotationRetention.RUNTIME)
+@MapKey
 annotation class WorkerKey(val value: KClass<out ListenableWorker>)
 
 class StubWorker (

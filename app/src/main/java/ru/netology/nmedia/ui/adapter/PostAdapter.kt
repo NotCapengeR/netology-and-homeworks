@@ -172,7 +172,7 @@ class PostAdapter(
     }
 
     fun notifyAuth(id: Long) {
-        currentList.onEach { post ->
+        currentList.forEach { post ->
             post.isOwner = post.authorId == id
         }
         notifyDataSetChanged()

@@ -68,4 +68,4 @@ interface ViewModelModule {
 )
 @Retention(AnnotationRetention.RUNTIME)
 @MapKey
-internal annotation class ViewModelKey(val value: KClass<out ViewModel>)
+annotation class ViewModelKey(val value: KClass<out ViewModel>)
