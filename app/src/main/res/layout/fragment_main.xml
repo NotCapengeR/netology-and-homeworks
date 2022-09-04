@@ -49,7 +49,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:maxImageSize="60dp"
-        app:fabCustomSize="56dp"
+        app:fabCustomSize="58dp"
         tools:ignore="ContentDescription">
 
     </com.google.android.material.floatingactionbutton.FloatingActionButton>
