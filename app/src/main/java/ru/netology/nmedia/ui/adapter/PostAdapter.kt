@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.bumptech.glide.Glide
@@ -47,7 +48,7 @@ interface PostListener {
 
 class PostAdapter(
     private val listener: PostListener
-) : ListAdapter<Post, PostAdapter.PostViewHolder>(DiffUtilCallback), View.OnClickListener {
+) : PagingDataAdapter<Post, PostAdapter.PostViewHolder>(DiffUtilCallback), View.OnClickListener {
 
     override fun onClick(view: View) {
         val post = view.tag as Post
@@ -171,12 +172,6 @@ class PostAdapter(
 
     }
 
-    fun notifyAuth(id: Long) {
-        currentList.forEach { post ->
-            post.isOwner = post.authorId == id
-        }
-        notifyDataSetChanged()
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostAdapter.PostViewHolder {
         val binding =
@@ -185,7 +180,7 @@ class PostAdapter(
     }
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position) ?: return)
     }
 
     override fun onBindViewHolder(
@@ -199,14 +194,13 @@ class PostAdapter(
 
         val payload = payloads.first() as List<*>
         if (payload.contains(LIKES)) {
-            holder.bindLikes(getItem(position))
+            holder.bindLikes(getItem(position) ?: return super.onBindViewHolder(holder, position, payloads))
         }
         if (payload.contains(TEXT)) {
-            holder.bindText(getItem(position))
+            holder.bindText(getItem(position) ?: return super.onBindViewHolder(holder, position, payloads))
         }
     }
 
-    override fun getItemId(position: Int): Long = getItem(position).id
 
     private object DiffUtilCallback : DiffUtil.ItemCallback<Post>() {
         override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean =

@@ -12,26 +12,25 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentMainBinding
-import ru.netology.nmedia.network.exceptions.FailedHttpRequestException
-import ru.netology.nmedia.network.results.NetworkResult
 import ru.netology.nmedia.repository.dto.Post
+import ru.netology.nmedia.ui.adapter.PagingLoadStateAdapter
 import ru.netology.nmedia.ui.adapter.PostAdapter
 import ru.netology.nmedia.ui.adapter.PostListener
 import ru.netology.nmedia.ui.adapter.decorators.LinearVerticalSpacingDecoration
 import ru.netology.nmedia.ui.base.BaseFragment
 import ru.netology.nmedia.ui.fragments.login.LoginFragment
 import ru.netology.nmedia.ui.viewmodels.ViewModelFactory
-import ru.netology.nmedia.utils.*
-import timber.log.Timber
-import java.io.IOException
-import java.net.ConnectException
-import java.net.SocketTimeoutException
+import ru.netology.nmedia.utils.getAppComponent
+import ru.netology.nmedia.utils.setDebouncedListener
+import ru.netology.nmedia.utils.setVisibility
 import javax.inject.Inject
 
 class MainFragment : BaseFragment<FragmentMainBinding>() {
@@ -163,11 +162,12 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 )
             }
         })
-        adapter.setHasStableIds(true)
         with(binding) {
             rcViewPost.layoutManager =
                 LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
-            rcViewPost.adapter = adapter
+            rcViewPost.adapter = adapter.withLoadStateFooter(
+                footer = PagingLoadStateAdapter(adapter::retry)
+            )
             rcViewPost.addItemDecoration(
                 LinearVerticalSpacingDecoration(INNER_SPACING_RC_VIEW.dpTpPx())
             )
@@ -201,82 +201,25 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 }
                 mainNavController?.navigate(R.id.action_mainFragment_to_addFragment)
             }
-            refreshPostLayout.setOnRefreshListener {
-                refreshPostLayout.isRefreshing = true
-                viewModel.fetchData()
-                lifecycleScope.launch {
-                    delay(1000L)
-                    try {
-                        refreshPostLayout.isRefreshing = false
-                    } catch (ex: IllegalArgumentException) {
-                        Timber.e(ex)
-                    }
-                }
-            }
-            btnNewer.setDebouncedListener(500L) {
-                viewModel.insertNewer()
-                btnNewer.setVisibility(false)
-                lifecycleScope.launch {
-                    delay(50L)
-                    rcViewPost.smoothScrollToPosition(0)
-                }
+        }
+        binding.refreshPostLayout.setOnRefreshListener(adapter::refresh)
+        lifecycleScope.launchWhenCreated {
+            viewModel.posts.collectLatest { posts ->
+                adapter.submitData(posts)
             }
         }
-        viewModel.authData.observe(viewLifecycleOwner) { auth ->
-            activity?.invalidateMenu()
-            adapter.notifyAuth(auth.id)
+        lifecycleScope.launchWhenCreated {
+            adapter.loadStateFlow.collectLatest { state ->
+                binding.refreshPostLayout.isRefreshing = state.refresh is LoadState.Loading
+                        || state.append is LoadState.Loading
+                        || state.prepend is LoadState.Loading
+            }
         }
-        binding.refreshPostLayout.isRefreshing = false
-        viewModel.newerPosts.observe(viewLifecycleOwner) { latest ->
-            Timber.d("Live data posts: $latest")
-            binding.btnNewer.setVisibility(latest.isNotEmpty())
 
-        }
-        viewModel.postsList.observe(viewLifecycleOwner) { result ->
-            when (result) {
-                is NetworkResult.Success -> {
-                    binding.refreshPostLayout.isRefreshing = false
-                    binding.postProgress.setVisibility(false)
-                    adapter.submitList(result.data.map { response ->
-                        Post.parser(response).also { post ->
-                            post?.isOwner = viewModel.getAuthId() == post?.authorId
-                        }
-                    }
-                    )
-                }
-                is NetworkResult.Loading -> {
-                    if (SystemClock.elapsedRealtime() - lastUpdateTime < args.updateDebounce) {
-                        return@observe
-                    } else {
-                        binding.postProgress.setVisibility(true)
-                    }
-                }
-                is NetworkResult.Error -> {
-                    binding.postProgress.setVisibility(false)
-                    Timber.e("Error: ${result.error}")
-                    when (val it = result.error) {
-                        is SocketTimeoutException -> showToast(R.string.error_timed_out_from_response)
-                        is ConnectException -> if (SystemClock.elapsedRealtime() - lastUpdateTime > args.updateDebounce) {
-                            showToast(R.string.error_no_internet_connection)
-                        }
-                        is IOException -> showToast(R.string.error_problem_with_internet_connection)
-                        is FailedHttpRequestException -> showToast(
-                            getString(
-                                R.string.error_server_respond_error,
-                                it.code().toString(),
-                                it.message()
-                            )
-                        )
-                        is HttpException -> showToast(
-                            getString(
-                                R.string.error_server_respond_error,
-                                it.code().toString(),
-                                it.message()
-                            )
-                        )
-                        else -> showToast(getString(R.string.error_error, it.getErrorMessage()))
-                    }
-                }
+        viewModel.authData.observe(viewLifecycleOwner) { _ ->
+            activity?.invalidateMenu()
+            lifecycleScope.launch {
+                adapter.refresh()
             }
         }
     }

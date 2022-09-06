@@ -30,6 +30,8 @@ data class Post(
         const val POST_DATE_ABSOLUTE: String = "dd-MM-yyyy, HH:mm:ss"
         const val AVATARS_BASE_URL: String = "http://10.0.2.2:9999/avatars/"
         const val ATTACHMENTS_BASE_URL: String = "http://10.0.2.2:9999/media/"
+        const val PAGE_SIZE: Int = 10
+        const val MAX_SIZE: Int = 300
         val EMPTY_POST: Post = Post(
             id = 0L,
             title = "",

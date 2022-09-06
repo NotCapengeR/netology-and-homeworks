@@ -1,5 +1,6 @@
 package ru.netology.nmedia.repository
 
+import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import ru.netology.nmedia.database.entities.PostEntity
 import ru.netology.nmedia.network.post_api.dto.PostResponse
@@ -10,11 +11,9 @@ import ru.netology.nmedia.repository.dto.Post
 
 interface PostRepository {
 
-    val latestPosts: Flow<List<PostResponse>>
+    val posts: Flow<PagingData<Post>>
 
-    suspend fun insertLatest(latest: List<PostResponse>): List<PostEntity>
-
-    fun getAllPosts(): Flow<NetworkResult<List<PostResponse>>>
+    suspend fun getDBSize(): Int
 
     fun getPostsFromDB(): Flow<List<Post>>
 

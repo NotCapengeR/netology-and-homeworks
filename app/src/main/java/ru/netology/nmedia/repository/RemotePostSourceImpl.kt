@@ -1,11 +1,5 @@
 package ru.netology.nmedia.repository
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import ru.netology.nmedia.database.dao.PostDAO
@@ -20,9 +14,6 @@ import ru.netology.nmedia.network.results.safeApiCall
 import ru.netology.nmedia.repository.dto.Attachment
 import ru.netology.nmedia.repository.dto.Media
 import ru.netology.nmedia.repository.dto.Photo
-import ru.netology.nmedia.utils.getErrorMessage
-import timber.log.Timber
-import java.lang.NullPointerException
 import java.time.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -30,23 +21,7 @@ import javax.inject.Singleton
 @Singleton
 class RemotePostSourceImpl @Inject constructor(
     private val service: PostService,
-    private val dao: PostDAO
 ) : RemotePostSource {
-
-    override val latestPosts: Flow<List<PostResponse>> = flow {
-        while (true) {
-            val id = dao.getLastId()
-            if (id != null) {
-                val news = safeApiCall { service.getNewer(id) }
-                emit(news.data ?: emptyList())
-            }
-            delay(DELAY)
-        }
-    }.catch { Timber.e("Error occurred while getting newer posts: ${it.getErrorMessage()}") }
-        .flowOn(Dispatchers.IO)
-
-    override suspend fun getAll(): NetworkResult<List<PostResponse>> =
-        safeApiCall { service.getAll() }
 
     override suspend fun getPostById(id: Long): NetworkResult<PostResponse> =
         safeApiCall { service.getPostById(id) }

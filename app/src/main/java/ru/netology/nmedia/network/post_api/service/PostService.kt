@@ -19,11 +19,20 @@ interface PostService {
     @POST("users/push-tokens")
     suspend fun savePushToken(token: PushToken): Response<Unit>
 
-    @GET("posts")
-    suspend fun getAll(): Response<List<PostResponse>>
+    @GET("posts/latest")
+    suspend fun getLatest(@Query("count") count: Int): Response<List<PostResponse>>
 
-    @GET("posts/{post_id}/newer")
-    suspend fun getNewer(@Path("post_id") id: Long): Response<List<PostResponse>>
+    @GET("posts/{post_id}/before")
+    suspend fun getBefore(
+        @Path("post_id") id: Long,
+        @Query("count") count: Int
+    ): Response<List<PostResponse>>
+
+    @GET("posts/{post_id}/after")
+    suspend fun getAfter(
+        @Path("post_id") id: Long,
+        @Query("count") count: Int
+    ): Response<List<PostResponse>>
 
     @Multipart
     @POST("media")

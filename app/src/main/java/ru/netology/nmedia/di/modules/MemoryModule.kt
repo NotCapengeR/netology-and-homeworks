@@ -13,6 +13,7 @@ import ru.netology.nmedia.database.PostDB
 import ru.netology.nmedia.database.PostDB.Companion.DB_NAME
 import ru.netology.nmedia.database.dao.DeletedPostDAO
 import ru.netology.nmedia.database.dao.PostDAO
+import ru.netology.nmedia.database.dao.PostRemoteKeyDao
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
 import ru.netology.nmedia.repository.RemotePostSource
@@ -50,6 +51,10 @@ class MemoryModule {
     @Provides
     @Singleton
     fun provideDeletedPostDAO(db: PostDB): DeletedPostDAO = db.getPostDeletedDao()
+
+    @Provides
+    @Singleton
+    fun provideRemotePostKeysDao(db: PostDB): PostRemoteKeyDao = db.getPostRemoteKeysDao()
 }
 
 @Module

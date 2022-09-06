@@ -45,5 +45,6 @@
     <string name="auth_confirm_pass">Подтвердите Пароль</string>
     <string name="auth_user_name">Введите Имя Пользователя</string>
     <string name="auth_authorization">Авторизация</string>
+    <string name="retry_loading">Повторить</string>
     <string name="google_play_unavailable">Google Play сервисы недоступны! Некоторые функции могут не работать!</string>
 </resources>

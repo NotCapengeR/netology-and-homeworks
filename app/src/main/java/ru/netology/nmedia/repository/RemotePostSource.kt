@@ -9,10 +9,6 @@ import ru.netology.nmedia.repository.dto.Photo
 
 interface RemotePostSource {
 
-    val latestPosts: Flow<List<PostResponse>>
-
-    suspend fun getAll(): NetworkResult<List<PostResponse>>
-
     suspend fun getPostById(id: Long): NetworkResult<PostResponse>
 
     suspend fun addPost(title: String, text: String, attachment: Attachment?): NetworkResult<PostResponse>

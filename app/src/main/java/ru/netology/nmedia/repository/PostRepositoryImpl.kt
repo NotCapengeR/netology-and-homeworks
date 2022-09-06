@@ -2,6 +2,7 @@ package ru.netology.nmedia.repository
 
 import android.content.SharedPreferences
 import android.database.sqlite.SQLiteConstraintException
+import androidx.paging.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -13,7 +14,6 @@ import ru.netology.nmedia.database.entities.DeletedPostEntity
 import ru.netology.nmedia.database.entities.PostEntity
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.network.results.NetworkResult
-import ru.netology.nmedia.network.results.NetworkResult.Companion.RESPONSE_CODE_OK
 import ru.netology.nmedia.repository.auth.AuthManager.Companion.ID_KEY
 import ru.netology.nmedia.repository.dto.Attachment
 import ru.netology.nmedia.repository.dto.Photo
@@ -32,22 +32,29 @@ class PostRepositoryImpl @Inject constructor(
     private val dao: PostDAO,
     private val deletedDAO: DeletedPostDAO,
     private val source: RemotePostSource,
+    mediator: PostRemoteMediator
 ) : PostRepository, SyncHelper {
 
-    override val latestPosts: Flow<List<PostResponse>> = source.latestPosts.map { latest ->
-        latest.filter { post ->
-            dao.getPostById(post.id) == null
+    @OptIn(ExperimentalPagingApi::class)
+    override val posts: Flow<PagingData<Post>> = Pager(
+        config = PagingConfig(
+            pageSize = Post.PAGE_SIZE,
+            enablePlaceholders = false,
+            prefetchDistance = 7,
+            maxSize = Post.MAX_SIZE,
+        ),
+        pagingSourceFactory = dao::pagingSource,
+        remoteMediator = mediator
+    ).flow.map { data ->
+        data.map { entity ->
+            Post.parser(entity)!!
+        }.map { post ->
+            post.copy(isOwner = post.authorId == getAuthId())
         }
-    }.catch { Timber.e("Error occurred while parsing newer posts: ${it.getErrorMessage()}") }
-        .flowOn(Dispatchers.IO)
+    }.flowOn(Dispatchers.IO)
 
-    override suspend fun insertLatest(latest: List<PostResponse>): List<PostEntity> {
-        return withContext(Dispatchers.IO) {
-            latest.map { post -> PostEntity.parser(post) }
-                .onEach { post ->
-                    dao.insertPost(post)
-                }
-        }
+    override suspend fun getDBSize(): Int {
+        return dao.getSize()
     }
 
     override suspend fun calculateDiffAndUpdate(local: PostEntity?, remote: PostResponse?) {
@@ -112,21 +119,6 @@ class PostRepositoryImpl @Inject constructor(
         return deletedDAO.getAllIds()
     }
 
-    override fun getAllPosts(): Flow<NetworkResult<List<PostResponse>>> = flow {
-        emit(NetworkResult.Loading())
-        emit(pingServer())
-    }.flowOn(Dispatchers.IO)
-
-    override suspend fun pingServer(): NetworkResult<List<PostResponse>> {
-        return source.getAll().also { result ->
-            if (result is NetworkResult.Success && result.code == RESPONSE_CODE_OK) {
-                syncDB(
-                    serverData = result.data.associateBy { response -> response.id },
-                    localData = dao.getAllAsList().associateBy { entity -> entity.id }
-                )
-            }
-        }
-    }
 
     override fun getPostsFromDB(): Flow<List<Post>> = dao.getAll()
         .map { Mapper.mapEntitiesToPosts(it) }

@@ -16,5 +16,5 @@ interface SyncHelper {
         remote: PostResponse?
     )
 
-    suspend fun pingServer(): NetworkResult<List<PostResponse>>
+    //suspend fun pingServer(): NetworkResult<List<PostResponse>>
 }

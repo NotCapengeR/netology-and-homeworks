@@ -1,5 +1,6 @@
 package ru.netology.nmedia.database.dao
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -14,13 +15,28 @@ import java.time.OffsetDateTime
 @Dao
 interface PostDAO {
 
-    @Query("SELECT * FROM posts WHERE post_id > 0 ORDER BY post_id ASC")
+    @Query("SELECT * FROM posts WHERE post_id > 0 ORDER BY post_id DESC")
     fun getAll(): Flow<List<PostEntity>>
 
-    @Query("SELECT post_id FROM posts ORDER BY post_id DESC LIMIT 1")
+    @Query("SELECT COUNT(*) FROM POSTS")
+    suspend fun getSize(): Int
+
+    @Query("DELETE FROM posts")
+    suspend fun removeAll()
+
+    @Query("SELECT MAX(post_id) FROM posts")
+    suspend fun max(): Long?
+
+    @Query("SELECT MIN(post_id) FROM posts")
+    suspend fun min(): Long?
+
+    @Query("SELECT * FROM posts WHERE post_id > 0 ORDER BY post_id DESC")
+    fun pagingSource(): PagingSource<Int, PostEntity>
+
+    @Query("SELECT post_id FROM posts ORDER BY post_id ASC LIMIT 1")
     suspend fun getLastId(): Long?
 
-    @Query("SELECT * FROM posts WHERE post_id > 0 ORDER BY post_id ASC")
+    @Query("SELECT * FROM posts WHERE post_id > 0 ORDER BY post_id DESC")
     suspend fun getAllAsList(): List<PostEntity>
 
     @Query("SELECT * FROM posts WHERE post_id = :id LIMIT 1")
@@ -101,6 +117,9 @@ interface PostDAO {
 
     @Insert(onConflict = REPLACE)
     suspend fun insertAll(vararg posts: PostEntity)
+
+    @Insert(onConflict = REPLACE)
+    suspend fun insertAll(posts: List<PostEntity>)
 
     @Insert(onConflict = REPLACE)
     suspend fun insertPost(post: PostEntity)
