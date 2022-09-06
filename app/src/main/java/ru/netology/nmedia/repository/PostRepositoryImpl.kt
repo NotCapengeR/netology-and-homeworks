@@ -91,26 +91,10 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun syncDB(
-        serverData: Map<Long, PostResponse>,
-        localData: Map<Long, PostEntity>
-    ) {
+    override suspend fun syncDB() {
         deletedDAO.getAllIds().forEach { id ->
             source.deletePostById(id).also { isSuccess ->
                 if (isSuccess) deletedDAO.removeFromDeleted(id)
-            }
-        }
-        serverData.keys.forEach { id ->
-            if (!localData.containsKey(id)) {
-                dao.insertPost(PostEntity.parser(serverData[id]!!))
-            }
-        }
-        localData.keys.forEach { id ->
-            if (!serverData.containsKey(id)) {
-                dao.deletePostById(id)
-                deletedDAO.removeFromDeleted(id)
-            } else {
-                calculateDiffAndUpdate(localData[id], serverData[id])
             }
         }
     }

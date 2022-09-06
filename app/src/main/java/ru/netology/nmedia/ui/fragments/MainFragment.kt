@@ -14,13 +14,10 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.fragment_main.*
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentMainBinding
-import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.ui.adapter.PagingLoadStateAdapter
 import ru.netology.nmedia.ui.adapter.PostAdapter
 import ru.netology.nmedia.ui.adapter.PostListener
@@ -30,7 +27,6 @@ import ru.netology.nmedia.ui.fragments.login.LoginFragment
 import ru.netology.nmedia.ui.viewmodels.ViewModelFactory
 import ru.netology.nmedia.utils.getAppComponent
 import ru.netology.nmedia.utils.setDebouncedListener
-import ru.netology.nmedia.utils.setVisibility
 import javax.inject.Inject
 
 class MainFragment : BaseFragment<FragmentMainBinding>() {

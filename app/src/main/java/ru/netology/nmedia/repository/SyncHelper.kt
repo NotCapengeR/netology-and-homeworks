@@ -6,10 +6,7 @@ import ru.netology.nmedia.network.results.NetworkResult
 
 interface SyncHelper {
 
-    suspend fun syncDB(
-        serverData: Map<Long, PostResponse>,
-        localData: Map<Long, PostEntity>
-    )
+    suspend fun syncDB()
 
     suspend fun calculateDiffAndUpdate(
         local: PostEntity?,
