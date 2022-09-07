@@ -30,7 +30,7 @@ interface PostDAO {
     @Query("SELECT MIN(post_id) FROM posts")
     suspend fun min(): Long?
 
-    @Query("SELECT * FROM posts ORDER BY post_id DESC LIMIT 300")
+    @Query("SELECT * FROM posts ORDER BY post_id DESC")
     fun pagingSource(): PagingSource<Int, PostEntity>
 
     @Query("SELECT post_id FROM posts ORDER BY post_id ASC LIMIT 1")
