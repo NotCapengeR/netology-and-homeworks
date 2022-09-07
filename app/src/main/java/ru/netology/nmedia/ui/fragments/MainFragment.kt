@@ -29,6 +29,7 @@ import ru.netology.nmedia.ui.fragments.login.LoginFragment
 import ru.netology.nmedia.ui.viewmodels.ViewModelFactory
 import ru.netology.nmedia.utils.getAppComponent
 import ru.netology.nmedia.utils.setDebouncedListener
+import timber.log.Timber
 import javax.inject.Inject
 
 class MainFragment : BaseFragment<FragmentMainBinding>() {

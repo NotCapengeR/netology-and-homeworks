@@ -40,7 +40,7 @@ class PostRemoteMediator @Inject constructor(
             val response = when (loadType) {
                 LoadType.REFRESH -> service.getLatest(state.config.initialLoadSize)
                 LoadType.PREPEND -> {
-                    val id = remoteKeyDao.max() ?: return MediatorResult.Success(
+                    val id = remoteKeyDao.getAfter() ?: return MediatorResult.Success(
                         endOfPaginationReached = false
                     )
                     service.getAfter(id, state.config.pageSize)
