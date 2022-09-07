@@ -2,12 +2,14 @@ package ru.netology.nmedia.ui.fragments.login
 
 import android.app.Activity
 import android.content.Context
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.edit
 import androidx.core.net.toFile
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
@@ -29,7 +31,10 @@ import javax.inject.Inject
 
 class LoginFragment : BaseFragment<LoginFragmentBinding>() {
 
-    @Inject lateinit var factory: ViewModelFactory
+    @Inject
+    lateinit var factory: ViewModelFactory
+    @Inject
+    lateinit var prefs: SharedPreferences
     private val args: LoginFragmentArgs by navArgs()
     private val viewModel: LoginViewModel by activityViewModels {
         factory
@@ -106,8 +111,12 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>() {
         }
         viewModel.isSuccess.observe(viewLifecycleOwner) {
             if (it) {
-                viewModel.clearData()
-                mainNavController?.navigateUp()
+                onBackPressed {
+                    viewModel.clearData()
+                    prefs.edit {
+                        putBoolean(LOGIN_REFRESH_KEY, true)
+                    }
+                }
             }
         }
         viewModel.isProgress.observe(viewLifecycleOwner) {
@@ -118,8 +127,15 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>() {
         }
         btnAuth.setDebouncedListener(100L) {
             when (args.loginFlag) {
-                LoginFlags.LOGIN -> viewModel.login(etLogin.text.toString(), etPassword.text.toString())
-                LoginFlags.SIGNUP -> viewModel.register(etLogin.text.toString(), etPassword.text.toString(), etName.text.toString())
+                LoginFlags.LOGIN -> viewModel.login(
+                    etLogin.text.toString(),
+                    etPassword.text.toString()
+                )
+                LoginFlags.SIGNUP -> viewModel.register(
+                    etLogin.text.toString(),
+                    etPassword.text.toString(),
+                    etName.text.toString()
+                )
             }
         }
     }
@@ -160,5 +176,9 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>() {
     @Parcelize
     enum class LoginFlags : Parcelable {
         LOGIN, SIGNUP
+    }
+
+    companion object {
+        const val LOGIN_REFRESH_KEY: String = "login_refresh_key"
     }
 }

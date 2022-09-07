@@ -3,17 +3,22 @@ package ru.netology.nmedia.ui.fragments
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.SystemClock
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.edit
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import androidx.paging.LoadState
+import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
@@ -31,35 +36,15 @@ import javax.inject.Inject
 
 class MainFragment : BaseFragment<FragmentMainBinding>() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    @Inject lateinit var viewModelFactory: ViewModelFactory
+    @Inject lateinit var prefs: SharedPreferences
     private var lastUpdateTime: Long = 0L
     private val args: MainFragmentArgs by navArgs()
     private val viewModel: PostViewModel by activityViewModels {
         viewModelFactory
     }
-    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentMainBinding
-        get() = FragmentMainBinding::inflate
-
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        getAppComponent().inject(this)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initView()
-    }
-
-
-    private fun initView() {
-        (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
-        mainNavController?.apply {
-            val appBarConfiguration = AppBarConfiguration(graph)
-            binding.toolbar.setupWithNavController(this, appBarConfiguration)
-        }
-        val adapter = PostAdapter(object : PostListener {
+    private val adapter: PostAdapter by lazy {
+        PostAdapter(object : PostListener {
 
             override fun onRemoved(id: Long) {
                 viewModel.removePost(id)
@@ -158,6 +143,28 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 )
             }
         })
+    }
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentMainBinding
+        get() = FragmentMainBinding::inflate
+
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        getAppComponent().inject(this)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initView()
+    }
+
+
+    private fun initView() {
+        (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
+        mainNavController?.apply {
+            val appBarConfiguration = AppBarConfiguration(graph)
+            binding.toolbar.setupWithNavController(this, appBarConfiguration)
+        }
         with(binding) {
             rcViewPost.layoutManager =
                 LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
@@ -198,6 +205,16 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 mainNavController?.navigate(R.id.action_mainFragment_to_addFragment)
             }
         }
+        prefs.getBoolean(LoginFragment.LOGIN_REFRESH_KEY, false).let { needRefresh ->
+            if (needRefresh) {
+                lifecycleScope.launch {
+                    adapter.refresh()
+                }
+                prefs.edit {
+                    putBoolean(LoginFragment.LOGIN_REFRESH_KEY, false)
+                }
+            }
+        }
         binding.refreshPostLayout.setOnRefreshListener(adapter::refresh)
         lifecycleScope.launchWhenCreated {
             viewModel.posts.collectLatest { posts ->
@@ -206,17 +223,18 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
         }
         lifecycleScope.launchWhenCreated {
             adapter.loadStateFlow.collectLatest { state ->
-                binding.refreshPostLayout.isRefreshing = state.refresh is LoadState.Loading
-                        || state.append is LoadState.Loading
-                        || state.prepend is LoadState.Loading
+                try {
+                    binding.refreshPostLayout.isRefreshing = state.refresh is LoadState.Loading
+                            || state.append is LoadState.Loading
+                            || state.prepend is LoadState.Loading
+                } catch (_: IllegalArgumentException) {
+
+                }
             }
         }
 
         viewModel.authData.observe(viewLifecycleOwner) { _ ->
             activity?.invalidateMenu()
-            lifecycleScope.launch {
-                adapter.refresh()
-            }
         }
     }
 
@@ -235,6 +253,9 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                         .setMessage(R.string.auth_are_sure)
                         .setPositiveButton(R.string.sign_out) { _, _ ->
                             viewModel.clearAuth()
+                            lifecycleScope.launch {
+                                adapter.refresh()
+                            }
                         }
                         .setNegativeButton(
                             com.github.dhaval2404.imagepicker.R.string.action_cancel,

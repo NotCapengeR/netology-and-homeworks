@@ -41,7 +41,7 @@ class PostRepositoryImpl @Inject constructor(
             pageSize = Post.PAGE_SIZE,
             enablePlaceholders = false,
             prefetchDistance = 7,
-            maxSize = Post.MAX_SIZE,
+            maxSize = Post.MAX_SIZE, //1149..1180 1129..1080 1109..1180
         ),
         pagingSourceFactory = dao::pagingSource,
         remoteMediator = mediator
