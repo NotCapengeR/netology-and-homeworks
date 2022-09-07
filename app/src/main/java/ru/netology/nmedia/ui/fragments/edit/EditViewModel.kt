@@ -10,6 +10,8 @@ import ru.netology.nmedia.R
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.ui.base.BaseViewModel
+import ru.netology.nmedia.utils.AndroidUtils.showToast
+import ru.netology.nmedia.utils.SingleLiveEvent
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -23,13 +25,19 @@ class EditViewModel @Inject constructor(
     }
     val isUpdating: MutableLiveData<Boolean> = MutableLiveData(false)
     val isLoaded: MutableLiveData<Boolean> = MutableLiveData(false)
+    val errorMsg: SingleLiveEvent<String> = SingleLiveEvent()
 
+
+    fun clearErrorMsg() {
+        errorMsg.call()
+    }
 
     fun removeLink(id: Long) {
         viewModelScope.launch {
             repository.removeLink(id)
         }
     }
+
 
     fun saveText(text: String) {
         post.value = post.value?.copy(text = text)
@@ -54,7 +62,7 @@ class EditViewModel @Inject constructor(
                     isLoaded.value = true
                     isLoaded.value = false
                 } else {
-                    showToast(R.string.error_problem_with_internet_connection)
+                    errorMsg.value = getString(R.string.error_problem_with_internet_connection)
                 }
             }
         }

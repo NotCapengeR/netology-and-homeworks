@@ -47,7 +47,6 @@ class PostRemoteMediator @Inject constructor(
             if (!response.isSuccessful || body == null) {
                 throw FailedHttpRequestException(response)
             }
-            Timber.d(body.size.toString())
             Timber.d(body.map { it.id }.toString())
 
             val isEnd = body.isEmpty()

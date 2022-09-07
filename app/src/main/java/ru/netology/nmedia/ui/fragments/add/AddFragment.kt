@@ -24,10 +24,7 @@ import ru.netology.nmedia.databinding.AddFragmentBinding
 import ru.netology.nmedia.repository.dto.Post.Companion.POST_DATE_PATTERN
 import ru.netology.nmedia.ui.base.BaseFragment
 import ru.netology.nmedia.ui.viewmodels.ViewModelFactory
-import ru.netology.nmedia.utils.checkIfNotEmpty
-import ru.netology.nmedia.utils.getAppComponent
-import ru.netology.nmedia.utils.setDebouncedListener
-import ru.netology.nmedia.utils.setVisibility
+import ru.netology.nmedia.utils.*
 import java.util.*
 import javax.inject.Inject
 
@@ -82,6 +79,12 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
             .centerCrop()
             .timeout(10_000)
             .into(ivPostAvatar)
+        viewModel.clearErrorMsg()
+        viewModel.errorMsg.observe(viewLifecycleOwner) { message ->
+            if (message != null && !message.isBlankOrEmpty()) {
+                showToast(message)
+            }
+        }
         viewModel.photo.observe(viewLifecycleOwner) { photo ->
             if (photo.uri != null) {
                 ivAttachment.setVisibility(true)

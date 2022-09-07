@@ -11,6 +11,7 @@ import ru.netology.nmedia.R
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.dto.Photo
 import ru.netology.nmedia.ui.base.BaseViewModel
+import ru.netology.nmedia.utils.SingleLiveEvent
 import java.io.File
 import javax.inject.Inject
 
@@ -23,6 +24,11 @@ class AddViewModel @Inject constructor(
     val photo: MutableLiveData<Photo> = MutableLiveData(Photo.NO_PHOTO)
     val isUpdating: MutableLiveData<Boolean> = MutableLiveData(false)
     val isLoaded: MutableLiveData<Boolean> = MutableLiveData(false)
+    val errorMsg: SingleLiveEvent<String> = SingleLiveEvent()
+
+    fun clearErrorMsg() {
+        errorMsg.call()
+    }
 
     fun setPhoto(file: File?, uri: Uri?) {
         photo.value = Photo(file, uri)
@@ -43,7 +49,7 @@ class AddViewModel @Inject constructor(
                             isLoaded.value = true
                             isLoaded.value = false
                         } else {
-                            showToast(R.string.error_problem_with_internet_connection)
+                            errorMsg.value = getString(R.string.error_problem_with_internet_connection)
                         }
                     }
                 }
@@ -55,7 +61,7 @@ class AddViewModel @Inject constructor(
                             isLoaded.value = true
                             isLoaded.value = false
                         } else {
-                            showToast(R.string.error_problem_with_internet_connection)
+                            errorMsg.value = getString(R.string.error_problem_with_internet_connection)
                         }
                     }
                 }

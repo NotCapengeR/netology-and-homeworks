@@ -25,6 +25,7 @@ import ru.netology.nmedia.databinding.LoginFragmentBinding
 import ru.netology.nmedia.ui.base.BaseFragment
 import ru.netology.nmedia.ui.viewmodels.ViewModelFactory
 import ru.netology.nmedia.utils.getAppComponent
+import ru.netology.nmedia.utils.isBlankOrEmpty
 import ru.netology.nmedia.utils.setDebouncedListener
 import ru.netology.nmedia.utils.setVisibility
 import javax.inject.Inject
@@ -33,6 +34,7 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>() {
 
     @Inject
     lateinit var factory: ViewModelFactory
+
     @Inject
     lateinit var prefs: SharedPreferences
     private val args: LoginFragmentArgs by navArgs()
@@ -71,6 +73,7 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>() {
             toolbar.setupWithNavController(this, appBarConfiguration)
         }
         viewModel.clearState()
+        viewModel.clearErrorMsg()
         btnAuth.text = args.loginFlag.name
         cardName.setVisibility(args.loginFlag == LoginFlags.SIGNUP)
         cardConfirmPass.setVisibility(args.loginFlag == LoginFlags.SIGNUP)
@@ -92,6 +95,11 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>() {
             }
             etConfirmPassword.doOnTextChanged { text, _, _, _ ->
                 viewModel.setConfirmPassword(text.toString(), args.loginFlag)
+            }
+        }
+        viewModel.errorMsg.observe(viewLifecycleOwner) { message ->
+            if (message != null && !message.isBlankOrEmpty()) {
+                showToast(message)
             }
         }
         viewModel.loginData.observe(viewLifecycleOwner) { login ->

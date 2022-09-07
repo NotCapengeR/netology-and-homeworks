@@ -53,6 +53,12 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
         if (id != viewModel.post.value?.id) {
             viewModel.loadPost(id)
         }
+        viewModel.clearErrorMsg()
+        viewModel.errorMsg.observe(viewLifecycleOwner) { message ->
+            if (message != null && !message.isBlankOrEmpty()) {
+                showToast(message)
+            }
+        }
 
         viewModel.post.observe(viewLifecycleOwner) { post ->
             if (post != null) {

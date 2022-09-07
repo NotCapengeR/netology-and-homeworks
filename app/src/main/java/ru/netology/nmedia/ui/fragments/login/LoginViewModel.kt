@@ -15,6 +15,8 @@ import ru.netology.nmedia.network.results.NetworkResult.Companion.RESPONSE_CODE_
 import ru.netology.nmedia.repository.auth.AuthRepository
 import ru.netology.nmedia.repository.dto.Photo
 import ru.netology.nmedia.ui.base.BaseViewModel
+import ru.netology.nmedia.utils.AndroidUtils.showToast
+import ru.netology.nmedia.utils.SingleLiveEvent
 import ru.netology.nmedia.utils.getErrorMessage
 import ru.netology.nmedia.utils.isBlankOrEmpty
 import ru.netology.nmedia.utils.isNotBlankOrEmpty
@@ -33,6 +35,11 @@ class LoginViewModel @Inject constructor(
     val isBtnEnabled: MutableLiveData<Boolean> = MutableLiveData(false)
     val isProgress: MutableLiveData<Boolean> = MutableLiveData(false)
     val loginData: MutableLiveData<LoginData> = MutableLiveData(LoginData.EMPTY_LOGIN)
+    val errorMsg: SingleLiveEvent<String> = SingleLiveEvent()
+
+    fun clearErrorMsg() {
+        errorMsg.call()
+    }
 
     fun setPhoto(file: File?, uri: Uri?) {
         loginData.value = loginData.value?.copy(avatar = Photo(file, uri))
@@ -45,7 +52,7 @@ class LoginViewModel @Inject constructor(
     fun login(login: String, password: String) {
         viewModelScope.launch {
             if (login.isBlankOrEmpty() || password.isBlankOrEmpty()) {
-                showToast(R.string.text_is_unfilled)
+                errorMsg.value = getString(R.string.text_is_unfilled)
                 return@launch
             }
             isProgress.value = true
@@ -66,7 +73,7 @@ class LoginViewModel @Inject constructor(
         }
         viewModelScope.launch {
             if (login.isBlankOrEmpty() || password.isBlankOrEmpty() || name.isBlankOrEmpty()) {
-                showToast(R.string.text_is_unfilled)
+                errorMsg.value = getString(R.string.text_is_unfilled)
                 return@launch
             }
             isProgress.value = true
@@ -84,7 +91,7 @@ class LoginViewModel @Inject constructor(
     private fun registerWithAvatar(login: String, password: String, name: String, avatar: Photo?) {
         viewModelScope.launch {
             if (login.isBlankOrEmpty() || password.isBlankOrEmpty() || name.isBlankOrEmpty()) {
-                showToast(R.string.text_is_unfilled)
+                errorMsg.value = getString(R.string.text_is_unfilled)
                 return@launch
             }
             isProgress.value = true
@@ -101,24 +108,22 @@ class LoginViewModel @Inject constructor(
 
     private fun handleError(error: Throwable?) {
         when (error) {
-            null -> showToast(R.string.error_unknown)
-            is SocketTimeoutException -> showToast(R.string.error_timed_out_from_response)
+            null -> errorMsg.value = getString(R.string.error_unknown)
+            is SocketTimeoutException -> errorMsg.value = getString(R.string.error_timed_out_from_response)
             is ConnectException -> {
-                showToast(R.string.error_no_internet_connection)
+                errorMsg.value = getString(R.string.error_no_internet_connection)
             }
-            is IOException -> showToast(R.string.error_problem_with_internet_connection)
+            is IOException -> errorMsg.value = getString(R.string.error_problem_with_internet_connection)
             is FailedHttpRequestException -> {
                 if (error.code() == RESPONSE_CODE_NOT_FOUND)
-                    showToast(R.string.error_user_not_found)
+                    errorMsg.value = getString(R.string.error_user_not_found)
                 else
-                    showToast(
-                        "Error: ${error.code()}: ${error.message()}"
-                    )
+                    errorMsg.value = "Error: ${error.code()}: ${error.message()}"
+
             }
-            is HttpException -> showToast(
-                "Error: ${error.code()}: ${error.message()}"
-            )
-            else -> showToast(error.getErrorMessage())
+            is HttpException -> errorMsg.value = "Error: ${error.code()}: ${error.message()}"
+
+            else -> errorMsg.value = error.getErrorMessage()
         }
     }
 
