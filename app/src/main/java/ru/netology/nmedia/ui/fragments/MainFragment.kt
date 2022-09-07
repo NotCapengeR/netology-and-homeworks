@@ -15,10 +15,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import androidx.paging.LoadState
-import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
@@ -215,6 +212,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                 }
             }
         }
+
         binding.refreshPostLayout.setOnRefreshListener(adapter::refresh)
         lifecycleScope.launchWhenCreated {
             viewModel.posts.collectLatest { posts ->
@@ -233,7 +231,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
             }
         }
 
-        viewModel.authData.observe(viewLifecycleOwner) { _ ->
+        viewModel.authData.observe(viewLifecycleOwner) {
             activity?.invalidateMenu()
         }
     }

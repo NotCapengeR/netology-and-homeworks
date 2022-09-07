@@ -30,7 +30,7 @@ interface PostDAO {
     @Query("SELECT MIN(post_id) FROM posts")
     suspend fun min(): Long?
 
-    @Query("SELECT * FROM posts ORDER BY post_id DESC")
+    @Query("SELECT * FROM posts ORDER BY post_id DESC LIMIT 300")
     fun pagingSource(): PagingSource<Int, PostEntity>
 
     @Query("SELECT post_id FROM posts ORDER BY post_id ASC LIMIT 1")
@@ -105,6 +105,9 @@ interface PostDAO {
 
     @Query("UPDATE posts SET likes_count = likes_count + 1, is_liked = 1 WHERE post_id = :id")
     suspend fun likePostById(id: Long): Int
+
+    @Query("UPDATE posts SET likes_count = :newCount, is_liked = :isLiked WHERE post_id = :id")
+    suspend fun setLikes(id: Long, newCount: Int, isLiked: Boolean): Int
 
     @Query("UPDATE posts SET likes_count = likes_count - 1, is_liked = 0 WHERE post_id = :id")
     suspend fun dislikePostById(id: Long): Int

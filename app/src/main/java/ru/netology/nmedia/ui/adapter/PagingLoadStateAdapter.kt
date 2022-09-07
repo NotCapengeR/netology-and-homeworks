@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.LoadState
 import androidx.paging.LoadStateAdapter
-import ru.netology.nmedia.databinding.LoadStateBinding
+import ru.netology.nmedia.databinding.PostLoadStateDownBinding
 import ru.netology.nmedia.ui.base.ItemViewHolder
 import ru.netology.nmedia.utils.setDebouncedListener
 import ru.netology.nmedia.utils.setVisibility
@@ -16,7 +16,7 @@ class PagingLoadStateAdapter(
 ): LoadStateAdapter<PagingLoadStateAdapter.PostPagingViewHolder>()  {
 
     inner class PostPagingViewHolder(
-        private val binding: LoadStateBinding
+        private val binding: PostLoadStateDownBinding
     ): ItemViewHolder<LoadState>(binding.root) {
 
         override fun bind(item: LoadState) = with(binding) {
@@ -35,7 +35,7 @@ class PagingLoadStateAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, loadState: LoadState): PostPagingViewHolder {
         return PostPagingViewHolder(
-            LoadStateBinding.inflate(
+            PostLoadStateDownBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false)

@@ -33,7 +33,7 @@ class PostRepositoryImpl @Inject constructor(
     private val deletedDAO: DeletedPostDAO,
     private val source: RemotePostSource,
     mediator: PostRemoteMediator
-) : PostRepository, SyncHelper {
+) : PostRepository {
 
     @OptIn(ExperimentalPagingApi::class)
     override val posts: Flow<PagingData<Post>> = Pager(
@@ -57,47 +57,7 @@ class PostRepositoryImpl @Inject constructor(
         return dao.getSize()
     }
 
-    override suspend fun calculateDiffAndUpdate(local: PostEntity?, remote: PostResponse?) {
-        if (local == null || remote == null || local.id != remote.id) return
-        if (local.likes != remote.likes) {
-            if ((local.likes - remote.likes == 1 || local.likes - remote.likes == -1) &&
-                local.isLiked != remote.isLiked
-            ) {
-                source.likeById(local.id)
-            } else {
-                dao.updateLikesCount(local.id, remote.likes)
-            }
-        }
 
-        if (local.text != remote.text) {
-            dao.updateText(local.id, remote.text)
-        }
-        if (local.title != remote.title) {
-            dao.updateTitle(local.id, remote.title)
-        }
-        if (local.avatar != remote.avatar) {
-            dao.updateAvatar(local.id, remote.avatar)
-        }
-        if (local.attachment != remote.attachment) {
-            dao.updateAttachment(
-                local.id,
-                remote.attachment?.name,
-                remote.attachment?.description,
-                remote.attachment?.type
-            )
-        }
-        if (Mapper.parseStringToEpoch(local.date) != remote.date) {
-            dao.updateDate(local.id, Mapper.parseEpochToAbsolute(remote.date))
-        }
-    }
-
-    override suspend fun syncDB() {
-        deletedDAO.getAllIds().forEach { id ->
-            source.deletePostById(id).also { isSuccess ->
-                if (isSuccess) deletedDAO.removeFromDeleted(id)
-            }
-        }
-    }
 
     override suspend fun getDeletedPostsIds(): List<Long> {
         return deletedDAO.getAllIds()

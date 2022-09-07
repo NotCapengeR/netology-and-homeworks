@@ -17,8 +17,8 @@
         android:layout_width="wrap_content"
         android:backgroundTint="@color/purple_500"
         android:layout_height="wrap_content"
-        app:icon="@drawable/alert_circle"
+        app:icon="@drawable/arrow_down"
         android:layout_gravity="center"
-        android:text="@string/retry_loading"
+        android:text="@string/load_more"
         />
 </LinearLayout>
