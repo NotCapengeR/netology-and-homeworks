@@ -37,7 +37,11 @@ class PostRemoteMediator @Inject constructor(
         try {
             Timber.d(loadType.name)
             val response = when (loadType) {
-                LoadType.REFRESH -> service.getLatest(state.config.initialLoadSize)
+                LoadType.REFRESH -> {
+                    remoteKeyDao.getAfter()?.let { id ->
+                        service.getAfter(id, state.config.initialLoadSize)
+                    } ?: service.getLatest(state.config.initialLoadSize)
+                }
                 LoadType.PREPEND -> {
                     return MediatorResult.Success(endOfPaginationReached = true)
 //                    val id = remoteKeyDao.getAfter() ?: return MediatorResult.Success(
@@ -63,20 +67,13 @@ class PostRemoteMediator @Inject constructor(
             db.withTransaction {
                 when (loadType) {
                     LoadType.REFRESH -> {
-                        remoteKeyDao.removeAll()
                         remoteKeyDao.insert(
-                            listOf(
-                                PostRemoteKeyEntity(
-                                    type = PostRemoteKeyEntity.KeyType.AFTER,
-                                    id = body.first().id,
-                                ),
-                                PostRemoteKeyEntity(
-                                    type = PostRemoteKeyEntity.KeyType.BEFORE,
-                                    id = body.last().id,
-                                ),
+                            PostRemoteKeyEntity(
+                                type = PostRemoteKeyEntity.KeyType.AFTER,
+                                id = body.first().id,
                             )
                         )
-                        dao.removeAll()
+                        //dao.removeAll()
                     }
                     LoadType.PREPEND -> {
                         if (!isEnd) {
@@ -143,7 +140,7 @@ class PostRemoteMediator @Inject constructor(
     override suspend fun calculateDiffAndUpdate(local: PostEntity?, remote: PostResponse?) {
         if (local == null || remote == null || local.id != remote.id) return
         if (local.likes != remote.likes) {
-            if (((local.likes - remote.likes).absoluteValue == 1  && local.isLiked != remote.isLiked)) {
+            if (((local.likes - remote.likes).absoluteValue == 1 && local.isLiked != remote.isLiked)) {
                 source.likeById(local.id).let { result ->
                     result.data?.let { response ->
                         dao.setLikes(response.id, response.likes, response.isLiked)
