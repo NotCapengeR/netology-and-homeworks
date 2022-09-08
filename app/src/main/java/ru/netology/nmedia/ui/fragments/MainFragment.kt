@@ -16,6 +16,8 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
@@ -29,13 +31,16 @@ import ru.netology.nmedia.ui.fragments.login.LoginFragment
 import ru.netology.nmedia.ui.viewmodels.ViewModelFactory
 import ru.netology.nmedia.utils.getAppComponent
 import ru.netology.nmedia.utils.setDebouncedListener
+import ru.netology.nmedia.utils.setVisibility
 import timber.log.Timber
 import javax.inject.Inject
 
 class MainFragment : BaseFragment<FragmentMainBinding>() {
 
-    @Inject lateinit var viewModelFactory: ViewModelFactory
-    @Inject lateinit var prefs: SharedPreferences
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+    @Inject
+    lateinit var prefs: SharedPreferences
     private var lastUpdateTime: Long = 0L
     private val args: MainFragmentArgs by navArgs()
     private val viewModel: PostViewModel by activityViewModels {
@@ -216,16 +221,14 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
 
         binding.refreshPostLayout.setOnRefreshListener(adapter::refresh)
         lifecycleScope.launchWhenCreated {
-            viewModel.posts.collectLatest { posts ->
-                adapter.submitData(posts)
-            }
+            viewModel.posts.collectLatest(adapter::submitData)
         }
         lifecycleScope.launchWhenCreated {
             adapter.loadStateFlow.collectLatest { state ->
                 try {
-                    binding.refreshPostLayout.isRefreshing = state.refresh is LoadState.Loading
-                            || state.append is LoadState.Loading
-                            || state.prepend is LoadState.Loading
+                    binding.apply {
+                        refreshPostLayout.isRefreshing = state.refresh is LoadState.Loading
+                    }
                 } catch (_: IllegalArgumentException) {
 
                 }

@@ -14,7 +14,6 @@ import ru.netology.nmedia.database.entities.PostRemoteKeyEntity
 import ru.netology.nmedia.network.exceptions.FailedHttpRequestException
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.network.post_api.service.PostService
-import ru.netology.nmedia.utils.Mapper
 import ru.netology.nmedia.utils.getErrorMessage
 import timber.log.Timber
 import javax.inject.Inject
@@ -40,10 +39,11 @@ class PostRemoteMediator @Inject constructor(
             val response = when (loadType) {
                 LoadType.REFRESH -> service.getLatest(state.config.initialLoadSize)
                 LoadType.PREPEND -> {
-                    val id = remoteKeyDao.getAfter() ?: return MediatorResult.Success(
-                        endOfPaginationReached = false
-                    )
-                    service.getAfter(id, state.config.pageSize)
+                    return MediatorResult.Success(endOfPaginationReached = true)
+//                    val id = remoteKeyDao.getAfter() ?: return MediatorResult.Success(
+//                        endOfPaginationReached = false
+//                    )
+//                    service.getAfter(id, state.config.pageSize)
                 }
                 LoadType.APPEND -> {
                     val id = remoteKeyDao.getBefore() ?: return MediatorResult.Success(
