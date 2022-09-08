@@ -39,9 +39,8 @@ class PostRepositoryImpl @Inject constructor(
     override val posts: Flow<PagingData<Post>> = Pager(
         config = PagingConfig(
             pageSize = Post.PAGE_SIZE,
-            enablePlaceholders = false,
             prefetchDistance = 7,
-            maxSize = Post.MAX_SIZE, //1149..1180 1129..1080 1109..1180
+            maxSize = Post.MAX_SIZE,
         ),
         pagingSourceFactory = dao::pagingSource,
         remoteMediator = mediator
