@@ -38,8 +38,9 @@ class PostRemoteMediator @Inject constructor(
             Timber.d(loadType.name)
             val response = when (loadType) {
                 LoadType.REFRESH -> {
-                    val id = remoteKeyDao.getAfter() ?: return MediatorResult.Success(endOfPaginationReached = false)
-                    service.getAfter(id, state.config.initialLoadSize)
+                    remoteKeyDao.getAfter()?.let { id ->
+                        service.getAfter(id, state.config.initialLoadSize)
+                    } ?: service.getLatest(state.config.initialLoadSize)
                 }
                 LoadType.PREPEND -> {
                     return MediatorResult.Success(endOfPaginationReached = true)
@@ -67,10 +68,10 @@ class PostRemoteMediator @Inject constructor(
                 when (loadType) {
                     LoadType.REFRESH -> {
                         remoteKeyDao.insert(
-                                PostRemoteKeyEntity(
-                                    type = PostRemoteKeyEntity.KeyType.AFTER,
-                                    id = body.first().id,
-                                )
+                            PostRemoteKeyEntity(
+                                type = PostRemoteKeyEntity.KeyType.AFTER,
+                                id = body.first().id,
+                            )
                         )
                         //dao.removeAll()
                     }
@@ -139,7 +140,7 @@ class PostRemoteMediator @Inject constructor(
     override suspend fun calculateDiffAndUpdate(local: PostEntity?, remote: PostResponse?) {
         if (local == null || remote == null || local.id != remote.id) return
         if (local.likes != remote.likes) {
-            if (((local.likes - remote.likes).absoluteValue == 1  && local.isLiked != remote.isLiked)) {
+            if (((local.likes - remote.likes).absoluteValue == 1 && local.isLiked != remote.isLiked)) {
                 source.likeById(local.id).let { result ->
                     result.data?.let { response ->
                         dao.setLikes(response.id, response.likes, response.isLiked)
