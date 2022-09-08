@@ -37,7 +37,10 @@ class PostRemoteMediator @Inject constructor(
         try {
             Timber.d(loadType.name)
             val response = when (loadType) {
-                LoadType.REFRESH -> service.getLatest(state.config.initialLoadSize)
+                LoadType.REFRESH -> {
+                    val id = remoteKeyDao.getAfter() ?: return MediatorResult.Success(endOfPaginationReached = false)
+                    service.getAfter(id, state.config.initialLoadSize)
+                }
                 LoadType.PREPEND -> {
                     return MediatorResult.Success(endOfPaginationReached = true)
 //                    val id = remoteKeyDao.getAfter() ?: return MediatorResult.Success(
@@ -63,20 +66,13 @@ class PostRemoteMediator @Inject constructor(
             db.withTransaction {
                 when (loadType) {
                     LoadType.REFRESH -> {
-                        remoteKeyDao.removeAll()
                         remoteKeyDao.insert(
-                            listOf(
                                 PostRemoteKeyEntity(
                                     type = PostRemoteKeyEntity.KeyType.AFTER,
                                     id = body.first().id,
-                                ),
-                                PostRemoteKeyEntity(
-                                    type = PostRemoteKeyEntity.KeyType.BEFORE,
-                                    id = body.last().id,
-                                ),
-                            )
+                                )
                         )
-                        dao.removeAll()
+                        //dao.removeAll()
                     }
                     LoadType.PREPEND -> {
                         if (!isEnd) {

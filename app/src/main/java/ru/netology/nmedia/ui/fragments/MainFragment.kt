@@ -18,6 +18,7 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_main.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
@@ -39,6 +40,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
     @Inject
     lateinit var prefs: SharedPreferences
     private var lastUpdateTime: Long = 0L
@@ -226,8 +228,15 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
         lifecycleScope.launchWhenCreated {
             adapter.loadStateFlow.collectLatest { state ->
                 try {
+                    val isLoading = state.refresh is LoadState.Loading
                     binding.apply {
-                        refreshPostLayout.isRefreshing = state.refresh is LoadState.Loading
+                        refreshPostLayout.isRefreshing = isLoading
+                        if (isLoading) {
+                            lifecycleScope.launch {
+                                delay(500L)
+                                rcViewPost.smoothScrollToPosition(0)
+                            }
+                        }
                     }
                 } catch (_: IllegalArgumentException) {
 
