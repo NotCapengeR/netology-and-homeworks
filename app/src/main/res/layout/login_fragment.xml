@@ -55,116 +55,117 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
 
-            <com.google.android.material.card.MaterialCardView
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/card_login"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="60dp"
                 android:layout_marginStart="40dp"
                 android:layout_marginTop="60dp"
                 android:layout_marginEnd="40dp"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="4dp"
+                android:elevation="8dp"
+                android:hint="@string/auth_login"
+                app:boxStrokeColor="@color/black_overlay"
+                app:boxStrokeWidth="2dp"
+                app:errorEnabled="true"
+                app:errorTextColor="@color/red"
+                app:hintTextColor="@color/black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/btnAuth"
-                app:strokeColor="@color/black"
-                app:strokeWidth="2dp">
+                app:layout_constraintTop_toBottomOf="@id/btnAuth">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etLogin"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:hint="@string/auth_login"
-                    android:singleLine="true"
+                    android:textSize="20sp"
                     android:textStyle="normal" />
 
-            </com.google.android.material.card.MaterialCardView>
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.card.MaterialCardView
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/card_name"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="60dp"
                 android:layout_marginStart="40dp"
                 android:layout_marginTop="30dp"
                 android:layout_marginEnd="40dp"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="4dp"
+                android:hint="@string/auth_user_name"
+                app:boxStrokeColor="@color/black_overlay"
+                app:boxStrokeWidth="2dp"
+                app:errorEnabled="true"
+                app:hintTextColor="@color/black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/card_login"
-                app:strokeColor="@color/black"
-                app:strokeWidth="2dp">
+                app:layout_constraintTop_toBottomOf="@id/card_login">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:hint="@string/auth_user_name"
                     android:singleLine="true"
+                    android:textSize="20sp"
                     android:textStyle="normal" />
 
-            </com.google.android.material.card.MaterialCardView>
+            </com.google.android.material.textfield.TextInputLayout>
 
 
-            <com.google.android.material.card.MaterialCardView
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/card_password"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="60dp"
                 android:layout_marginStart="40dp"
                 android:layout_marginTop="30dp"
                 android:layout_marginEnd="40dp"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="4dp"
+                android:hint="@string/auth_pass"
+                app:boxStrokeColor="@color/black_overlay"
+                app:boxStrokeWidth="2dp"
+                app:errorEnabled="true"
+                app:hintTextColor="@color/black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/card_name"
-                app:strokeColor="@color/black"
-                app:strokeWidth="2dp">
+                app:layout_constraintTop_toBottomOf="@id/card_name">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:hint="@string/auth_pass"
                     android:inputType="textPassword"
                     android:singleLine="true"
+                    android:textSize="20sp"
                     android:textStyle="normal" />
 
-            </com.google.android.material.card.MaterialCardView>
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.card.MaterialCardView
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/card_confirm_pass"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="60dp"
                 android:layout_marginStart="40dp"
                 android:layout_marginTop="30dp"
                 android:layout_marginEnd="40dp"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="4dp"
+                android:hint="@string/auth_confirm_pass"
+                app:boxStrokeColor="@color/black_overlay"
+                app:boxStrokeWidth="2dp"
+                app:errorEnabled="true"
+                app:hintTextColor="@color/black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/card_password"
-                app:strokeColor="@color/black"
-                app:strokeWidth="2dp">
+                app:layout_constraintTop_toBottomOf="@id/card_password">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etConfirmPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:hint="@string/auth_confirm_pass"
                     android:inputType="textPassword"
                     android:singleLine="true"
+                    android:textSize="20sp"
                     android:textStyle="normal" />
 
-            </com.google.android.material.card.MaterialCardView>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivAvatar"

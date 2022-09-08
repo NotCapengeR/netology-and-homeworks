@@ -98,9 +98,11 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>() {
             }
         }
         viewModel.errorMsg.observe(viewLifecycleOwner) { message ->
-            if (message != null && !message.isBlankOrEmpty()) {
-                showToast(message)
-            }
+            cardLogin.error = message
+            cardName.error = message
+            cardPassword.error = message
+            cardConfirmPass.error = message
+            cardLogin.hint = message ?: getString(R.string.auth_login)
         }
         viewModel.loginData.observe(viewLifecycleOwner) { login ->
             login.avatar?.uri?.let { avatarUri ->
