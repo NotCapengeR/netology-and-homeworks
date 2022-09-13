@@ -16,8 +16,6 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
@@ -31,8 +29,6 @@ import ru.netology.nmedia.ui.fragments.login.LoginFragment
 import ru.netology.nmedia.ui.viewmodels.ViewModelFactory
 import ru.netology.nmedia.utils.getAppComponent
 import ru.netology.nmedia.utils.setDebouncedListener
-import ru.netology.nmedia.utils.setVisibility
-import timber.log.Timber
 import javax.inject.Inject
 
 class MainFragment : BaseFragment<FragmentMainBinding>() {
@@ -85,7 +81,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                                 )
                             }
                             .setNeutralButton(
-                                com.github.dhaval2404.imagepicker.R.string.action_cancel,
+                                R.string.cancel,
                                 null
                             )
                             .setIcon(R.drawable.ic_netology)
@@ -197,7 +193,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                                 )
                             }
                             .setNeutralButton(
-                                com.github.dhaval2404.imagepicker.R.string.action_cancel,
+                                R.string.cancel,
                                 null
                             )
                             .setIcon(R.drawable.ic_netology)
@@ -260,7 +256,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
                             }
                         }
                         .setNegativeButton(
-                            com.github.dhaval2404.imagepicker.R.string.action_cancel,
+                            R.string.cancel,
                             null
                         )
                         .setIcon(R.drawable.ic_netology)

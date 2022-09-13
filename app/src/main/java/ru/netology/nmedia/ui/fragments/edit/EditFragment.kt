@@ -127,7 +127,7 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
         }
         ivLikes.setDebouncedListener(50L) {
             saveState()
-            viewModel.likePost(it.tag as Long)
+            viewModel.likePost(it.tag as Long, tvPostText.text.toString())
         }
         ivShare.setDebouncedListener(50L) {
             saveState()

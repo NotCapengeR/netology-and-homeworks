@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Build
 import android.text.Html
@@ -14,6 +15,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.StringRes
+import java.net.InetAddress
 import java.util.regex.Pattern
 import kotlin.math.roundToInt
 
@@ -100,6 +102,19 @@ object AndroidUtils {
         browserIntent.addCategory(Intent.CATEGORY_BROWSABLE)
         if (browserIntent.resolveActivity(packageManager) != null) {
             startActivity(browserIntent)
+        }
+    }
+
+    fun isNetworkConnected(context: Context): Boolean {
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        return cm.activeNetworkInfo != null && cm.activeNetworkInfo?.isConnected == true
+    }
+
+    fun isInternetAvailable(): Boolean {
+        return try {
+            InetAddress.getByName("google.com").hostName.isNotBlankOrEmpty()
+        } catch (t: Throwable) {
+            false
         }
     }
 

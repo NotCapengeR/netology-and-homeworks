@@ -69,12 +69,12 @@ class EditViewModel @Inject constructor(
     }
 
 
-    fun likePost(id: Long) {
+    fun likePost(id: Long, text: String) {
         viewModelScope.launch {
             repository.likePost(id).also {
                 if (it) {
                     val newPost = getPostById(id) ?: return@also
-                    post.value = post.value?.copy(likes = newPost.likes, isLiked = newPost.isLiked)
+                    post.value = post.value?.copy(likes = newPost.likes, isLiked = newPost.isLiked, text = text)
                 }
             }
         }

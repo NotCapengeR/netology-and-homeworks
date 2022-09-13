@@ -5,22 +5,23 @@ import android.database.sqlite.SQLiteConstraintException
 import androidx.paging.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.netology.nmedia.database.dao.DeletedPostDAO
 import ru.netology.nmedia.database.dao.PostDAO
 import ru.netology.nmedia.database.entities.DeletedPostEntity
 import ru.netology.nmedia.database.entities.PostEntity
-import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.network.results.NetworkResult
 import ru.netology.nmedia.repository.auth.AuthManager.Companion.ID_KEY
-import ru.netology.nmedia.repository.dto.Attachment
-import ru.netology.nmedia.repository.dto.Photo
-import ru.netology.nmedia.repository.dto.Post
+import ru.netology.nmedia.repository.dto.*
 import ru.netology.nmedia.utils.Mapper
 import ru.netology.nmedia.utils.getErrorMessage
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -36,7 +37,7 @@ class PostRepositoryImpl @Inject constructor(
 ) : PostRepository {
 
     @OptIn(ExperimentalPagingApi::class)
-    override val posts: Flow<PagingData<Post>> = Pager(
+    override val posts: Flow<PagingData<PostAdapterEntity>> = Pager(
         config = PagingConfig(
             pageSize = Post.PAGE_SIZE,
             prefetchDistance = 7,
@@ -49,13 +50,31 @@ class PostRepositoryImpl @Inject constructor(
             Post.parser(entity)!!
         }.map { post ->
             post.copy(isOwner = post.authorId == getAuthId())
+        }.insertSeparators<Post, PostAdapterEntity> { before: Post?, after: Post? ->
+            if (before == null) {
+                if (after != null) {
+                    return@insertSeparators PostTimeSeparator(
+                        Mapper.parseEpochToSeparator(after.date)
+                    )
+                }
+                return@insertSeparators null
+            }
+            if (after == null) {
+                return@insertSeparators null
+            }
+            val diff = after.date - before.date
+            val needSeparator = TimeUnit.DAYS.convert(diff, TimeUnit.SECONDS) > 0
+            return@insertSeparators if (needSeparator) {
+                PostTimeSeparator(Mapper.parseEpochToSeparator(before.date))
+            } else {
+                null
+            }
         }
     }.flowOn(Dispatchers.IO)
 
     override suspend fun getDBSize(): Int {
         return dao.getSize()
     }
-
 
 
     override suspend fun getDeletedPostsIds(): List<Long> {

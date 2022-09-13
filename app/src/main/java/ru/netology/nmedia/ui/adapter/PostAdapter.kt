@@ -9,13 +9,17 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.PostItemBinding
+import ru.netology.nmedia.databinding.PostSeparatorBinding
 import ru.netology.nmedia.repository.dto.Attachment
 import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.repository.dto.Post.Companion.ATTACHMENTS_BASE_URL
 import ru.netology.nmedia.repository.dto.Post.Companion.AVATARS_BASE_URL
+import ru.netology.nmedia.repository.dto.PostAdapterEntity
+import ru.netology.nmedia.repository.dto.PostTimeSeparator
 import ru.netology.nmedia.ui.base.ItemViewHolder
 import ru.netology.nmedia.utils.Mapper
 import ru.netology.nmedia.utils.setDebouncedListener
@@ -47,7 +51,8 @@ interface PostListener {
 
 class PostAdapter(
     private val listener: PostListener
-) : PagingDataAdapter<Post, PostAdapter.PostViewHolder>(DiffUtilCallback), View.OnClickListener {
+) : PagingDataAdapter<PostAdapterEntity, RecyclerView.ViewHolder>(DiffUtilCallback),
+    View.OnClickListener {
 
     override fun onClick(view: View) {
         val post = view.tag as Post
@@ -74,6 +79,14 @@ class PostAdapter(
 
             else -> {/* do nothing */
             }
+        }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return when (getItem(position)) {
+            is PostTimeSeparator -> SEPARATOR_TYPE
+            is Post -> POST_TYPE
+            null -> NULL_TYPE
         }
     }
 
@@ -171,19 +184,47 @@ class PostAdapter(
 
     }
 
+    inner class SeparatorViewHolder(private val binding: PostSeparatorBinding): ItemViewHolder<PostTimeSeparator>(binding.root) {
+        override fun bind(item: PostTimeSeparator) = with(binding) {
+            tvDateTime.text = item.time
+            progress.setVisibility(false)
+        }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostAdapter.PostViewHolder {
-        val binding =
-            PostItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return PostViewHolder(binding)
+        fun bindNull() = with(binding) {
+            progress.setVisibility(true)
+        }
     }
 
-    override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
-        holder.bind(getItem(position) ?: return)
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            POST_TYPE -> PostViewHolder(
+                PostItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            )
+            SEPARATOR_TYPE, NULL_TYPE -> {
+                SeparatorViewHolder(
+                    PostSeparatorBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                )
+            }
+            else -> throw IllegalArgumentException("Unknown view type given: $viewType")
+        }
+
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val item = getItem(position)
+        return when (val type = getItemViewType(position)) {
+            POST_TYPE -> (holder as PostViewHolder).bind(item as Post)
+            SEPARATOR_TYPE -> (holder as SeparatorViewHolder).bind(item as PostTimeSeparator)
+            NULL_TYPE -> (holder as SeparatorViewHolder).bindNull()
+            else -> {
+                Timber.d("Unknown view type given: $type")
+            }
+        }
     }
 
     override fun onBindViewHolder(
-        holder: PostViewHolder,
+        holder: RecyclerView.ViewHolder,
         position: Int,
         payloads: MutableList<Any?>
     ) {
@@ -192,36 +233,79 @@ class PostAdapter(
         }
 
         val payload = payloads.first() as List<*>
-        if (payload.contains(LIKES)) {
-            holder.bindLikes(getItem(position) ?: return super.onBindViewHolder(holder, position, payloads))
+        if (payload.contains(LIKES) && holder is PostViewHolder) {
+            holder.bindLikes(
+                getItem(position) as? Post ?: return super.onBindViewHolder(
+                    holder,
+                    position,
+                    payloads
+                )
+            )
         }
-        if (payload.contains(TEXT)) {
-            holder.bindText(getItem(position) ?: return super.onBindViewHolder(holder, position, payloads))
+        if (payload.contains(TEXT) && holder is PostViewHolder) {
+            holder.bindText(
+                getItem(position) as? Post ?: return super.onBindViewHolder(
+                    holder,
+                    position,
+                    payloads
+                )
+            )
+        }
+        if (payload.contains(SEPARATOR) && holder is SeparatorViewHolder) {
+            holder.bind(getItem(position) as? PostTimeSeparator ?: return super.onBindViewHolder(
+                holder,
+                position,
+                payloads
+            ))
         }
     }
 
 
-    private object DiffUtilCallback : DiffUtil.ItemCallback<Post>() {
-        override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean =
-            oldItem.id == newItem.id
+    private object DiffUtilCallback : DiffUtil.ItemCallback<PostAdapterEntity>() {
+        override fun areItemsTheSame(
+            oldItem: PostAdapterEntity,
+            newItem: PostAdapterEntity
+        ): Boolean {
+            val isSameSeparator = oldItem is PostTimeSeparator && newItem is PostTimeSeparator &&
+                    oldItem.time == newItem.time
+            val isSamePost = oldItem is Post && newItem is Post &&
+                    oldItem.id == newItem.id
+            return isSameSeparator || isSamePost
+        }
 
-        override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean =
+        override fun areContentsTheSame(
+            oldItem: PostAdapterEntity,
+            newItem: PostAdapterEntity
+        ): Boolean =
             oldItem == newItem
 
-        override fun getChangePayload(oldItem: Post, newItem: Post): List<Int> {
+        override fun getChangePayload(
+            oldItem: PostAdapterEntity,
+            newItem: PostAdapterEntity
+        ): List<Int> {
             val payloads: MutableList<Int> = mutableListOf()
-            if (newItem.likes != oldItem.likes) {
-                payloads.add(LIKES)
+            if (oldItem is PostTimeSeparator || newItem is PostTimeSeparator) {
+                if (oldItem is PostTimeSeparator && newItem is PostTimeSeparator) {
+                    payloads.add(SEPARATOR)
+                    return payloads
+                }
+                return emptyList()
+            } else {
+                if ((newItem as Post).likes != (oldItem as Post).likes) {
+                    payloads.add(LIKES)
+                }
+                if (newItem.text != oldItem.text) {
+                    payloads.add(TEXT)
+                }
+                if (oldItem.date != newItem.date) {
+                    payloads.add(DATE)
+                }
+                return payloads
             }
-            if (newItem.text != oldItem.text) {
-                payloads.add(TEXT)
-            }
-            if (oldItem.date != newItem.date) {
-                DATE
-            }
-            return payloads
         }
     }
+
+    fun getItemByPosition(position: Int): PostAdapterEntity? = getItem(position)
 
     private companion object {
         private const val REMOVE_ID: Int = 1
@@ -230,6 +314,11 @@ class PostAdapter(
         private const val LIKES: Int = 0
         private const val TEXT: Int = 1
         private const val DATE: Int = 2
+        private const val SEPARATOR: Int = 3
+
+        private const val SEPARATOR_TYPE: Int = 2
+        private const val POST_TYPE: Int = 1
+        private const val NULL_TYPE: Int = 0
     }
 }
 

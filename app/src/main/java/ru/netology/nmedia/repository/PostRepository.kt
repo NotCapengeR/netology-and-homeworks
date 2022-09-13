@@ -8,10 +8,11 @@ import ru.netology.nmedia.network.results.NetworkResult
 import ru.netology.nmedia.repository.dto.Attachment
 import ru.netology.nmedia.repository.dto.Photo
 import ru.netology.nmedia.repository.dto.Post
+import ru.netology.nmedia.repository.dto.PostAdapterEntity
 
 interface PostRepository {
 
-    val posts: Flow<PagingData<Post>>
+    val posts: Flow<PagingData<PostAdapterEntity>>
 
     suspend fun getDBSize(): Int
 

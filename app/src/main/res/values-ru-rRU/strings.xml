@@ -47,5 +47,7 @@
     <string name="auth_authorization">Авторизация</string>
     <string name="load_more">Загрузить ещё</string>
     <string name="retry_loading">Повторить</string>
+    <string name="cancel">Отмена</string>
+    <string name="today">Сегодня</string>
     <string name="google_play_unavailable">Google Play сервисы недоступны! Некоторые функции могут не работать!</string>
 </resources>

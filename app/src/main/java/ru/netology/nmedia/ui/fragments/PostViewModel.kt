@@ -13,6 +13,7 @@ import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.auth.AuthData
 import ru.netology.nmedia.repository.auth.AuthManager
 import ru.netology.nmedia.repository.dto.Post
+import ru.netology.nmedia.repository.dto.PostAdapterEntity
 import ru.netology.nmedia.ui.base.BaseViewModel
 import javax.inject.Inject
 
@@ -22,7 +23,7 @@ class PostViewModel @Inject constructor(
     private val repository: PostRepository
 ) : BaseViewModel(application) {
 
-    val posts: Flow<PagingData<Post>> = repository.posts.cachedIn(viewModelScope)
+    val posts: Flow<PagingData<PostAdapterEntity>> = repository.posts.cachedIn(viewModelScope)
     val authData: LiveData<AuthData> =
         authManager.authData.asLiveData(Dispatchers.Default)
 

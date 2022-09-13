@@ -6,6 +6,8 @@ import ru.netology.nmedia.database.entities.PostEntity
 import ru.netology.nmedia.network.post_api.dto.PostResponse
 import ru.netology.nmedia.utils.Mapper
 
+sealed interface PostAdapterEntity
+
 @Parcelize
 data class Post(
     val id: Long,
@@ -22,7 +24,7 @@ data class Post(
     val video: YouTubeVideoData? = null,
     val attachment: Attachment? = null,
     var isOwner: Boolean = false
-) : Parcelable {
+) : Parcelable, PostAdapterEntity {
 
     companion object {
         const val POST_ID: String = "post_id"
@@ -86,3 +88,6 @@ data class Post(
         }
     }
 }
+
+@Parcelize
+data class PostTimeSeparator(val time: String): Parcelable, PostAdapterEntity

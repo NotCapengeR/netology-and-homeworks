@@ -11,6 +11,7 @@ import java.util.*
 
 object Mapper {
     private val SIMPLE_POST_FORMAT = SimpleDateFormat("d MMMM yyyy, HH:mm")
+    private val SEPARATOR_POST_FORMAT = SimpleDateFormat("d MMMM yyyy")
     private val ABSOLUTE_POST_FORMAT = SimpleDateFormat("dd-MM-yyyy, HH:mm:ss")
     val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern(Post.POST_DATE_ABSOLUTE)
 
@@ -19,6 +20,10 @@ object Mapper {
             data = entities.map { PostResponse.parser(it) },
             code = RESPONSE_CODE_OK
         )
+    }
+
+    fun parseEpochToSeparator(epoch: Long): String {
+        return SEPARATOR_POST_FORMAT.format(Date(epoch * 1000L))
     }
 
     fun parseEpochSeconds(epoch: Long): String {
