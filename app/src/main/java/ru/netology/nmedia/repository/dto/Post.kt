@@ -67,7 +67,7 @@ data class Post(
                 isLiked = entity.isLiked,
                 video = entity.video,
                 attachment = entity.attachment,
-                isOwner = false
+                isOwner = entity.isOwner
             )
         }
 
@@ -102,7 +102,7 @@ data class Post(
                 likes = response.likes,
                 isLiked = response.isLiked,
                 attachment = response.attachment,
-                isOwner = false
+                isOwner = response.isOwner
             )
         }
     }
