@@ -13,7 +13,8 @@ import ru.netology.nmedia.database.entities.PostRemoteKeyEntity
 @Database(
     entities = [PostEntity::class, DeletedPostEntity::class, PostRemoteKeyEntity::class],
     version = DB_VERSION,
-    exportSchema = true)
+    exportSchema = true
+)
 abstract class PostDB : RoomDatabase() {
 
     abstract fun getPostDao(): PostDAO
@@ -23,7 +24,7 @@ abstract class PostDB : RoomDatabase() {
     abstract fun getPostRemoteKeysDao(): PostRemoteKeyDao
 
     companion object {
-        const val DB_VERSION: Int = 9
+        const val DB_VERSION: Int = 10
         const val DB_NAME: String = "posts-database"
     }
 }

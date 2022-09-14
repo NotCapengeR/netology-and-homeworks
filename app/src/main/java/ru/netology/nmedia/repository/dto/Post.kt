@@ -71,6 +71,25 @@ data class Post(
             )
         }
 
+        fun parserNotNull(entity: PostEntity): Post {
+            return Post(
+                id = entity.id,
+                title = entity.title,
+                text = entity.text,
+                authorId = entity.authorId,
+                date = Mapper.parseStringToEpoch(entity.date),
+                avatar = entity.avatar,
+                likes = entity.likes,
+                comments = entity.comments,
+                shared = entity.shares,
+                views = entity.views,
+                isLiked = entity.isLiked,
+                video = entity.video,
+                attachment = entity.attachment,
+                isOwner = entity.isOwner
+            )
+        }
+
         fun parser(response: PostResponse?): Post? {
             if (response == null) return null
             return Post(

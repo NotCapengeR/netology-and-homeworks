@@ -19,7 +19,8 @@ data class PostResponse(
     @SerializedName("published") val date: Long,
     @SerializedName("likedByMe") val isLiked: Boolean,
     @SerializedName("likes") val likes: Int,
-    @SerializedName("attachment") val attachment: Attachment?
+    @SerializedName("attachment") val attachment: Attachment?,
+    @SerializedName("ownedByMe") val isOwner: Boolean
 ) : Parcelable {
 
     companion object {
@@ -32,7 +33,8 @@ data class PostResponse(
             date = 0L,
             isLiked = false,
             likes = 0,
-            attachment = null
+            attachment = null,
+            isOwner = false
         )
 
         fun parser(entity: PostEntity): PostResponse {
@@ -45,7 +47,8 @@ data class PostResponse(
                 date = OffsetDateTime.parse(entity.date, Mapper.formatter).toEpochSecond(),
                 isLiked = entity.isLiked,
                 likes = entity.likes,
-                attachment = entity.attachment
+                attachment = entity.attachment,
+                isOwner = entity.isOwner
             )
         }
 
@@ -59,7 +62,8 @@ data class PostResponse(
                 date = post.date,
                 isLiked = post.isLiked,
                 likes = post.likes,
-                attachment = post.attachment
+                attachment = post.attachment,
+                isOwner = post.isOwner
             )
         }
     }

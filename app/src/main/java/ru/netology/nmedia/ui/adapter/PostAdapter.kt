@@ -157,7 +157,9 @@ class PostAdapter(
             } else {
                 ivLikes.setIconResource(R.drawable.heart_outline)
             }
-            menuButton.setVisibility(item.isOwner)
+            menuButton.setVisibility(item.isOwner).also {
+                Timber.d("Item: ${item.isOwner}")
+            }
             ivLikes.isChecked = item.isLiked
             postItem.setDebouncedListener(50L, this@PostAdapter)
             ivLikes.setDebouncedListener(50L, this@PostAdapter)
@@ -182,9 +184,16 @@ class PostAdapter(
             tvPostText.text = post.text
         }
 
+        fun bindMenu(item: Post) = with(binding) {
+            menuButton.tag = item
+            menuButton.setVisibility(item.isOwner)
+            menuButton.setDebouncedListener(200L, this@PostAdapter)
+        }
+
     }
 
-    inner class SeparatorViewHolder(private val binding: PostSeparatorBinding): ItemViewHolder<PostTimeSeparator>(binding.root) {
+    inner class SeparatorViewHolder(private val binding: PostSeparatorBinding) :
+        ItemViewHolder<PostTimeSeparator>(binding.root) {
         override fun bind(item: PostTimeSeparator) = with(binding) {
             tvDateTime.text = item.time
             progress.setVisibility(false)
@@ -232,31 +241,46 @@ class PostAdapter(
             return super.onBindViewHolder(holder, position, payloads)
         }
 
-        val payload = payloads.first() as List<*>
-        if (payload.contains(LIKES) && holder is PostViewHolder) {
-            holder.bindLikes(
-                getItem(position) as? Post ?: return super.onBindViewHolder(
-                    holder,
-                    position,
-                    payloads
+        payloads.firstOrNull().let { payload ->
+            if (payload !is List<*>) {
+                return super.onBindViewHolder(holder, position, payloads)
+            }
+            if (payload.contains(LIKES) && holder is PostViewHolder) {
+                holder.bindLikes(
+                    getItem(position) as? Post ?: return super.onBindViewHolder(
+                        holder,
+                        position,
+                        payloads
+                    )
                 )
-            )
-        }
-        if (payload.contains(TEXT) && holder is PostViewHolder) {
-            holder.bindText(
-                getItem(position) as? Post ?: return super.onBindViewHolder(
-                    holder,
-                    position,
-                    payloads
+            }
+            if (payload.contains(TEXT) && holder is PostViewHolder) {
+                holder.bindText(
+                    getItem(position) as? Post ?: return super.onBindViewHolder(
+                        holder,
+                        position,
+                        payloads
+                    )
                 )
-            )
-        }
-        if (payload.contains(SEPARATOR) && holder is SeparatorViewHolder) {
-            holder.bind(getItem(position) as? PostTimeSeparator ?: return super.onBindViewHolder(
-                holder,
-                position,
-                payloads
-            ))
+            }
+            if (payload.contains(SEPARATOR) && holder is SeparatorViewHolder) {
+                holder.bind(
+                    getItem(position) as? PostTimeSeparator ?: return super.onBindViewHolder(
+                        holder,
+                        position,
+                        payloads
+                    )
+                )
+            }
+            if (payload.contains(IS_OWNER) && holder is PostViewHolder) {
+                holder.bindMenu(
+                    getItem(position) as? Post ?: return super.onBindViewHolder(
+                        holder,
+                        position,
+                        payloads
+                    )
+                )
+            }
         }
     }
 
@@ -297,15 +321,14 @@ class PostAdapter(
                 if (newItem.text != oldItem.text) {
                     payloads.add(TEXT)
                 }
-                if (oldItem.date != newItem.date) {
-                    payloads.add(DATE)
+                if (newItem.isOwner != oldItem.isOwner) {
+                    payloads.add(IS_OWNER)
+                    Timber.d("New: ${newItem.isOwner}, Old: ${oldItem.isOwner}")
                 }
                 return payloads
             }
         }
     }
-
-    fun getItemByPosition(position: Int): PostAdapterEntity? = getItem(position)
 
     private companion object {
         private const val REMOVE_ID: Int = 1
@@ -313,8 +336,8 @@ class PostAdapter(
 
         private const val LIKES: Int = 0
         private const val TEXT: Int = 1
-        private const val DATE: Int = 2
-        private const val SEPARATOR: Int = 3
+        private const val SEPARATOR: Int = 2
+        private const val IS_OWNER: Int = 3
 
         private const val SEPARATOR_TYPE: Int = 2
         private const val POST_TYPE: Int = 1

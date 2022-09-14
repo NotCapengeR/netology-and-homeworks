@@ -40,16 +40,14 @@ class PostRepositoryImpl @Inject constructor(
     override val posts: Flow<PagingData<PostAdapterEntity>> = Pager(
         config = PagingConfig(
             pageSize = Post.PAGE_SIZE,
-            prefetchDistance = 7,
+            prefetchDistance = (Post.PAGE_SIZE - 3).coerceAtLeast(1),
             maxSize = Post.MAX_SIZE,
         ),
         pagingSourceFactory = dao::pagingSource,
         remoteMediator = mediator
     ).flow.map { data ->
         data.map { entity ->
-            Post.parser(entity)!!
-        }.map { post ->
-            post.copy(isOwner = post.authorId == getAuthId())
+            Post.parserNotNull(entity)
         }.insertSeparators<Post, PostAdapterEntity> { before: Post?, after: Post? ->
             if (before == null) {
                 if (after != null) {
@@ -108,22 +106,9 @@ class PostRepositoryImpl @Inject constructor(
 
 
     override suspend fun addPost(title: String, text: String, attachment: Attachment?): Long {
-        source.addPost(title, text, attachment).data?.also {
-            try {
-                dao.addPost(it.id, title, text, avatar = it.avatar, authorId = getAuthId())
-            } catch (ex: SQLiteConstraintException) {
-                dao.insertPost(
-                    PostEntity(
-                        id = it.id,
-                        title = title,
-                        text = text,
-                        avatar = it.avatar,
-                        attachment = it.attachment,
-                        authorId = getAuthId()
-                    )
-                )
-            }
-            return it.id
+        source.addPost(title, text, attachment).data?.also { response ->
+            dao.insertPost(PostEntity.parser(response))
+            return response.id
         }
         return 0L
     }

@@ -1,6 +1,7 @@
 package ru.netology.nmedia.network.post_api.dto
 
 import android.os.Parcelable
+import androidx.room.ColumnInfo
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 import ru.netology.nmedia.repository.dto.Attachment
@@ -15,7 +16,8 @@ data class PostRequest(
     @SerializedName("published") val date: Long = OffsetDateTime.now().toEpochSecond(),
     @SerializedName("likedByMe") val isLiked: Boolean = false,
     @SerializedName("likes") val likes: Int = 0,
-    @SerializedName("attachment") val attachment: Attachment? = null
+    @SerializedName("attachment") val attachment: Attachment? = null,
+    @SerializedName("ownedByMe") val isOwner: Boolean = false
 ) : Parcelable {
 
     companion object {
@@ -27,7 +29,8 @@ data class PostRequest(
             date = 0L,
             isLiked = false,
             likes = 0,
-            attachment = null
+            attachment = null,
+            isOwner = false
         )
     }
 }

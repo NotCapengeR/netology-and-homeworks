@@ -37,6 +37,8 @@ data class PostEntity(
     val views: Int = 0,
     @ColumnInfo(name = "is_liked")
     val isLiked: Boolean = false,
+    @ColumnInfo(name = "is_owner")
+    val isOwner: Boolean = false,
     @Embedded(prefix = "yt_")
     val video: YouTubeVideoData? = null,
     @Embedded(prefix = "attachment_")
@@ -57,7 +59,8 @@ data class PostEntity(
                 views = post.views,
                 isLiked = post.isLiked,
                 video = post.video,
-                attachment = post.attachment
+                attachment = post.attachment,
+                isOwner = post.isOwner
             )
         }
 
@@ -71,7 +74,8 @@ data class PostEntity(
                 date = Mapper.parseEpochToAbsolute(response.date),
                 likes = response.likes,
                 isLiked = response.isLiked,
-                attachment = response.attachment
+                attachment = response.attachment,
+                isOwner = response.isOwner
             )
         }
     }

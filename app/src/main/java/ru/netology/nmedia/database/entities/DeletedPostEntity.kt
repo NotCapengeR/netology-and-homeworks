@@ -34,6 +34,8 @@ data class DeletedPostEntity(
     val views: Int = 0,
     @ColumnInfo(name = "is_liked")
     val isLiked: Boolean = false,
+    @ColumnInfo(name = "is_owner")
+    val isOwner: Boolean = false,
     @Embedded(prefix = "yt_")
     val video: YouTubeVideoData? = null,
     @Embedded(prefix = "attachment_")
@@ -54,7 +56,8 @@ data class DeletedPostEntity(
                 views = entity.views,
                 isLiked = entity.isLiked,
                 video = entity.video,
-                attachment = entity.attachment
+                attachment = entity.attachment,
+                isOwner = entity.isOwner
             )
         }
     }
