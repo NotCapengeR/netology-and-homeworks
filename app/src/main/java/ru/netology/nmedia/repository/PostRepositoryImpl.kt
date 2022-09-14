@@ -48,7 +48,7 @@ class PostRepositoryImpl @Inject constructor(
     ).flow.map { data ->
         data.map { entity ->
             Post.parserNotNull(entity)
-        }.insertSeparators<Post, PostAdapterEntity> { before: Post?, after: Post? ->
+        }.insertSeparators<Post, PostAdapterEntity>(TerminalSeparatorType.SOURCE_COMPLETE) { before: Post?, after: Post? ->
             if (before == null) {
                 if (after != null) {
                     return@insertSeparators PostTimeSeparator(
