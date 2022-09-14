@@ -30,6 +30,9 @@ interface PostRemoteKeyDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(keys: List<PostRemoteKeyEntity>)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(vararg keys: PostRemoteKeyEntity)
+
     @Query("DELETE FROM post_remote_keys")
     suspend fun removeAll()
 }

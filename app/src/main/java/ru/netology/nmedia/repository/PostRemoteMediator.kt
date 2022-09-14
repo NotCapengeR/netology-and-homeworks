@@ -71,6 +71,10 @@ class PostRemoteMediator @Inject constructor(
                             PostRemoteKeyEntity(
                                 type = PostRemoteKeyEntity.KeyType.AFTER,
                                 id = body.first().id,
+                            ),
+                            PostRemoteKeyEntity(
+                                type = PostRemoteKeyEntity.KeyType.BEFORE,
+                                id = body.last().id,
                             )
                         )
                         //dao.removeAll()
