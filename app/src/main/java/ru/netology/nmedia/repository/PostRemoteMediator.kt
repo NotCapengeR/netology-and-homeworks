@@ -72,11 +72,23 @@ class PostRemoteMediator @Inject constructor(
                                 type = PostRemoteKeyEntity.KeyType.AFTER,
                                 id = body.first().id,
                             ),
-                            PostRemoteKeyEntity(
-                                type = PostRemoteKeyEntity.KeyType.BEFORE,
-                                id = body.last().id,
-                            )
                         )
+                        val min = dao.min()
+                        if (min == null) {
+                            remoteKeyDao.insert(
+                                PostRemoteKeyEntity(
+                                    type = PostRemoteKeyEntity.KeyType.BEFORE,
+                                    id = body.last().id,
+                                )
+                            )
+                        } else {
+                            remoteKeyDao.insert(
+                                PostRemoteKeyEntity(
+                                    type = PostRemoteKeyEntity.KeyType.BEFORE,
+                                    id = min,
+                                )
+                            )
+                        }
                         //dao.removeAll()
                     }
                     LoadType.PREPEND -> {
