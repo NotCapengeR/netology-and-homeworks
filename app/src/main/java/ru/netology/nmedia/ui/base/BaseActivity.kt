@@ -66,11 +66,12 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
         popupMenu?.show()
     }
 
-    protected fun showSnackbar(text: String, isLong: Boolean = false) = Snackbar.make(
+    protected fun showSnackbar(text: String, isLong: Boolean = false) = AndroidUtils.showShackbar(
+        this,
         binding.root,
         text,
-        if (isLong) Snackbar.LENGTH_LONG else Snackbar.LENGTH_SHORT,
-    ).show()
+        isLong
+    )
 
 
     protected fun Int.dpTpPx(): Int = AndroidUtils.dpToPx(this@BaseActivity, this)

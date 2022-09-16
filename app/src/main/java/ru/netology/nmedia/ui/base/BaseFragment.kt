@@ -79,11 +79,12 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment(), MenuProvider {
     }
 
 
-    protected fun showSnackbar(text: String, isLong: Boolean = false) = Snackbar.make(
+    protected fun showSnackbar(text: String, isLong: Boolean = false) = AndroidUtils.showShackbar(
+        requireContext(),
         binding.root,
         text,
-        if (isLong) Snackbar.LENGTH_LONG else Snackbar.LENGTH_SHORT,
-    ).show()
+        isLong
+    )
 
     protected fun openUrl(url: String?) {
         AndroidUtils.openUrl(requireContext(), url)

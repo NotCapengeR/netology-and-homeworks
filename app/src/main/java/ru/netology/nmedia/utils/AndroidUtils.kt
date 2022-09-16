@@ -15,6 +15,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.StringRes
+import com.google.android.material.snackbar.Snackbar
 import java.net.InetAddress
 import java.util.regex.Pattern
 import kotlin.math.roundToInt
@@ -50,6 +51,15 @@ object AndroidUtils {
         editText.text.clear()
         editText.clearFocus()
     }
+
+    fun showShackbar(context: Context, view: View, text: String, isLong: Boolean = false) = Snackbar.make(
+        context,
+        view,
+        text,
+        if (isLong) Snackbar.LENGTH_LONG else Snackbar.LENGTH_SHORT,
+    ).show()
+
+    fun showShackbar(inflater: () -> Snackbar) = inflater.invoke().show()
 
     fun dpToPx(context: Context, dp: Int): Int {
         val r: Resources = context.resources
