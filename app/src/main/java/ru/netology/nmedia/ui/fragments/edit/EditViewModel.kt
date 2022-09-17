@@ -10,7 +10,6 @@ import ru.netology.nmedia.R
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.dto.Post
 import ru.netology.nmedia.ui.base.BaseViewModel
-import ru.netology.nmedia.utils.AndroidUtils.showToast
 import ru.netology.nmedia.utils.SingleLiveEvent
 import timber.log.Timber
 import javax.inject.Inject
