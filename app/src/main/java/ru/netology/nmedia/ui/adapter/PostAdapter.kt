@@ -2,6 +2,7 @@ package ru.netology.nmedia.ui.adapter
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -130,6 +131,7 @@ class PostAdapter(
             tvPostText.text = item.text
             tvPostTitle.text = item.title
             tvDateTime.text = Mapper.parseEpochSeconds(item.date)
+            Linkify.addLinks(tvPostText, Linkify.WEB_URLS)
             Timber.d("Post ${item.id}: ${tvDateTime.text}")
             if (item.avatar.isNotBlank() && item.avatar.isNotEmpty()) {
                 Glide.with(root.context)
@@ -182,6 +184,7 @@ class PostAdapter(
 
         fun bindText(post: Post) = with(binding) {
             tvPostText.text = post.text
+            Linkify.addLinks(tvPostText, Linkify.WEB_URLS)
         }
 
         fun bindMenu(item: Post) = with(binding) {

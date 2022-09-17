@@ -38,18 +38,13 @@ class EditViewModel @Inject constructor(
     }
 
     fun saveText(text: CharSequence) {
-        post.value = post.value?.copy(text = text.toString())
+        saveText(text = text.toString())
     }
 
 
     fun saveText(text: String) {
         post.value = post.value?.copy(text = text)
     }
-
-    fun saveTitle(title: String) {
-        post.value = post.value?.copy(title = title)
-    }
-
 
     fun editPost(
         id: Long,
@@ -77,7 +72,11 @@ class EditViewModel @Inject constructor(
             repository.likePost(id).also {
                 if (it) {
                     val newPost = getPostById(id) ?: return@also
-                    post.value = post.value?.copy(likes = newPost.likes, isLiked = newPost.isLiked, text = text)
+                    post.value = post.value?.copy(
+                        likes = newPost.likes,
+                        isLiked = newPost.isLiked,
+                        text = text
+                    )
                 }
             }
         }
@@ -111,16 +110,20 @@ class EditViewModel @Inject constructor(
 
     private suspend fun getPostById(id: Long): Post? {
         return withContext(viewModelScope.coroutineContext + Dispatchers.Main) {
-            repository.getPostFromDBById(id).also { newPost ->
-                post.value = newPost
-            }
+            repository.getPostFromDBById(id)
         }
     }
 
-    fun loadPost(postId: Long) {
+    fun loadPost(postId: Long, onLoad: (Post?) -> Unit) {
         viewModelScope.launch {
+            val previousPost = post.value
             val newPost = getPostById(postId) ?: return@launch
-            post.value = newPost
+            if (previousPost?.id == newPost.id) {
+                post.value = newPost.copy(text = previousPost.text)
+            } else {
+                post.value = newPost
+            }
+            onLoad.invoke(post.value)
         }
     }
 }

@@ -52,8 +52,9 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
             toolbar.setupWithNavController(this, appBarConfiguration)
         }
         val id = args.postId
-        if (id != viewModel.post.value?.id) {
-            viewModel.loadPost(id)
+        viewModel.loadPost(id) { post ->
+            tvPostText.setText(post?.text)
+            Linkify.addLinks(tvPostText, Linkify.WEB_URLS)
         }
         viewModel.clearErrorMsg()
         viewModel.errorMsg.observe(viewLifecycleOwner) { message ->
@@ -61,10 +62,10 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
                 showToast(message)
             }
         }
-        tvPostText.setText(viewModel.post.value?.text)
         tvPostText.doOnTextChanged { text, _, _, _ ->
             if (!text.isNullOrBlank()) {
                 viewModel.saveText(text)
+                Linkify.addLinks(tvPostText, Linkify.WEB_URLS)
             }
         }
 

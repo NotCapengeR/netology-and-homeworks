@@ -28,7 +28,7 @@ import ru.netology.nmedia.utils.*
 import java.util.*
 import javax.inject.Inject
 
-class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
+class AddFragment : BaseFragment<AddFragmentBinding>() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -70,6 +70,7 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
         viewModel.text.value.let { text ->
             if (!text.isNullOrBlank()) {
                 tvPostText.setText(text)
+                Linkify.addLinks(tvPostText, Linkify.WEB_URLS)
             }
         }
         mainNavController?.apply {
@@ -107,11 +108,23 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
         tvPostText.doOnTextChanged { text, _, _, _ ->
             if (!text.isNullOrBlank()) {
                 viewModel.setText(text)
+                Linkify.addLinks(tvPostText, Linkify.WEB_URLS)
             }
         }
         tvDateTime.text = DateFormat.format(POST_DATE_PATTERN, Date().time)
-        cardViewSendPost.setDebouncedListener(600L, this@AddFragment)
-        cancelButton.setDebouncedListener(50L, this@AddFragment)
+        cardViewSendPost.setDebouncedListener(600L) {
+            if (tvPostText.text.toString().checkIfNotEmpty()) {
+                viewModel.addPost(
+                    tvPostTitle.text.toString().trim(),
+                    tvPostText.text.toString().trim(),
+                )
+            } else {
+                showToast(R.string.text_is_unfilled)
+            }
+        }
+        cancelButton.setDebouncedListener(50L) {
+            onBackPressed()
+        }
     }
 
     private fun initViewModel() {
@@ -124,28 +137,6 @@ class AddFragment : BaseFragment<AddFragmentBinding>(), View.OnClickListener {
         }
         viewModel.isUpdating.observe(viewLifecycleOwner) {
             binding.postProgress.setVisibility(it)
-        }
-    }
-
-    override fun onClick(view: View) {
-        when (view.id) {
-            R.id.cardViewSendPost -> {
-                with(binding) {
-                    if (tvPostText.text.toString().checkIfNotEmpty()) {
-                        Linkify.addLinks(tvPostText, Linkify.WEB_URLS)
-                        viewModel.addPost(
-                            tvPostTitle.text.toString().trim(),
-                            tvPostText.text.toString().trim(),
-                        )
-                    } else {
-                        showToast(R.string.text_is_unfilled)
-                    }
-                }
-            }
-
-            R.id.cancel_button -> onBackPressed()
-
-            else -> {/* do nothing */}
         }
     }
 
