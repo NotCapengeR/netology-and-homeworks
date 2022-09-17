@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
@@ -21,7 +21,7 @@ class ImageDetailsFragment : BaseFragment<ImageDetailsFragmentBinding>() {
 
     private val args: ImageDetailsFragmentArgs by navArgs()
     @Inject lateinit var viewModelFactory: ViewModelFactory
-    private val viewModel: ImageDetailsViewModel by activityViewModels {
+    private val viewModel: ImageDetailsViewModel by viewModels {
         viewModelFactory
     }
 

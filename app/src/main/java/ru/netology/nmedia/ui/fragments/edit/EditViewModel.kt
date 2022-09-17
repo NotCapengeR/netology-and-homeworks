@@ -38,6 +38,10 @@ class EditViewModel @Inject constructor(
         }
     }
 
+    fun saveText(text: CharSequence) {
+        post.value = post.value?.copy(text = text.toString())
+    }
+
 
     fun saveText(text: String) {
         post.value = post.value?.copy(text = text)

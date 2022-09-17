@@ -20,7 +20,7 @@ class AddViewModel @Inject constructor(
     private val repository: PostRepository,
 ) : BaseViewModel(application) {
 
-
+    val text: MutableLiveData<String> = MutableLiveData("")
     val photo: MutableLiveData<Photo> = MutableLiveData(Photo.NO_PHOTO)
     val isUpdating: MutableLiveData<Boolean> = MutableLiveData(false)
     val isLoaded: MutableLiveData<Boolean> = MutableLiveData(false)
@@ -32,6 +32,14 @@ class AddViewModel @Inject constructor(
 
     fun setPhoto(file: File?, uri: Uri?) {
         photo.value = Photo(file, uri)
+    }
+
+    fun setText(text: CharSequence) {
+        this.text.value = text.toString()
+    }
+
+    fun clearText() {
+        text.value = ""
     }
 
     fun addPost(
@@ -49,7 +57,8 @@ class AddViewModel @Inject constructor(
                             isLoaded.value = true
                             isLoaded.value = false
                         } else {
-                            errorMsg.value = getString(R.string.error_problem_with_internet_connection)
+                            errorMsg.value =
+                                getString(R.string.error_problem_with_internet_connection)
                         }
                     }
                 }
@@ -61,7 +70,8 @@ class AddViewModel @Inject constructor(
                             isLoaded.value = true
                             isLoaded.value = false
                         } else {
-                            errorMsg.value = getString(R.string.error_problem_with_internet_connection)
+                            errorMsg.value =
+                                getString(R.string.error_problem_with_internet_connection)
                         }
                     }
                 }

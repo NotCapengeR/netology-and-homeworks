@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.text.util.Linkify
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.AppBarConfiguration
@@ -25,7 +26,8 @@ import javax.inject.Inject
 
 class EditFragment : BaseFragment<EditFragmentBinding>() {
 
-    @Inject lateinit var viewModelFactory: ViewModelFactory
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
     private val args: EditFragmentArgs by navArgs()
     private val viewModel: EditViewModel by activityViewModels {
         viewModelFactory
@@ -59,12 +61,15 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
                 showToast(message)
             }
         }
+        tvPostText.setText(viewModel.post.value?.text)
+        tvPostText.doOnTextChanged { text, _, _, _ ->
+            if (!text.isNullOrBlank()) {
+                viewModel.saveText(text)
+            }
+        }
 
         viewModel.post.observe(viewLifecycleOwner) { post ->
             if (post != null) {
-                if (post.text != tvPostText.text.toString()) {
-                    tvPostText.setText(post.text)
-                }
                 tvPostTitle.text = post.title
                 tvDateTime.text = Mapper.parseEpochSeconds(post.date)
                 ivLikes.tag = post.id
@@ -126,11 +131,9 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
             onBackPressed()
         }
         ivLikes.setDebouncedListener(50L) {
-            saveState()
             viewModel.likePost(it.tag as Long, tvPostText.text.toString())
         }
         ivShare.setDebouncedListener(50L) {
-            saveState()
             val intent = Intent(Intent.ACTION_SEND).apply {
                 putExtra(Intent.EXTRA_TEXT, binding.tvPostText.text.toString())
                 type = "text/plain"
@@ -144,7 +147,6 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
             }
         }
         ivComments.setDebouncedListener(50L) {
-            saveState()
             viewModel.commentPost(it.tag as Long)
         }
         cardViewSendPost.setDebouncedListener {
@@ -167,15 +169,6 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
         }
     }
 
-    override fun onDestroyView() {
-        saveState()
-        super.onDestroyView()
-    }
-
-    private fun saveState() {
-        viewModel.saveText(binding.tvPostText.text.toString())
-        viewModel.saveTitle(binding.tvPostTitle.text.toString())
-    }
 
     override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()

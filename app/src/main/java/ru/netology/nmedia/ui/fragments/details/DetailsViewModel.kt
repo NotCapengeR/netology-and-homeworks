@@ -75,7 +75,6 @@ class DetailsViewModel @Inject constructor(
     fun loadPost(postId: Long) {
         viewModelScope.launch(Dispatchers.Main) {
             val newPost = getPostById(postId) ?: return@launch
-            newPost.isOwner = getAuthId() == newPost.authorId
             post.value = newPost
         }
     }

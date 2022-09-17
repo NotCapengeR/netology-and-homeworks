@@ -10,7 +10,7 @@ import android.text.util.Linkify
 import android.view.*
 import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
@@ -31,7 +31,7 @@ class DetailsFragment : BaseFragment<DetailsFragmentBinding>() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private val args: DetailsFragmentArgs by navArgs()
-    private val viewModel: DetailsViewModel by activityViewModels {
+    private val viewModel: DetailsViewModel by viewModels {
         viewModelFactory
     }
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> DetailsFragmentBinding

@@ -13,7 +13,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.viewbinding.ViewBinding
-import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.R
 import ru.netology.nmedia.utils.AndroidUtils
 
@@ -101,6 +100,5 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment(), MenuProvider {
             else -> false
         }
     }
-
     protected fun Int.dpTpPx(): Int = AndroidUtils.dpToPx(activity as AppCompatActivity, this)
 }
