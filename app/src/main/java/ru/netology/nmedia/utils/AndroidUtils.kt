@@ -18,6 +18,7 @@ import androidx.annotation.StringRes
 import com.google.android.material.snackbar.Snackbar
 import java.net.InetAddress
 import java.util.regex.Pattern
+import kotlin.math.ceil
 import kotlin.math.roundToInt
 
 
@@ -62,10 +63,14 @@ object AndroidUtils {
     fun showShackbar(inflater: () -> Snackbar) = inflater.invoke().show()
 
     fun dpToPx(context: Context, dp: Int): Int {
+        return dpToPx(context, dp.toFloat())
+    }
+
+    fun dpToPx(context: Context, dp: Float): Int {
         val r: Resources = context.resources
         return TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
-            dp.toFloat(),
+            dp,
             r.displayMetrics
         ).roundToInt()
     }
