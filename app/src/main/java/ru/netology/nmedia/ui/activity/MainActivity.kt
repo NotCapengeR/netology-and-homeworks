@@ -2,17 +2,18 @@ package ru.netology.nmedia.ui.activity
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.widget.Toast
 import androidx.activity.viewModels
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.android.synthetic.main.activity_main.*
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.ActivityMainBinding
 import ru.netology.nmedia.di.modules.FirebaseModule.Companion.FIREBASE_TAG
 import ru.netology.nmedia.ui.base.BaseActivity
 import ru.netology.nmedia.ui.viewmodels.ViewModelFactory
 import ru.netology.nmedia.utils.getAppComponent
+import ru.netology.nmedia.utils.setVisibility
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -31,16 +32,20 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         getAppComponent().inject(this)
-        messaging.token.addOnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Timber.tag(FIREBASE_TAG).d("Some stuff happened: ${task.exception}")
-                return@addOnCompleteListener
-            }
-
-            Timber.tag(FIREBASE_TAG).d(task.result)
+        binding.apply {
+            stats.data = listOf(500f, 500f, 500f, 500f)
+            navHostFragment.setVisibility(false)
         }
-        checkGoogleApiAvailability()
-    }
+        messaging.token.addOnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Timber.tag(FIREBASE_TAG).d("Some stuff happened: ${task.exception}")
+                    return@addOnCompleteListener
+                }
+
+                Timber.tag(FIREBASE_TAG).d(task.result)
+            }
+            checkGoogleApiAvailability()
+        }
 
     private fun checkGoogleApiAvailability() {
         with(googleApi) {

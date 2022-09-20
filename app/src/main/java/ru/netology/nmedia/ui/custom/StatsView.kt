@@ -54,8 +54,7 @@ class StatsView @JvmOverloads constructor(
             field = value
             invalidate()
         }
-    private val sum: Float
-        get() = data.sum()
+    var expectedSize: Int = 0
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         radius = min(w, h) / 2f - lineWidth / 2
@@ -72,16 +71,18 @@ class StatsView @JvmOverloads constructor(
         }
 
         var startFrom = -90f
-        val currentSum = sum
+        val currentSum = data.sum()
         data.forEachIndexed { index, datum ->
             val angle = 360f * (datum / currentSum)
             paint.color = colors.getOrNull(index) ?: randomColor()
             canvas.drawArc(oval, startFrom, angle, false, paint)
             startFrom += angle
         }
+        paint.color = colors.first()
+        canvas.drawCircle(center.x, center.y - radius, 1f, paint)
 
         canvas.drawText(
-            "%.2f%%".format(sum * 100f),
+            "%.2f%%".format(100f),
             center.x,
             center.y + textPaint.textSize / 4,
             textPaint,

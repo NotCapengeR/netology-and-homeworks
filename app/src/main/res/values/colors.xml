@@ -18,4 +18,10 @@
     <color name="blue_white">#BFE3E3</color>
     <color name="pink">#C030E1</color>
     <color name="red">#F11111</color>
+    <array name="colors">
+        <item>@color/purple_500</item>
+        <item>@color/red</item>
+        <item>#FFDE03</item>
+        <item>#1AEF0B</item>
+    </array>
 </resources>
