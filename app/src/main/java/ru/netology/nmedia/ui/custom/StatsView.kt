@@ -54,7 +54,6 @@ class StatsView @JvmOverloads constructor(
             field = value
             invalidate()
         }
-    var expectedSize: Int = 0
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         radius = min(w, h) / 2f - lineWidth / 2
