@@ -106,7 +106,7 @@ class StatsView @JvmOverloads constructor(
                 mProgress = animator.animatedValue as Float
                 invalidate()
             }
-            duration = 4_000L
+            duration = 2_000L
             interpolator = LinearInterpolator()
         }.also { animator ->
             animator.start()
