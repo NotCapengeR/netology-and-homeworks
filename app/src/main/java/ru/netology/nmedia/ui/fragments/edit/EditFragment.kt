@@ -53,8 +53,12 @@ class EditFragment : BaseFragment<EditFragmentBinding>() {
         }
         val id = args.postId
         viewModel.loadPost(id) { post ->
-            tvPostText.setText(post?.text)
-            Linkify.addLinks(tvPostText, Linkify.WEB_URLS)
+            try {
+                tvPostText.setText(post?.text)
+                Linkify.addLinks(tvPostText, Linkify.WEB_URLS)
+            } catch (_: IllegalArgumentException) {
+                //ignore
+            }
         }
         viewModel.clearErrorMsg()
         viewModel.errorMsg.observe(viewLifecycleOwner) { message ->

@@ -75,7 +75,7 @@ dependencies {
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     //Coroutines & LiveData
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.5.0"
 
     //Network
@@ -102,7 +102,7 @@ dependencies {
     implementation 'com.google.dagger:dagger:2.36'
     kapt("com.google.dagger:dagger-compiler:2.36")
     kapt("com.google.dagger:dagger-android-processor:2.36")
-    kapt("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.3.0")
+    kapt("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0")
 
     //Pagging
     implementation("androidx.paging:paging-runtime-ktx:3.1.1")
