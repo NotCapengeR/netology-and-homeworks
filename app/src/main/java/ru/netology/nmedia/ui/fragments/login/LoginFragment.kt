@@ -25,7 +25,6 @@ import ru.netology.nmedia.databinding.LoginFragmentBinding
 import ru.netology.nmedia.ui.base.BaseFragment
 import ru.netology.nmedia.ui.viewmodels.ViewModelFactory
 import ru.netology.nmedia.utils.getAppComponent
-import ru.netology.nmedia.utils.isBlankOrEmpty
 import ru.netology.nmedia.utils.setDebouncedListener
 import ru.netology.nmedia.utils.setVisibility
 import javax.inject.Inject
@@ -102,7 +101,7 @@ class LoginFragment : BaseFragment<LoginFragmentBinding>() {
             cardName.error = message
             cardPassword.error = message
             cardConfirmPass.error = message
-            cardLogin.hint = message ?: getString(R.string.auth_login)
+            etLogin.error = message
         }
         viewModel.loginData.observe(viewLifecycleOwner) { login ->
             login.avatar?.uri?.let { avatarUri ->
