@@ -91,14 +91,11 @@ class FirebaseModule {
     }
 
     @Provides
-    @Singleton
     fun provideFirebaseMessaging(): FirebaseMessaging = FirebaseMessaging.getInstance()
 
     @Provides
-    @Singleton
     fun provideFirebaseApp(): FirebaseApp = FirebaseApp.getInstance()
 
     @Provides
-    @Singleton
     fun provideGoogleApiAvailability(): GoogleApiAvailability = GoogleApiAvailability.getInstance()
 }

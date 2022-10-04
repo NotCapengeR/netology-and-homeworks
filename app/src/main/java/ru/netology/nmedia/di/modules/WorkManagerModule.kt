@@ -19,7 +19,6 @@ import kotlin.reflect.KClass
 class WorkManagerModule {
 
     @Provides
-    @Singleton
     fun provideWorkManager(context: Context): WorkManager = WorkManager.getInstance(context)
 
 }
